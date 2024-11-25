@@ -7,10 +7,16 @@ import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+
 @Service
 public class CategoriaProductoServicio {
 
     @Autowired
-    CategoriaProductoRepositorio categoriaProductoRepositorio;
+    private CategoriaProductoRepositorio categoriaProductoRepositorio;
 
+    // Guardar una categoría en la base de datos
+    public CategoriaProducto saveCategoria(CategoriaProducto categoriaProducto) {
+        return categoriaProductoRepositorio.save(categoriaProducto);
+    }
 }
