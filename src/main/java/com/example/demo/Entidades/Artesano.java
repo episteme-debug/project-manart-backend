@@ -11,13 +11,9 @@ public class Artesano extends Usuario{
     @OneToMany(mappedBy = "artesano", cascade = CascadeType.ALL)
     private List<Producto> productos;
 
-    public Artesano(Integer idUsuario, String nombreUsuario, String apellidoUsuario,
-                    String telefonoUsuario, boolean estadoUsuario,
-                    String imagenPerfilUsuario, int tipoUsuario)
-    {
-        super(idUsuario, nombreUsuario, apellidoUsuario, telefonoUsuario, estadoUsuario,
-                imagenPerfilUsuario, tipoUsuario);
-        this.rolUsuario = "Artesano";
+    public Artesano(Integer idUsuario, String nombreUsuario, String apellidoUsuario, String telefonoUsuario, boolean estadoUsuario, String imagenPerfilUsuario, int tipoUsuario, String emailUsuario, String contrasenaUsuario, String rolUsuario) {
+        super(idUsuario, nombreUsuario, apellidoUsuario, telefonoUsuario, estadoUsuario, imagenPerfilUsuario, tipoUsuario, emailUsuario, contrasenaUsuario);
+        this.rolUsuario = "artesano";
     }
 
     public Artesano() {
