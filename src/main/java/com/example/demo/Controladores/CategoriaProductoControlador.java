@@ -8,7 +8,7 @@ import java.util.List;
 
 @CrossOrigin("http://127.0.0.1:5501/")
 @RestController
-public class CategoriaProducto {
+public class CategoriaProductoControlador {
 
     @Autowired
     CategoriaProductoServicio categoriaProductoServicio;
