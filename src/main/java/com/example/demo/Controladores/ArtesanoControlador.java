@@ -1,9 +1,8 @@
-package com.example.demo.controlador;
+package com.example.demo.Controladores;
 
 import com.example.demo.Entidades.Artesano;
-import com.example.demo.Servicio.ArtesanoServicio;
+import com.example.demo.Servicios.ArtesanoServicio;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
