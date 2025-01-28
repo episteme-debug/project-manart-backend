@@ -11,7 +11,6 @@ public class ManartApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ManartApplication.class, args);
 
-
 	}
 
 }

@@ -19,8 +19,9 @@ public class CategoriaProducto {
     @Column(nullable = false)
     private boolean estadoCategoria;
 
-    @Column(nullable = false)
-    private String imagenCategoria;
+    @Lob
+    @Column(nullable = false, columnDefinition = "LONGBLOB")
+    private byte[] imagenCategoria;
 
     @Column(nullable = false)
     private int ordenVisualizacionCategoria;
@@ -36,7 +37,8 @@ public class CategoriaProducto {
     public CategoriaProducto() {
     }
 
-    public CategoriaProducto(Integer idCategoria, String nombreCategoria, String descripcionCategoria, boolean estadoCategoria, String imagenCategoria, int ordenVisualizacionCategoria) {
+    public CategoriaProducto(List<Producto> productos, Integer idCategoria, String nombreCategoria, String descripcionCategoria, boolean estadoCategoria, byte[] imagenCategoria, int ordenVisualizacionCategoria) {
+        this.productos = productos;
         this.idCategoria = idCategoria;
         this.nombreCategoria = nombreCategoria;
         this.descripcionCategoria = descripcionCategoria;
@@ -77,11 +79,11 @@ public class CategoriaProducto {
         this.estadoCategoria = estadoCategoria;
     }
 
-    public String getImagenCategoria() {
+    public byte[] getImagenCategoria() {
         return imagenCategoria;
     }
 
-    public void setImagenCategoria(String imagenCategoria) {
+    public void setImagenCategoria(byte[] imagenCategoria) {
         this.imagenCategoria = imagenCategoria;
     }
 
@@ -91,6 +93,14 @@ public class CategoriaProducto {
 
     public void setOrdenVisualizacionCategoria(int ordenVisualizacionCategoria) {
         this.ordenVisualizacionCategoria = ordenVisualizacionCategoria;
+    }
+
+    public List<Producto> getProductos() {
+        return productos;
+    }
+
+    public void setProductos(List<Producto> productos) {
+        this.productos = productos;
     }
 
     @Override
