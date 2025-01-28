@@ -1,8 +1,8 @@
-package com.example.demo.Servicio;
+package com.example.demo.Servicios;
 
-import com.example.demo.DTO.logInDTO;
+import com.example.demo.DTOs.LogInDTO;
 import com.example.demo.Entidades.Usuario;
-import com.example.demo.Messages.logMessage;
+import com.example.demo.Mensajes.MensajeLogIn;
 import com.example.demo.Repositorios.UsuarioRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,8 +27,8 @@ public class UsuarioServicio {
     }
 
     //Insert a Usuario in db
-    public logMessage saveUsuario(Usuario objeto){
-        logMessage dataMessage = new logMessage();
+    public MensajeLogIn saveUsuario(Usuario objeto){
+        MensajeLogIn dataMessage = new MensajeLogIn();
         if(verificarExistenciaUsuario(objeto) == false){
             dataMessage.setMensaje("Email no registrado");
             dataMessage.setError(0);
@@ -59,8 +59,8 @@ public class UsuarioServicio {
     }
 
     //LogIn Persona
-    public logMessage logInPersona(logInDTO dataPersona){
-        logMessage dataMessage = new logMessage();
+    public MensajeLogIn logInPersona(LogInDTO dataPersona){
+        MensajeLogIn dataMessage = new MensajeLogIn();
         String emailUsuario = dataPersona.getEmailUsuario();
         String contrasenaUsuario = dataPersona.getContrasenaUsuario();
         Optional<Usuario> personaExiste = usuarioRepositorio.findByEmailUsuario(emailUsuario);
