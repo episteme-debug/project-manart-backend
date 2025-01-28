@@ -13,13 +13,9 @@ public class Organizador extends Usuario{
     @OneToMany(mappedBy = "organizador", cascade = CascadeType.ALL)
     List<Evento> eventos;
 
-    public Organizador(Integer idUsuario, String nombreUsuario, String apellidoUsuario,
-                    String telefonoUsuario, boolean estadoUsuario,
-                    String imagenPerfilUsuario, int tipoUsuario)
-    {
-        super(idUsuario, nombreUsuario, apellidoUsuario, telefonoUsuario, estadoUsuario,
-                imagenPerfilUsuario, tipoUsuario);
-        this.rolUsuario = "Organizador";
+    public Organizador(Integer idUsuario, String nombreUsuario, String apellidoUsuario, String telefonoUsuario, boolean estadoUsuario, String imagenPerfilUsuario, int tipoUsuario, String emailUsuario, String contrasenaUsuario, String rolUsuario) {
+        super(idUsuario, nombreUsuario, apellidoUsuario, telefonoUsuario, estadoUsuario, imagenPerfilUsuario, tipoUsuario, emailUsuario, contrasenaUsuario);
+        this.rolUsuario = rolUsuario;
     }
 
     public Organizador() {
