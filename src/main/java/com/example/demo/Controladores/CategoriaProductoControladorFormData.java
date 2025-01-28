@@ -1,10 +1,8 @@
 package com.example.demo.controlador;
 
 import com.example.demo.Entidades.CategoriaProducto;
-import com.example.demo.Entidades.Producto;
-import com.example.demo.Entidades.Usuario;
 import com.example.demo.Repositorios.CategoriaProductoRepositorio;
-import com.example.demo.Servicio.CategoriaProductoServicio;
+import com.example.demo.Servicios.CategoriaProductoServicio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -13,11 +11,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 
 @RestController
-@CrossOrigin("http://127.0.0.1:5501/")
-public class CategoriaProductControlador {
+@CrossOrigin("http://127.0.0.1:5500/")
+public class CategoriaProductoControladorFormData {
 
     @Autowired
     CategoriaProductoServicio CategoriaProductoServicio;
@@ -27,7 +24,7 @@ public class CategoriaProductControlador {
 
     @GetMapping( "/GetallCategoria" )
     public List<CategoriaProducto>GetallCategoria(){
-        return CategoriaProductoServicio.GetallCategoria();
+        return CategoriaProductoServicio.get_all_categorias_producto();
     }
     @PostMapping(value ="/saveCategoria",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<String> saveCategoria(
