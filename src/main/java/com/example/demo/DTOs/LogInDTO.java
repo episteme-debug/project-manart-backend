@@ -1,13 +1,13 @@
-package com.example.demo.DTO;
+package com.example.demo.DTOs;
 
-public class logInDTO {
+public class LogInDTO {
     String emailUsuario;
     String contrasenaUsuario;
 
-    public logInDTO() {
+    public LogInDTO() {
     }
 
-    public logInDTO(String emailUsuario, String contrasenaUsuario) {
+    public LogInDTO(String emailUsuario, String contrasenaUsuario) {
         this.emailUsuario = emailUsuario;
         this.contrasenaUsuario = contrasenaUsuario;
     }
