@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin("http://127.0.0.1:5501/")
+@CrossOrigin("http://127.0.0.1:5500/")
 @RestController
-public class CategoriaProducto {
+public class CategoriaProductoControlador {
 
     @Autowired
     CategoriaProductoServicio categoriaProductoServicio;
