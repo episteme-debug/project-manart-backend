@@ -21,26 +21,34 @@ public class Usuario {
     protected String telefonoUsuario;
 
     @Column(nullable = false)
-    protected boolean estadoUsuario;
+    protected boolean estadoUsuario = true;
 
     @Column(nullable = false)
-    protected String imagenPerfilUsuario;
+    protected String imagenPerfilUsuario = "avatarGenerico.jpg";
 
     @Column(nullable = false)
     protected int tipoUsuario;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @PrimaryKeyJoinColumn
-    protected CredencialesAcceso credencialesAcceso;
+    @Column(nullable = false, length = 200)
+    private String emailUsuario;
+
+    @Column(nullable = false, length = 250)
+    private String contrasenaUsuario;
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
     List<Publicacion> publicaciones;
+    
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+    List<Direccion> direcciones;
 
 
 /*    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
     private List<Valoracion> valoraciones;*/
 
-    public Usuario(Integer idUsuario, String nombreUsuario, String apellidoUsuario, String telefonoUsuario, boolean estadoUsuario, String imagenPerfilUsuario, int tipoUsuario) {
+    public Usuario() {
+    }
+
+    public Usuario(Integer idUsuario, String nombreUsuario, String apellidoUsuario, String telefonoUsuario, boolean estadoUsuario, String imagenPerfilUsuario, int tipoUsuario, String emailUsuario, String contrasenaUsuario) {
         this.idUsuario = idUsuario;
         this.nombreUsuario = nombreUsuario;
         this.apellidoUsuario = apellidoUsuario;
@@ -48,9 +56,22 @@ public class Usuario {
         this.estadoUsuario = estadoUsuario;
         this.imagenPerfilUsuario = imagenPerfilUsuario;
         this.tipoUsuario = tipoUsuario;
+        this.emailUsuario = emailUsuario;
+        this.contrasenaUsuario = contrasenaUsuario;
     }
 
-    public Usuario() {
+    public Usuario(Integer idUsuario, String nombreUsuario, String apellidoUsuario, String telefonoUsuario, boolean estadoUsuario, String imagenPerfilUsuario, int tipoUsuario, String emailUsuario, String contrasenaUsuario, List<Publicacion> publicaciones, List<Direccion> direcciones) {
+        this.idUsuario = idUsuario;
+        this.nombreUsuario = nombreUsuario;
+        this.apellidoUsuario = apellidoUsuario;
+        this.telefonoUsuario = telefonoUsuario;
+        this.estadoUsuario = estadoUsuario;
+        this.imagenPerfilUsuario = imagenPerfilUsuario;
+        this.tipoUsuario = tipoUsuario;
+        this.emailUsuario = emailUsuario;
+        this.contrasenaUsuario = contrasenaUsuario;
+        this.publicaciones = publicaciones;
+        this.direcciones = direcciones;
     }
 
     public Integer getIdUsuario() {
@@ -101,22 +122,6 @@ public class Usuario {
         this.imagenPerfilUsuario = imagenPerfilUsuario;
     }
 
-    public List<Publicacion> getPublicaciones() {
-        return publicaciones;
-    }
-
-    public void setPublicaciones(List<Publicacion> publicaciones) {
-        this.publicaciones = publicaciones;
-    }
-
-    public CredencialesAcceso getCredencialesAcceso() {
-        return credencialesAcceso;
-    }
-
-    public void setCredencialesAcceso(CredencialesAcceso credencialesAcceso) {
-        this.credencialesAcceso = credencialesAcceso;
-    }
-
     public int getTipoUsuario() {
         return tipoUsuario;
     }
@@ -125,18 +130,35 @@ public class Usuario {
         this.tipoUsuario = tipoUsuario;
     }
 
-    @Override
-    public String toString() {
-        return "Usuario{" +
-                "idUsuario=" + idUsuario +
-                ", nombreUsuario='" + nombreUsuario + '\'' +
-                ", apellidoUsuario='" + apellidoUsuario + '\'' +
-                ", telefonoUsuario='" + telefonoUsuario + '\'' +
-                ", estadoUsuario=" + estadoUsuario +
-                ", imagenPerfilUsuario='" + imagenPerfilUsuario + '\'' +
-                ", tipoUsuario=" + tipoUsuario +
-                ", credencialesAcceso=" + credencialesAcceso +
-                ", publicaciones=" + publicaciones +
-                '}';
+    public String getEmailUsuario() {
+        return emailUsuario;
+    }
+
+    public void setEmailUsuario(String emailUsuario) {
+        this.emailUsuario = emailUsuario;
+    }
+
+    public String getContrasenaUsuario() {
+        return contrasenaUsuario;
+    }
+
+    public void setContrasenaUsuario(String contrasenaUsuario) {
+        this.contrasenaUsuario = contrasenaUsuario;
+    }
+
+    public List<Publicacion> getPublicaciones() {
+        return publicaciones;
+    }
+
+    public void setPublicaciones(List<Publicacion> publicaciones) {
+        this.publicaciones = publicaciones;
+    }
+
+    public List<Direccion> getDirecciones() {
+        return direcciones;
+    }
+
+    public void setDirecciones(List<Direccion> direcciones) {
+        this.direcciones = direcciones;
     }
 }

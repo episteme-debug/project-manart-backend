@@ -1,3 +1,4 @@
+/*
 package com.example.demo.Entidades;
 import jakarta.persistence.*;
 import java.time.LocalDate;
@@ -97,3 +98,4 @@ public class Factura {
                 '}';
     }
 }
+*/
