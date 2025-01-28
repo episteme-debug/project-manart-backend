@@ -1,10 +1,10 @@
-package com.example.demo.controlador;
+package com.example.demo.Controladores;
 
-import com.example.demo.DTO.logInDTO;
+import com.example.demo.DTOs.LogInDTO;
 import com.example.demo.Entidades.*;
-import com.example.demo.Messages.logMessage;
+import com.example.demo.Mensajes.MensajeLogIn;
 import com.example.demo.Repositorios.UsuarioRepositorio;
-import com.example.demo.Servicio.UsuarioServicio;
+import com.example.demo.Servicios.UsuarioServicio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -32,12 +32,12 @@ public class UsuarioControlador {
     }
 
     @PostMapping("/saveUsuario")
-    public logMessage saveUsuario(@RequestBody Usuario objetoUsuario){
+    public MensajeLogIn saveUsuario(@RequestBody Usuario objetoUsuario){
         return UsuarioServicio.saveUsuario(objetoUsuario);
     }
 
     @PostMapping("/logIn")
-    public logMessage logInPersona(@RequestBody logInDTO dataPersona){
+    public MensajeLogIn logInPersona(@RequestBody LogInDTO dataPersona){
         return UsuarioServicio.logInPersona(dataPersona);
     }
 }
