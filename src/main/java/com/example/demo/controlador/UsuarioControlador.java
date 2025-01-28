@@ -1,6 +1,8 @@
 package com.example.demo.controlador;
 
+import com.example.demo.DTO.logInDTO;
 import com.example.demo.Entidades.*;
+import com.example.demo.Messages.logMessage;
 import com.example.demo.Repositorios.UsuarioRepositorio;
 import com.example.demo.Servicio.UsuarioServicio;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@CrossOrigin("http://127.0.0.1:5500/")
+@CrossOrigin("http://127.0.0.1:5501/")
 public class UsuarioControlador {
 
     @Autowired
@@ -30,8 +32,12 @@ public class UsuarioControlador {
     }
 
     @PostMapping("/saveUsuario")
-    public void saveUsuario(@RequestBody Usuario objetoUsuario){
-        UsuarioServicio.saveUsuario(objetoUsuario);
+    public logMessage saveUsuario(@RequestBody Usuario objetoUsuario){
+        return UsuarioServicio.saveUsuario(objetoUsuario);
     }
 
+    @PostMapping("/logIn")
+    public logMessage logInPersona(@RequestBody logInDTO dataPersona){
+        return UsuarioServicio.logInPersona(dataPersona);
+    }
 }

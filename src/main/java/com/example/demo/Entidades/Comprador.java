@@ -11,16 +11,12 @@ public class Comprador extends Usuario{
     @OneToMany(mappedBy = "comprador", cascade = CascadeType.ALL)
     private List<Pedido> pedidos;
 
-    public Comprador(Integer idUsuario, String nombreUsuario, String apellidoUsuario,
-                    String telefonoUsuario, boolean estadoUsuario,
-                    String imagenPerfilUsuario, int tipoUsuario)
-    {
-        super(idUsuario, nombreUsuario, apellidoUsuario, telefonoUsuario, estadoUsuario,
-                imagenPerfilUsuario, tipoUsuario);
-        this.rolUsuario = "Comprador";
+    public Comprador() {
     }
 
-    public Comprador() {
+    public Comprador(Integer idUsuario, String nombreUsuario, String apellidoUsuario, String telefonoUsuario, boolean estadoUsuario, String imagenPerfilUsuario, int tipoUsuario, String emailUsuario, String contrasenaUsuario, String rolUsuario) {
+        super(idUsuario, nombreUsuario, apellidoUsuario, telefonoUsuario, estadoUsuario, imagenPerfilUsuario, tipoUsuario, emailUsuario, contrasenaUsuario);
+        this.rolUsuario = rolUsuario;
     }
 
     public String getRolUsuario() {
