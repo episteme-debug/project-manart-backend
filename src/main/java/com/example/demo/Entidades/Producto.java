@@ -14,7 +14,7 @@ public class Producto {
     @Column(nullable = false, length = 100)
     private String nombreProducto;
 
-    @Column(nullable = false, length = 250)
+    @Column(nullable = false, length = 500)
     private String descripcionProducto;
 
     @Column(nullable = false, length = 1000)
@@ -29,9 +29,6 @@ public class Producto {
     @ManyToMany(mappedBy = "productos")
     private List<CategoriaProducto> categorias;
 
-    @ManyToMany(mappedBy = "productos")
-    private List<Pedido> pedidos;
-
     @ManyToOne(targetEntity = Artesano.class)
     @JoinColumn(name = "idUsuario", nullable = false)
     private Artesano artesano;
@@ -40,7 +37,8 @@ public class Producto {
     @JoinColumn(name = "idPromocion", nullable = false)
     private Promocion promocion;
 
-
+    @OneToMany(mappedBy = "producto")
+    private List<CarritoCompra> carritoCompras;
 
 /*    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL)
     private List<Valoracion> valoraciones;*/
