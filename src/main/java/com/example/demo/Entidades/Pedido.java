@@ -13,8 +13,9 @@ public class Pedido {
     @Column(nullable = false )
     private LocalDate fechaPedido;
 
-    @Column(nullable = false )
-    private LocalDate fechaUltimaModificacion;
+  /*  @Column(nullable = false)
+    private LocalDate fechaUltimaModificacion = LocalDate.now();
+*/
 
     @Column(nullable = false)
     private Enum<EstadoPedidoEnum> estado;
@@ -26,8 +27,10 @@ public class Pedido {
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
     private List<CarritoCompra> carritoCompras;
 
-/*    @OneToOne(mappedBy = "pedido", cascade = CascadeType.ALL)
-    private Factura facturas;*/
+/*
+  @OneToOne(mappedBy = "pedido", cascade = CascadeType.ALL)
+    private Factura facturas;
+*/
 
     public Pedido() {
     }
@@ -35,7 +38,6 @@ public class Pedido {
     public Pedido(Integer idPedido, LocalDate fechaPedido, LocalDate fechaUltimaModificacion, Enum<EstadoPedidoEnum> estado, Comprador comprador, List<CarritoCompra> carritoCompras) {
         this.idPedido = idPedido;
         this.fechaPedido = fechaPedido;
-        this.fechaUltimaModificacion = fechaUltimaModificacion;
         this.estado = estado;
         this.comprador = comprador;
         this.carritoCompras = carritoCompras;
@@ -55,14 +57,6 @@ public class Pedido {
 
     public void setFechaPedido(LocalDate fechaPedido) {
         this.fechaPedido = fechaPedido;
-    }
-
-    public LocalDate getFechaUltimaModificacion() {
-        return fechaUltimaModificacion;
-    }
-
-    public void setFechaUltimaModificacion(LocalDate fechaUltimaModificacion) {
-        this.fechaUltimaModificacion = fechaUltimaModificacion;
     }
 
     public Enum<EstadoPedidoEnum> getEstado() {
@@ -94,8 +88,7 @@ public class Pedido {
         return "Pedido{" +
                 "idPedido=" + idPedido +
                 ", fechaPedido=" + fechaPedido +
-                ", fechaUltimaModificacion=" + fechaUltimaModificacion +
-                ", estado=" + estado +
+               ", estado=" + estado +
                 ", comprador=" + comprador +
                 ", carritoCompras=" + carritoCompras +
                 '}';
