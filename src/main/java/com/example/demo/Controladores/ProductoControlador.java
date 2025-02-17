@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @RestController
 @CrossOrigin("http://127.0.0.1:5501/")
-public class ProductoControlador {
+
 
     @Autowired
     ProductoServicio ProductoServicio;
