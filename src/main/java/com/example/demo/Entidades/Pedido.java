@@ -21,7 +21,7 @@ public class Pedido {
 
     @ManyToOne
     @JoinColumn(name = "idUsuario", nullable = false)
-    private Comprador comprador;
+    private Usuario usuario;
 
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
     private List<CarritoCompra> carritoCompras;
@@ -32,12 +32,12 @@ public class Pedido {
     public Pedido() {
     }
 
-    public Pedido(Integer idPedido, LocalDate fechaPedido, LocalDate fechaUltimaModificacion, Enum<EstadoPedidoEnum> estado, Comprador comprador, List<CarritoCompra> carritoCompras) {
+    public Pedido(Integer idPedido, LocalDate fechaPedido, LocalDate fechaUltimaModificacion, Enum<EstadoPedidoEnum> estado, Usuario usuario, List<CarritoCompra> carritoCompras) {
         this.idPedido = idPedido;
         this.fechaPedido = fechaPedido;
         this.fechaUltimaModificacion = fechaUltimaModificacion;
         this.estado = estado;
-        this.comprador = comprador;
+        this.usuario = usuario;
         this.carritoCompras = carritoCompras;
     }
 
@@ -73,12 +73,12 @@ public class Pedido {
         this.estado = estado;
     }
 
-    public Comprador getComprador() {
-        return comprador;
+    public Usuario getUsuario() {
+        return usuario;
     }
 
-    public void setComprador(Comprador comprador) {
-        this.comprador = comprador;
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
     }
 
     public List<CarritoCompra> getCarritoCompras() {
@@ -87,17 +87,5 @@ public class Pedido {
 
     public void setCarritoCompras(List<CarritoCompra> carritoCompras) {
         this.carritoCompras = carritoCompras;
-    }
-
-    @Override
-    public String toString() {
-        return "Pedido{" +
-                "idPedido=" + idPedido +
-                ", fechaPedido=" + fechaPedido +
-                ", fechaUltimaModificacion=" + fechaUltimaModificacion +
-                ", estado=" + estado +
-                ", comprador=" + comprador +
-                ", carritoCompras=" + carritoCompras +
-                '}';
     }
 }

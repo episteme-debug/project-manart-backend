@@ -5,6 +5,7 @@ import java.time.LocalDate;
 @Entity
 public class Evento {
 
+    //Definición de atributos y relaciones
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idEvento;
@@ -23,7 +24,7 @@ public class Evento {
 
     @ManyToOne
     @JoinColumn(name = "idUsuario")
-    private Organizador organizador;
+    private Usuario usuario;
 
     @Column(nullable = false, length = 50)
     private String tipoEvento;
@@ -31,84 +32,5 @@ public class Evento {
     @Column(nullable = false, length = 50)
     private boolean estadoEvento;
 
-    public Evento() {
-    }
 
-    public Integer getIdEvento() {
-        return idEvento;
-    }
-
-    public void setIdEvento(Integer idEvento) {
-        this.idEvento = idEvento;
-    }
-
-    public String getNombreEvento() {
-        return nombreEvento;
-    }
-
-    public void setNombreEvento(String nombreEvento) {
-        this.nombreEvento = nombreEvento;
-    }
-
-    public String getDescripcionEvento() {
-        return descripcionEvento;
-    }
-
-    public void setDescripcionEvento(String descripcionEvento) {
-        this.descripcionEvento = descripcionEvento;
-    }
-
-    public LocalDate getFechaEvento() {
-        return fechaEvento;
-    }
-
-    public void setFechaEvento(LocalDate fechaEvento) {
-        this.fechaEvento = fechaEvento;
-    }
-
-    public String getUbicacionEvento() {
-        return ubicacionEvento;
-    }
-
-    public void setUbicacionEvento(String ubicacionEvento) {
-        this.ubicacionEvento = ubicacionEvento;
-    }
-
-    public Organizador getOrganizador() {
-        return organizador;
-    }
-
-    public void setOrganizador(Organizador organizador) {
-        this.organizador = organizador;
-    }
-
-    public String getTipoEvento() {
-        return tipoEvento;
-    }
-
-    public void setTipoEvento(String tipoEvento) {
-        this.tipoEvento = tipoEvento;
-    }
-
-    public boolean isEstadoEvento() {
-        return estadoEvento;
-    }
-
-    public void setEstadoEvento(boolean estadoEvento) {
-        this.estadoEvento = estadoEvento;
-    }
-
-    @Override
-    public String toString() {
-        return "Evento{" +
-                "idEvento=" + idEvento +
-                ", nombreEvento='" + nombreEvento + '\'' +
-                ", descripcionEvento='" + descripcionEvento + '\'' +
-                ", fechaEvento=" + fechaEvento +
-                ", ubicacionEvento='" + ubicacionEvento + '\'' +
-                ", organizador=" + organizador +
-                ", tipoEvento='" + tipoEvento + '\'' +
-                ", estadoEvento=" + estadoEvento +
-                '}';
-    }
 }

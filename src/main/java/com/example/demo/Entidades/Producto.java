@@ -29,9 +29,9 @@ public class Producto {
     @ManyToMany(mappedBy = "productos")
     private List<CategoriaProducto> categorias;
 
-    @ManyToOne(targetEntity = Artesano.class)
+    @ManyToOne(targetEntity = Usuario.class)
     @JoinColumn(name = "idUsuario", nullable = false)
-    private Artesano artesano;
+    private Usuario usuario;
 
     @ManyToOne(targetEntity = Promocion.class)
     @JoinColumn(name = "idPromocion", nullable = false)
