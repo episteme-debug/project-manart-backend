@@ -22,7 +22,7 @@ public class CategoriaProductoServicio {
         for(int i = 0; i < allCategorias.size(); i++){
             CategoriaProducto categoriaProducto = allCategorias.get(i);
             //Filtrar categorias activas
-            if(categoriaProducto.getEstadoCategoria() == true){
+            if(categoriaProducto.isEstadoCategoria() == true){
                 categoriasActivas.add(categoriaProducto);
             }
         }
