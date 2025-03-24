@@ -1,5 +1,6 @@
 package com.example.demo.Servicios;
 
+import com.example.demo.DTOs.CategoriaProductoDTO;
 import com.example.demo.Entidades.CategoriaProducto;
 import com.example.demo.Repositorios.CategoriaProductoRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,31 +14,59 @@ public class CategoriaProductoServicio {
     @Autowired
     CategoriaProductoRepositorio categoriaProductoRepositorio;
 
-    //Get All Categorias Producto Activas
-    public List<CategoriaProducto> get_all_categorias_producto(){
-        List<CategoriaProducto> allCategorias = categoriaProductoRepositorio.findAll();
-        List<CategoriaProducto> categoriasActivas = new ArrayList<>();
+    //1. Crear una Categoria de Producto
+    public CategoriaProducto crearCategoriaProducto(CategoriaProducto categoriaProducto){
+        return categoriaProductoRepositorio.save(categoriaProducto);
+    }
 
-        //Recorrer arreglo con todas las categorías
-        for(int i = 0; i < allCategorias.size(); i++){
-            CategoriaProducto categoriaProducto = allCategorias.get(i);
-            //Filtrar categorias activas
-            if(categoriaProducto.isEstadoCategoria() == true){
-                categoriasActivas.add(categoriaProducto);
-            }
+    //2. Obtener una categoría por su id
+    public CategoriaProducto obtenerCategoriaPorId(Long idCategoria){
+        return categoriaProductoRepositorio.findById(idCategoria).get();
+    }
+
+    //3. Obtener todas las categorias
+    public List<CategoriaProducto> obtenerCategorias(){
+        return categoriaProductoRepositorio.findAll();
+    }
+
+    //4. Obtener categorias por estado
+    public List<CategoriaProducto> obtenerCategoriasPorEstado(Boolean estadoCategoria){
+        return categoriaProductoRepositorio.findByEstadoCategoria(estadoCategoria);
+    }
+
+    //5. Actualizar uno o más datos de categoría
+    public CategoriaProducto actualizarCategoria(Long idCategoria, CategoriaProductoDTO categoriaProductoDTO){
+
+        CategoriaProducto categoriaProducto = categoriaProductoRepositorio.findById(idCategoria).get();
+
+        if(categoriaProductoDTO.getNombreCategoria() != null){
+            categoriaProducto.setNombreCategoria(categoriaProductoDTO.getNombreCategoria());
         }
 
-        return categoriasActivas;
-    }
+        if(categoriaProductoDTO.getDescripcionCategoria() != null){
+            categoriaProducto.setDescripcionCategoria(categoriaProductoDTO.getDescripcionCategoria());
+        }
 
-    //Insert a Categoria Producto
-    public CategoriaProducto insert_categoria_producto(CategoriaProducto categoriaProducto){
+        if(categoriaProductoDTO.getEstadoCategoria() != null){
+            categoriaProducto.setEstadoCategoria(categoriaProductoDTO.getEstadoCategoria());
+        }
+
+        if(categoriaProductoDTO.getImagenCategoria() != null){
+            categoriaProducto.setImagenCategoria(categoriaProductoDTO.getImagenCategoria());
+        }
+
         return categoriaProductoRepositorio.save(categoriaProducto);
     }
 
-    // Guardar una categoría en la base de datos
-    public CategoriaProducto saveCategoria(CategoriaProducto categoriaProducto) {
-        return categoriaProductoRepositorio.save(categoriaProducto);
+    //6. Eliminar categoría
+    public List<?> eliminarCategoria(Long idCategoria){
+        categoriaProductoRepositorio.deleteById(idCategoria);
+
+        return obtenerCategorias();
     }
 
+/*    // Contar cuántos productos hay por categoría.
+    public int contarProductosPorCategoria(Long categoriaId) {
+        return categoriaProductoRepositorio.contarProductosPorCategoria(categoriaId);
+    }*/
 }

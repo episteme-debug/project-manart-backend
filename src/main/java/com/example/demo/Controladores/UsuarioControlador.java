@@ -33,10 +33,9 @@ public class UsuarioControlador {
     }
 
     //2. Obtener un usuario con un respectivo id
-    @PostMapping("/obtenerUsuarioPorId")
-    public ResponseEntity<?> obtenerUsuarioPorId(@RequestBody UsuarioDTO usuarioDTO)
+    @GetMapping("/obtenerUsuarioPorId/{idUsuario}")
+    public ResponseEntity<?> obtenerUsuarioPorId(@PathVariable Long idUsuario)
     {
-        Long idUsuario = usuarioDTO.getIdUsuario();
         Optional<Usuario> optionalUsuario = usuarioServicio.obtenerUsuarioPorId(idUsuario);
 
         return ResponseEntity.ok(optionalUsuario.get());
@@ -44,52 +43,43 @@ public class UsuarioControlador {
     }
 
     //3. Verificar la existencia de un usuario con un determinado username
-    @PostMapping("/verificarNombreUsuario")
-    public boolean verificarNombreUsuario(@RequestBody UsuarioDTO usuarioDTO)
+    @GetMapping("/verificarNombreUsuario/{nombreUsuario}")
+    public boolean verificarNombreUsuario(@PathVariable String nombreUsuario)
     {
-        String username = usuarioDTO.getNombreUsuario();
-        boolean usuarioExistentes = usuarioServicio.verificarNombreUsuario(username);
+        return usuarioServicio.verificarNombreUsuario(nombreUsuario);
 
-        return usuarioExistentes;
     }
 
     //4. Obtener usuarios por estado
-    @PostMapping("/obtenerUsuariosPorEstado")
-    public List<Usuario> obtenerUsuariosPorEstado(@RequestBody UsuarioDTO usuarioDTO)
+    @GetMapping("/obtenerUsuariosPorEstado/{estadoUsuario}")
+    public List<Usuario> obtenerUsuariosPorEstado(@PathVariable Boolean estadoUsuario)
     {
-        boolean estadoUsuario = usuarioDTO.getEstadoUsuario();
-        List<Usuario> listaUsuarios = usuarioServicio.obtenerUsuariosPorEstado(estadoUsuario);
-
-        System.out.println(estadoUsuario);
-        return listaUsuarios;
+        return usuarioServicio.obtenerUsuariosPorEstado(estadoUsuario);
     }
 
     //5. Obtener usuarios por rol
-    @PostMapping("/obtenerUsuariosPorRol")
-    public List<?> obtenerUsuariosPorRol(@RequestBody UsuarioDTO usuarioDTO)
+    @GetMapping("/obtenerUsuariosPorRol/{rolUsuario}")
+    public List<?> obtenerUsuariosPorRol(@PathVariable UsuarioEnum rolUsuario)
     {
-        UsuarioEnum rolUsuario = usuarioDTO.getRolUsuario();
-        List<?> listaUsuarios = usuarioServicio.obtenerUsuariosPorRol(rolUsuario);
-
-        return listaUsuarios;
+        return usuarioServicio.obtenerUsuariosPorRol(rolUsuario);
     }
 
     //6. Actualizar datos de usuario excepto la contraseña
-    @PostMapping("/actualizarDatosUsuario")
+    @PatchMapping("/actualizarDatosUsuario")
     public Usuario actualizarDatosUsuario(@RequestBody UsuarioDTO usuarioDTO){
         return usuarioServicio.actualizarDatosUsuario(usuarioDTO);
     }
 
     //7. Actualizar contraseña de usuario
-    @PostMapping("/actualizarContraseña")
+    @PatchMapping("/actualizarContraseña")
     public Usuario actualizarContrasela(@RequestBody ContraseñaUsuarioDTO usuarioDTO){
         return usuarioServicio.actualizarContraseña(usuarioDTO);
     }
 
     //8. Eliminar usuario por id
-    @PostMapping("/eliminarUsuarioPorId")
-    public List<?> eliminarUsuarioPorId(@RequestBody UsuarioDTO usuarioDTO){
-        return usuarioServicio.eliminarUsuario(usuarioDTO);
+    @DeleteMapping("/eliminarUsuarioPorId/{idUsuario}")
+    public List<?> eliminarUsuarioPorId(@PathVariable Long idUsuario){
+        return usuarioServicio.eliminarUsuario(idUsuario);
     }
 
 /*

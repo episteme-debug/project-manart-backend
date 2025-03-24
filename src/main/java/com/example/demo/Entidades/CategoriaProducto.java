@@ -1,5 +1,6 @@
 package com.example.demo.Entidades;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,11 +24,12 @@ public class CategoriaProducto {
     private String descripcionCategoria;
 
     @Column(nullable = false)
-    private boolean estadoCategoria;
+    private Boolean estadoCategoria;
 
     @Column(nullable = true)
     private String imagenCategoria;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "categoriaProducto")
     private List<RelacionCategoriaProducto> productosXCategoria;
 

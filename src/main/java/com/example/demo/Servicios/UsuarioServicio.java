@@ -98,10 +98,8 @@ public class UsuarioServicio {
     }
 
     //8. Eliminar usuario
-    public List<?> eliminarUsuario(UsuarioDTO usuarioDTO) {
-        Long idUsuario = usuarioDTO.getIdUsuario();
+    public List<?> eliminarUsuario(Long idUsuario) {
         usuarioRepositorio.deleteById(idUsuario);
-
         return obtenerTodosUsuarios();
     }
 
