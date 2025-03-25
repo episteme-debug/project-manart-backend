@@ -1,0 +1,44 @@
+{
+    "idUsuario": 2,
+    "nombreUsuario": "Virginia",
+    "apellidoUsuario": "Woolf",
+    "emailUsuario": "virginia.woolf@example.com",
+    "hashContrasenaUsuario": "$2a$12$EjemploHashContrasena456",
+    "telefonoUsuario": "+44-555-1941",
+    "estadoUsuario": true,
+    "imagenPerfilUsuario": "avatarGenerico.jpg",
+    "rolUsuario": "VENDEDOR"
+}
+
+{
+  "idProducto": 1,
+  "nombreProducto": "Mochila Wayuu",
+  "descripcionProducto": "Mochila tejida a mano con diseños geométricos tradicionales de la comunidad Wayuu.",
+  "stockProducto": 30,
+  "precioProducto": 150.75,
+  "imagenProducto": "https://example.com/imagenes/mochila-wayuu.jpg",
+  "categorias": [],
+  "usuario": {"idUsuario" : 1},
+  "promocion": null,
+  "carritoCompras": []
+}
+
+{
+    "tipoVia": "Carrera",
+    "numeroViaPrincipal": "12",
+    "letraViaPrincipal": "B",
+    "bisViaPrincipal": true,
+    "numeroViaSecundaria": "34",
+    "letraViaSecundaria": "C",
+    "bisViaSecundaria": false,
+    "numeroPredio": "56-78",
+    "complemento": "Casa 2",
+    "barrio": "San Fernando",
+    "ciudad": "Cali",
+    "departamento": "Valle del Cauca",
+    "esPredeterminada": false,
+    "fechaCreacion": "2024-06-23",
+    "fechaActualizacion": "2024-06-23",
+    "usuario": {
+        "idUsuario": 6
+    }
