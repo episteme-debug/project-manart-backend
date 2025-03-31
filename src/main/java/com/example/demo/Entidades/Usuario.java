@@ -2,9 +2,15 @@ package com.example.demo.Entidades;
 
 import com.example.demo.Enums.*;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Usuario {
     @Id
@@ -42,108 +48,11 @@ public class Usuario {
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
     List<Direccion> direcciones;
 
-    public Usuario() {
-    }
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+    List<CarritoCompra> carritoCompras;
 
-    public Usuario(Long idUsuario, String nombreUsuario, String apellidoUsuario, String emailUsuario, String hashContrasenaUsuario, String telefonoUsuario, boolean estadoUsuario, String imagenPerfilUsuario, UsuarioEnum rolUsuario, List<Publicacion> publicaciones, List<Direccion> direcciones) {
-        this.idUsuario = idUsuario;
-        this.nombreUsuario = nombreUsuario;
-        this.apellidoUsuario = apellidoUsuario;
-        this.emailUsuario = emailUsuario;
-        this.hashContrasenaUsuario = hashContrasenaUsuario;
-        this.telefonoUsuario = telefonoUsuario;
-        this.estadoUsuario = estadoUsuario;
-        this.imagenPerfilUsuario = imagenPerfilUsuario;
-        this.rolUsuario = rolUsuario;
-        this.publicaciones = publicaciones;
-        this.direcciones = direcciones;
-    }
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
+    List<Pedido> pedido;
 
-    public Long getIdUsuario() {
-        return idUsuario;
-    }
 
-    public void setIdUsuario(Long idUsuario) {
-        this.idUsuario = idUsuario;
-    }
-
-    public String getNombreUsuario() {
-        return nombreUsuario;
-    }
-
-    public void setNombreUsuario(String nombreUsuario) {
-        this.nombreUsuario = nombreUsuario;
-    }
-
-    public String getApellidoUsuario() {
-        return apellidoUsuario;
-    }
-
-    public void setApellidoUsuario(String apellidoUsuario) {
-        this.apellidoUsuario = apellidoUsuario;
-    }
-
-    public String getEmailUsuario() {
-        return emailUsuario;
-    }
-
-    public void setEmailUsuario(String emailUsuario) {
-        this.emailUsuario = emailUsuario;
-    }
-
-    public String getHashContrasenaUsuario() {
-        return hashContrasenaUsuario;
-    }
-
-    public void setHashContrasenaUsuario(String hashContrasenaUsuario) {
-        this.hashContrasenaUsuario = hashContrasenaUsuario;
-    }
-
-    public String getTelefonoUsuario() {
-        return telefonoUsuario;
-    }
-
-    public void setTelefonoUsuario(String telefonoUsuario) {
-        this.telefonoUsuario = telefonoUsuario;
-    }
-
-    public boolean isEstadoUsuario() {
-        return estadoUsuario;
-    }
-
-    public void setEstadoUsuario(boolean estadoUsuario) {
-        this.estadoUsuario = estadoUsuario;
-    }
-
-    public String getImagenPerfilUsuario() {
-        return imagenPerfilUsuario;
-    }
-
-    public void setImagenPerfilUsuario(String imagenPerfilUsuario) {
-        this.imagenPerfilUsuario = imagenPerfilUsuario;
-    }
-
-    public Enum<UsuarioEnum> getRolUsuario() {
-        return rolUsuario;
-    }
-
-    public void setRolUsuario(UsuarioEnum rolUsuario) {
-        this.rolUsuario = rolUsuario;
-    }
-
-    public List<Publicacion> getPublicaciones() {
-        return publicaciones;
-    }
-
-    public void setPublicaciones(List<Publicacion> publicaciones) {
-        this.publicaciones = publicaciones;
-    }
-
-    public List<Direccion> getDirecciones() {
-        return direcciones;
-    }
-
-    public void setDirecciones(List<Direccion> direcciones) {
-        this.direcciones = direcciones;
-    }
 }

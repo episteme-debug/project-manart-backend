@@ -1,37 +1,25 @@
 package com.example.demo.Entidades;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.*;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 @Entity
 public class CarritoCompra {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idCarrito;
-
-    @Column(nullable = false)
-    private int cantidad;
-
-    @Column(nullable = false)
-    private int total;
+    private Long idCarrito;
 
     @ManyToOne
-    @JoinColumn(name = "idPedido", nullable = false)
-    private Pedido pedido;
+    @JoinColumn(name = "idUsuario", nullable = false)
+    private Usuario usuario;
 
-    @ManyToOne
-    @JoinColumn(name = "idProducto", nullable = false)
-    private Producto producto;
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal total;
 
-    public CarritoCompra() {
-    }
-
-    public CarritoCompra(Integer idCarrito, int cantidad, int total, Pedido pedido) {
-        this.idCarrito = idCarrito;
-        this.cantidad = cantidad;
-        this.total = total;
-        this.pedido = pedido;
-    }
-
-
+    @OneToMany(mappedBy = "carritoCompra")
+    private List<RelacionCarritoProducto> relacionCarritoProductos;
 }

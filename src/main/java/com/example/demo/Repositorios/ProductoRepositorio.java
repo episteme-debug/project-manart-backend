@@ -13,6 +13,6 @@ import java.util.List;
 public interface ProductoRepositorio extends JpaRepository<Producto, Long> {
     // Obtener productos por nombre
     @Query(value = "SELECT * FROM producto p\n" +
-            "WHERE LOWER(p.nombre_producto) LIKE LOWER(CONCAT('%', :nombreProducto, '%'))", nativeQuery = true)
+            "WHERE LOWER(REPLACE(p.nombre_producto, ' ', '')) LIKE LOWER(CONCAT('%', :nombreProducto, '%'))", nativeQuery = true)
     List<Producto> findByNombreProducto(@Param("nombreProducto") String nombreProducto);
 }

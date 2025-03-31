@@ -50,10 +50,7 @@ public class Producto {
     private List<RelacionCategoriaProducto> categoriasXProducto;
 
     @OneToMany(mappedBy = "producto")
-    private List<CarritoCompra> carritoCompras;
-
-/*    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL)
-    private List<Valoracion> valoraciones;*/
-
+    @JsonIgnore
+    private List<RelacionCarritoProducto> relacionCarritoProductos;
 
 }

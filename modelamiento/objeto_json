@@ -41,4 +41,13 @@
     "fechaActualizacion": "2024-06-23",
     "usuario": {
         "idUsuario": 6
-    }
+}
+
+{
+  "nombrePromocion": "Descuento de Verano",
+  "detallesPromocion": "30% de descuento en todos los productos seleccionados.",
+  "fechaInicioPromocion": "2024-07-01",
+  "fechaFinPromocion": "2024-07-31",
+  "porcentajeDescuentoPromocion": 30,
+  "estadoPromocion": true
+}

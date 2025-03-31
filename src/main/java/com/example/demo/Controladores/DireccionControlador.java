@@ -29,8 +29,7 @@ public class DireccionControlador {
         return direccionServicio.obtenerDireccionPorUsuario(idUsuario);
     }
 
-    //
-
+    //3. Actualizar uno o más datos del producto
     @PutMapping("/actualizarDireccion/{idDireccion}")
     public Direccion actualizarDireccion(@PathVariable Long idDireccion, @RequestBody DireccionDTO direccionDTO) {
         return direccionServicio.actualizarDireccion(idDireccion, direccionDTO);

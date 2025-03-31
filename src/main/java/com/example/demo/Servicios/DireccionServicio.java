@@ -94,12 +94,12 @@ public class DireccionServicio {
         return direccionRepositorio.findAll();
     }
 
-/*
-
     //get id de la direccion
-    public Optional<Direccion> getDireccionId(Long id){
-        return DireccionRepositorio.findById(id);
+    public Direccion getDireccionId(Long id){
+        return direccionRepositorio.findById(id).get();
     }
+
+/*
 
     //Get todas las direciones permanetes
     public List<Direccion>getAllDireccionesPermanetes(Boolean esPredeterminada){
