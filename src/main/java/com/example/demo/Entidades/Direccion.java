@@ -69,7 +69,6 @@ public class Direccion {
 
     @ManyToOne
     @JoinColumn(name = "idUsuario", nullable = false)
-    @JsonIgnore
     private Usuario usuario;
 
 }

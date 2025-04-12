@@ -34,7 +34,6 @@ public class Promocion {
     @Column(nullable = false)
     private Boolean estadoPromocion;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "promocion", cascade = CascadeType.ALL)
     List<Producto> producto;
 

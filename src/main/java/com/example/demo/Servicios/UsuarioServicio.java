@@ -5,15 +5,11 @@ import com.example.demo.DTOs.LogInDTO;
 import com.example.demo.DTOs.UsuarioDTO;
 import com.example.demo.Entidades.Usuario;
 import com.example.demo.Enums.UsuarioEnum;
-import com.example.demo.Mensajes.MensajeLogIn;
 import com.example.demo.Repositorios.UsuarioRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class UsuarioServicio {
@@ -21,36 +17,55 @@ public class UsuarioServicio {
     @Autowired
     UsuarioRepositorio usuarioRepositorio;
 
-    //1. Crear un usuario
-    public Usuario guardarUsuario(Usuario usuario) {
+    //. Crear un usuario
+    public Usuario crearUsuario(Usuario usuario) {
+        if (usuario == null || usuario.getNombreUsuario() == null) {
+            throw new IllegalArgumentException("Los datos del usuario son inválidos.");
+        }
+
+        if (usuarioRepositorio.existsByNombreUsuario(usuario.getNombreUsuario())) {
+            throw new IllegalArgumentException("El nombre de usuario ya está en uso.");
+        }
+
         return usuarioRepositorio.save(usuario);
     }
 
-    //2. Obtener usuario por Id
-    public Optional<Usuario> obtenerUsuarioPorId(Long idUsuario) {
+    //. Obtener usuario por Id
+    public Optional<Usuario> obtenerPorId(Long idUsuario) {
+        if (idUsuario == null || idUsuario <= 0) {
+            throw new IllegalArgumentException("ID de usuario inválido.");
+        }
+
         return usuarioRepositorio.findById(idUsuario);
     }
 
-    //3. Verificar la existencia de un usuario con un determinado username
-    public boolean verificarNombreUsuario(String username) {
-        return usuarioRepositorio.existsByNombreUsuario(username);
-    }
-
-    //4. Obtener usuarios por estado (activo/inactivo)
-    public List<Usuario> obtenerUsuariosPorEstado(Boolean estadoUsuario) {
-        return usuarioRepositorio.findByEstadoUsuario(estadoUsuario);
+    //. Obtener usuarios por estado (activo/inactivo)
+    public List<Usuario> obtenerPorEstado(Boolean estado) {
+        return usuarioRepositorio.findByEstadoUsuario(estado);
     }
 
     //5. Obtener usuarios por rol (ADMIN / COMPRADOR / VENDEDOR / ORGANIZADOR)
-    public List<Usuario> obtenerUsuariosPorRol(Enum<UsuarioEnum> rolUsuario) {
+    public List<Usuario> obtenerUsuariosPorRol(UsuarioEnum rolUsuario) {
+        if (rolUsuario == null ) {
+            throw new IllegalArgumentException("El rol de usuario no puede ser nulo.");
+        } else if (!UsuarioEnum.existe(String.valueOf(rolUsuario))) {
+            throw new IllegalArgumentException("El rol de usuario es inválido.");
+        }
+
         return usuarioRepositorio.findByRolUsuario(rolUsuario);
     }
 
-    //6. Actualizar datos de usuario
-    public Usuario actualizarDatosUsuario(UsuarioDTO usuarioDTO) {
-        //Instancia de usuario
-        Long idUsuario = usuarioDTO.getIdUsuario();
-        Usuario usuario = obtenerUsuarioPorId(idUsuario).get();
+    //. Actualizar datos de usuario
+    public Usuario actualizarDatos(UsuarioDTO usuarioDTO) {
+        if (usuarioDTO == null || usuarioDTO.getIdUsuario() == null) {
+            throw new IllegalArgumentException("Los datos del usuario son inválidos.");
+        }
+
+        Optional<Usuario> usuarioOptional = usuarioRepositorio.findById(usuarioDTO.getIdUsuario());
+        if (!usuarioOptional.isPresent()) {
+            throw new NoSuchElementException("Usuario no encontrado.");
+        }
+        Usuario usuario = usuarioOptional.get();
 
         if (usuarioDTO.getNombreUsuario() != null) {
             usuario.setNombreUsuario(usuarioDTO.getNombreUsuario());
@@ -72,7 +87,7 @@ public class UsuarioServicio {
             usuario.setImagenPerfilUsuario(usuarioDTO.getImagenPerfilUsuario());
         }
 
-        if (usuarioDTO.getEstadoUsuario() != false) {
+        if (usuarioDTO.getEstadoUsuario() != null) {
             usuario.setEstadoUsuario(usuarioDTO.getEstadoUsuario());
         }
 
@@ -83,24 +98,37 @@ public class UsuarioServicio {
         return usuarioRepositorio.save(usuario);
     }
 
-    //7. Actualizar Contraseña
-    public Usuario actualizarContraseña(ContraseñaUsuarioDTO usuarioDTO) {
-        Long idUsuario = usuarioDTO.getIdUsuario();
-        String contraseñaAntigua = usuarioDTO.getContraseñaAntigua();
-        String contraseñaNueva = usuarioDTO.getContraseñaNueva();
-        Usuario usuario = usuarioRepositorio.findById(idUsuario).get();
-
-        if (contraseñaAntigua.equals(usuario.getHashContrasenaUsuario())) {
-            usuario.setHashContrasenaUsuario(contraseñaNueva);
-            usuarioRepositorio.save(usuario);
+    //. Actualizar Contraseña
+    public Usuario actualizarContraseña(ContraseñaUsuarioDTO dto) {
+        if (dto == null || dto.getIdUsuario() == null || dto.getContraseñaAntigua() == null || dto.getContraseñaNueva() == null) {
+            throw new IllegalArgumentException("Datos de contraseña inválidos.");
         }
-        return usuario;
+
+        Optional<Usuario> usuarioOptional = usuarioRepositorio.findById(dto.getIdUsuario());
+        if (!usuarioOptional.isPresent()) {
+            throw new NoSuchElementException("Usuario no encontrado.");
+        }
+        Usuario usuario = usuarioOptional.get();
+
+        if (!dto.getContraseñaAntigua().equals(usuario.getHashContrasenaUsuario())) {
+            throw new IllegalArgumentException("Contraseña antigua incorrecta.");
+        }
+
+        usuario.setHashContrasenaUsuario(dto.getContraseñaNueva());
+        return usuarioRepositorio.save(usuario);
     }
 
     //8. Eliminar usuario
-    public List<?> eliminarUsuario(Long idUsuario) {
+    public void eliminarUsuario(Long idUsuario) {
+        if (idUsuario == null || idUsuario <= 0) {
+            throw new IllegalArgumentException("ID inválido para eliminar.");
+        }
+
+        if (!usuarioRepositorio.existsById(idUsuario)) {
+            throw new NoSuchElementException("Usuario no encontrado para eliminar.");
+        }
+
         usuarioRepositorio.deleteById(idUsuario);
-        return obtenerTodosUsuarios();
     }
 
     //Obtener todos los usuarios

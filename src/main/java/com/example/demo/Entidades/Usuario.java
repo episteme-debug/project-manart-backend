@@ -1,6 +1,7 @@
 package com.example.demo.Entidades;
 
 import com.example.demo.Enums.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -33,7 +34,7 @@ public class Usuario {
     private String telefonoUsuario;
 
     @Column(nullable = false)
-    private boolean estadoUsuario = true;
+    private Boolean estadoUsuario = true;
 
     @Column(nullable = false)
     private String imagenPerfilUsuario = "avatarGenerico.jpg";
@@ -42,17 +43,25 @@ public class Usuario {
     @Column(nullable = false)
     private UsuarioEnum rolUsuario;
 
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
-    List<Publicacion> publicaciones;
+    // Relaciones
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Producto> productos;
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Publicacion> publicaciones;
     
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
-    List<Direccion> direcciones;
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Direccion> direcciones;
 
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
-    List<CarritoCompra> carritoCompras;
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CarritoCompra> carritoCompras;
 
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
-    List<Pedido> pedido;
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Pedido> pedido;
 
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ArchivoMultimedia> archivosMultimedia;
 
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ReseñaProducto> reseñaProducto;
 }

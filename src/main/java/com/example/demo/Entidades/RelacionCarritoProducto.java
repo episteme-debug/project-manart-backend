@@ -25,11 +25,11 @@ public class RelacionCarritoProducto {
     private CarritoCompra carritoCompra;
 
     @Column(nullable = false)
-    private Integer cantidad;
+    private Integer cantidad = 0;
 
-    @Column(nullable = false, scale = 2, precision = 10)
-    private BigDecimal precioUnitario;
+    @Column(nullable = false, scale = 2)
+    private BigDecimal precioUnitario = BigDecimal.valueOf(0.00);
 
-    @Column(nullable = false, scale = 2, precision = 10)
-    private BigDecimal subtotal;
+    @Column(nullable = false, scale = 2)
+    private BigDecimal subtotal = BigDecimal.valueOf(0.00);
 }

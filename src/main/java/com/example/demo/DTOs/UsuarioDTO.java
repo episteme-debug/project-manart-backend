@@ -77,7 +77,7 @@ public class UsuarioDTO {
         this.telefonoUsuario = telefonoUsuario;
     }
 
-    public boolean getEstadoUsuario() {
+    public Boolean getEstadoUsuario() {
         return estadoUsuario;
     }
 

@@ -29,9 +29,12 @@ public class CategoriaProducto {
     @Column(nullable = true)
     private String imagenCategoria;
 
-    @JsonIgnore
     @OneToMany(mappedBy = "categoriaProducto")
+    @JsonIgnore
     private List<RelacionCategoriaProducto> productosXCategoria;
+
+    @OneToMany(mappedBy = "categoriaProducto")
+    private List<ArchivoMultimedia> archivosMultimedia;
 
 
 }

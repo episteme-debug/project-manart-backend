@@ -37,6 +37,8 @@ public class Producto {
     @Column(nullable = false, columnDefinition = "boolean default true")
     private Boolean estadoProducto;
 
+    //Relaciones
+
     @ManyToOne(targetEntity = Usuario.class)
     @JoinColumn(name = "idUsuario", nullable = false)
     private Usuario usuario;
@@ -46,11 +48,15 @@ public class Producto {
     private Promocion promocion;
 
     @OneToMany(mappedBy = "producto")
-    @JsonIgnore
     private List<RelacionCategoriaProducto> categoriasXProducto;
 
-    @OneToMany(mappedBy = "producto")
-    @JsonIgnore
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RelacionCarritoProducto> relacionCarritoProductos;
+
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ArchivoMultimedia> archivosMultimedia;
+
+    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ReseñaProducto> reseñaProducto;
 
 }

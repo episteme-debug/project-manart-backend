@@ -5,18 +5,13 @@ import com.example.demo.DTOs.LogInDTO;
 import com.example.demo.DTOs.UsuarioDTO;
 import com.example.demo.Entidades.*;
 import com.example.demo.Enums.UsuarioEnum;
-import com.example.demo.Mensajes.MensajeLogIn;
-import com.example.demo.Repositorios.UsuarioRepositorio;
 import com.example.demo.Servicios.UsuarioServicio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/usuarios")
@@ -26,60 +21,83 @@ public class UsuarioControlador {
     @Autowired
     UsuarioServicio usuarioServicio;
 
-    //1. Crear un usuario (Este controlador recibe un usuario y devuelve un usuario un codigo de estado y un mensaje)
-    @PostMapping("/guardarUsuario")
-    public Usuario guardarUsuario(@RequestBody Usuario usuario){
-        return usuarioServicio.guardarUsuario(usuario);
+    //. Crear un usuario (Este controlador recibe un usuario y devuelve un usuario un codigo de estado y un mensaje)
+    @PostMapping("/guardar")
+    public ResponseEntity<?> crear(@RequestBody Usuario usuario) {
+        try {
+            Usuario nuevoUsuario = usuarioServicio.crearUsuario(usuario);
+            return ResponseEntity.status(HttpStatus.CREATED).body(nuevoUsuario);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
-    //2. Obtener un usuario con un respectivo id
-    @GetMapping("/obtenerUsuarioPorId/{idUsuario}")
-    public ResponseEntity<?> obtenerUsuarioPorId(@PathVariable Long idUsuario)
-    {
-        Optional<Usuario> optionalUsuario = usuarioServicio.obtenerUsuarioPorId(idUsuario);
 
-        return ResponseEntity.ok(optionalUsuario.get());
-
+    //. Obtener un usuario con un respectivo id
+    @GetMapping("/obtenerPorId/{id}")
+    public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
+        try {
+            Optional<Usuario> usuario = usuarioServicio.obtenerPorId(id);
+            return usuario.map(ResponseEntity::ok)
+                    .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
-    //3. Verificar la existencia de un usuario con un determinado username
-    @GetMapping("/verificarNombreUsuario/{nombreUsuario}")
-    public boolean verificarNombreUsuario(@PathVariable String nombreUsuario)
-    {
-        return usuarioServicio.verificarNombreUsuario(nombreUsuario);
-
+    //. Obtener usuarios por estado
+    @GetMapping("/obtenerPorEstado/{estado}")
+    public ResponseEntity<?> obtenerPorEstado(@PathVariable Boolean estado) {
+        try{
+            List<Usuario> usuarios = usuarioServicio.obtenerPorEstado(estado);
+            return ResponseEntity.ok(usuarios);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("");
+        }
     }
 
-    //4. Obtener usuarios por estado
-    @GetMapping("/obtenerUsuariosPorEstado/{estadoUsuario}")
-    public List<Usuario> obtenerUsuariosPorEstado(@PathVariable Boolean estadoUsuario)
-    {
-        return usuarioServicio.obtenerUsuariosPorEstado(estadoUsuario);
+    //. Obtener usuarios por rol
+    @GetMapping("/obtenerPorRol/{rolUsuario}")
+    public ResponseEntity<?> obtenerPorRol(@PathVariable UsuarioEnum rol) {
+        try {
+            List<Usuario> usuarios = usuarioServicio.obtenerUsuariosPorRol(rol);
+            return ResponseEntity.ok(usuarios);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
-    //5. Obtener usuarios por rol
-    @GetMapping("/obtenerUsuariosPorRol/{rolUsuario}")
-    public List<?> obtenerUsuariosPorRol(@PathVariable UsuarioEnum rolUsuario)
-    {
-        return usuarioServicio.obtenerUsuariosPorRol(rolUsuario);
+    //. Actualizar datos de usuario excepto la contraseña
+    @PatchMapping("/actualizarDatos")
+    public ResponseEntity<?> actualizarDatos(@RequestBody UsuarioDTO dto) {
+        try {
+            Usuario actualizado = usuarioServicio.actualizarDatos(dto);
+            return ResponseEntity.ok(actualizado);
+        } catch (IllegalArgumentException | NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
-    //6. Actualizar datos de usuario excepto la contraseña
-    @PatchMapping("/actualizarDatosUsuario")
-    public Usuario actualizarDatosUsuario(@RequestBody UsuarioDTO usuarioDTO){
-        return usuarioServicio.actualizarDatosUsuario(usuarioDTO);
-    }
-
-    //7. Actualizar contraseña de usuario
+    //. Actualizar contraseña de usuario
     @PatchMapping("/actualizarContraseña")
-    public Usuario actualizarContrasela(@RequestBody ContraseñaUsuarioDTO usuarioDTO){
-        return usuarioServicio.actualizarContraseña(usuarioDTO);
+    public ResponseEntity<?> actualizarContraseña(@RequestBody ContraseñaUsuarioDTO dto) {
+        try {
+            Usuario actualizado = usuarioServicio.actualizarContraseña(dto);
+            return ResponseEntity.ok(actualizado);
+        } catch (IllegalArgumentException | NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     //8. Eliminar usuario por id
-    @DeleteMapping("/eliminarUsuarioPorId/{idUsuario}")
-    public List<?> eliminarUsuarioPorId(@PathVariable Long idUsuario){
-        return usuarioServicio.eliminarUsuario(idUsuario);
+    @DeleteMapping("/eliminarPorId/{id}")
+    public ResponseEntity<?> eliminarUsuario(@PathVariable Long id) {
+        try {
+            usuarioServicio.eliminarUsuario(id);
+            return ResponseEntity.ok().build();
+        } catch (IllegalArgumentException | NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
 /*

@@ -1,47 +1,42 @@
 package com.example.demo.Entidades;
-import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
+@Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-public class Publicacion {
+public class ReseñaProducto {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
-    private String titulo;
+    @Min(1)
+    @Max(5)
+    private Integer calificacion;
+
+    @Column(nullable = true)
+    private String comentario;
 
     @Column(nullable = false)
-    private String contenido;
-
-    @Column(nullable = false)
-    private Boolean estado;
-
     @CreationTimestamp
-    @Column(nullable = false)
-    private LocalDateTime fechaCreacion;
-
-    @UpdateTimestamp
-    @Column(nullable = false)
-    private LocalDateTime fechaUltimaActualizacion;
+    private LocalDateTime fechaPublicacion;
 
     @ManyToOne(targetEntity = Usuario.class)
     @JoinColumn(name = "idUsuario", nullable = false)
     private Usuario usuario;
 
-    @OneToMany(mappedBy = "publicacion")
-    private List<ArchivoMultimedia> archivosMultimedia;
-
+    @ManyToOne(targetEntity = Producto.class)
+    @JoinColumn(name = "idProducto", nullable = false)
+    private Producto producto;
 }

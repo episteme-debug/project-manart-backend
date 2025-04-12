@@ -29,6 +29,7 @@ public class ImagenControlador {
 
         try {
             // Crear el directorio si no existe
+            //Sirve para defirir el lugar donde el objeto de tipo file que representa un directorio en el sistema de archivos se guardará
             File uploadDir = new File(UPLOAD_DIR);
             if (!uploadDir.exists()) uploadDir.mkdirs();
 
