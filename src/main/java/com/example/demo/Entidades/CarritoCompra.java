@@ -1,5 +1,4 @@
 package com.example.demo.Entidades;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -13,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-public class CarritoCompra {
+public class CarritoCompra<C> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

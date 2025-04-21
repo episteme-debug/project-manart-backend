@@ -51,3 +51,14 @@
   "porcentajeDescuentoPromocion": 30,
   "estadoPromocion": true
 }
+
+{
+    "producto" : {"idProducto" : 26},
+    "usuario" : {"idUsuario" : 1},
+    "cantidad" : 7
+}
+
+{
+    "idUsuario" : 1,
+    "metodoPago" : "TARJETA_CREDITO"
+}

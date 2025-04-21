@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @CrossOrigin("http://127.0.0.1:5500/")
 @RequestMapping("/api/carrito")
@@ -32,7 +31,7 @@ public class CarritoCompraControlador {
 
     //Obtener los carritos por usuario
     @GetMapping("/listarporusuario/{id}")
-    public List<CarritoInterfaz> listarPorUsuario(@PathVariable Long id){
+    public CarritoCompra<CarritoInterfaz> listarPorUsuario(@PathVariable Long id){
         return carritoCompraServicio.listarPorUsuario(id);
     }
 

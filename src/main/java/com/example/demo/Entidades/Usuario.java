@@ -1,7 +1,6 @@
 package com.example.demo.Entidades;
 
 import com.example.demo.Enums.*;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

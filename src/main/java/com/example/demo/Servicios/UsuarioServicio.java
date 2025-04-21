@@ -3,8 +3,10 @@ package com.example.demo.Servicios;
 import com.example.demo.DTOs.ContraseñaUsuarioDTO;
 import com.example.demo.DTOs.LogInDTO;
 import com.example.demo.DTOs.UsuarioDTO;
+import com.example.demo.Entidades.CarritoCompra;
 import com.example.demo.Entidades.Usuario;
 import com.example.demo.Enums.UsuarioEnum;
+import com.example.demo.Repositorios.CarritoCompraRepositorio;
 import com.example.demo.Repositorios.UsuarioRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +19,9 @@ public class UsuarioServicio {
     @Autowired
     UsuarioRepositorio usuarioRepositorio;
 
+    @Autowired
+    CarritoCompraServicio carritoCompraServicio;
+
     //. Crear un usuario
     public Usuario crearUsuario(Usuario usuario) {
         if (usuario == null || usuario.getNombreUsuario() == null) {
@@ -27,7 +32,13 @@ public class UsuarioServicio {
             throw new IllegalArgumentException("El nombre de usuario ya está en uso.");
         }
 
-        return usuarioRepositorio.save(usuario);
+        Usuario usuarioCreado = usuarioRepositorio.save(usuario);
+        // Crear un carrito asociado a este usuario
+        CarritoCompra carritoCompra = new CarritoCompra();
+        carritoCompra.setUsuario(usuarioCreado);
+        carritoCompraServicio.crearCarrito(carritoCompra);
+        return usuarioCreado;
+
     }
 
     //. Obtener usuario por Id

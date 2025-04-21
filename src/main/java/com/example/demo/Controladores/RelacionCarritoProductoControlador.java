@@ -1,5 +1,6 @@
 package com.example.demo.Controladores;
 
+import com.example.demo.DTOs.RelCarritoProductoDTO;
 import com.example.demo.Entidades.RelacionCarritoProducto;
 import com.example.demo.Servicios.RelacionCarritoProductoServicio;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +20,8 @@ public class RelacionCarritoProductoControlador {
 
     //. Agregar producto
     @PostMapping("/agregarproducto")
-    public RelacionCarritoProducto agregarProducto(@RequestBody RelacionCarritoProducto relacionCarritoProducto){
-        return relacionCarritoProductoServicio.crearProducto(relacionCarritoProducto);
+    public RelacionCarritoProducto agregarProducto(@RequestBody RelCarritoProductoDTO producto){
+        return relacionCarritoProductoServicio.crearProducto(producto);
     }
 
     //Get todoas los productos

@@ -6,9 +6,7 @@ import com.example.demo.Repositorios.CarritoCompraRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CarritoCompraServicio {
@@ -26,7 +24,7 @@ public class CarritoCompraServicio {
     }
 
     //Obtener todos los carritos por usuario
-    public List<CarritoInterfaz> listarPorUsuario(Long id){
+    public CarritoCompra<CarritoInterfaz> listarPorUsuario(Long id){
         return carritoCompraRepositorio.findByUsuarioIdUsuario(id);
     }
 
@@ -41,7 +39,7 @@ public class CarritoCompraServicio {
     }
 
     //La actualizacion total ya esta esta tipo triggers donde con cualquier cambio se de dispara el trigger aunque suene redundaten
-    //es esta en la clase DatabaseInitializer
+    //es esta en la clase DatabaseInitializer6
 
     public List<?> eliminarCarritoCompraById(Long idCarrito){
         carritoCompraRepositorio.deleteById(idCarrito);

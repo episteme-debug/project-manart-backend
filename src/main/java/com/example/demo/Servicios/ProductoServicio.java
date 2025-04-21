@@ -66,7 +66,16 @@ public class ProductoServicio {
         return productoRepositorio.save(producto);
     }
 
-    //6. Eliminar producto
+    //. Actualizar Stock
+    public void actualizarStock(Producto producto, int cantidad, boolean esAgregar) {
+        if (!esAgregar) {
+            cantidad = -cantidad;
+        }
+        producto.setStockProducto(producto.getStockProducto() + cantidad);
+    }
+
+
+    //. Eliminar producto
     public void eliminarProducto(Long idProducto) {
         productoRepositorio.deleteById(idProducto);
     }

@@ -8,12 +8,11 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface CarritoCompraRepositorio extends JpaRepository<CarritoCompra, Long> {
     // Retorna todos los carritos asociados a un usuario teniendo en cuenta las 'columnas' específicas de la interfaz
-    List<CarritoInterfaz> findByUsuarioIdUsuario(Long id);
+    CarritoCompra<CarritoInterfaz> findByUsuarioIdUsuario(Long id);
 
     //  Retorna todos los carritos de la tabla, hay que renombrar los nombres de las columnas para quecoincidan con los nombres de la interfaz
     @Query(value = "SELECT c.id_carrito AS idCarrito, c.total AS total, c.id_usuario AS usuarioIdUsuario FROM carrito_compra c\n", nativeQuery = true)
