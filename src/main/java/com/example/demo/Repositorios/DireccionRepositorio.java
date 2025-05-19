@@ -14,23 +14,5 @@ import java.util.Optional;
 public interface DireccionRepositorio extends JpaRepository<Direccion, Long> {
 
     List<Direccion> findByUsuario_IdUsuario(Long idUsuario);
-/*    List<Direccion> findByesPredeterminada(Boolean esPredeterminada);
 
-    Integer countByUsuario_IdUsuario(Integer idUsuario);
-
-    long countByEsPredeterminada(boolean esPredeterminada);
-
-    Optional<Direccion> findByUsuario_IdUsuarioAndEsPredeterminada(Integer idUsuario, Boolean esPredeterminada);
-
-    @Modifying
-    @Transactional
-    @Query("UPDATE Direccion d SET d.esPredeterminada = false WHERE d.esPredeterminada = true")
-    void removerPredeterminadas();
-
-    @Query("SELECT d FROM Direccion d ORDER BY d.fechaCreacion DESC LIMIT 1")
-    Optional<Direccion> findUltimaCreada();
-
-    // Obtener la última dirección actualizada
-    @Query("SELECT d FROM Direccion d ORDER BY d.fechaActualizacion DESC LIMIT 1")
-    Optional<Direccion> findUltimaActualizada();*/
 }

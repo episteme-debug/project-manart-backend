@@ -1,13 +1,14 @@
 package com.example.demo.DTOs;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class LogInDTO {
-    String alias;
-    String contraseña;
+public class AutenticacionRespuesta {
+    String token;
 }

@@ -4,12 +4,13 @@ import com.example.demo.DTOs.CategoriaProductoDTO;
 import com.example.demo.Entidades.CategoriaProducto;
 import com.example.demo.Servicios.CategoriaProductoServicio;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @CrossOrigin("http://127.0.0.1:5500/")
-@RequestMapping("/api/categoriasProductos")
+@RequestMapping("/api/categoriaproducto")
 @RestController
 public class CategoriaProductoControlador {
 
@@ -17,38 +18,42 @@ public class CategoriaProductoControlador {
     CategoriaProductoServicio categoriaProductoServicio;
 
     //1. Crear categoría de producto
-    @PostMapping("/crearCategoria")
+    @PostMapping("private/crearcategoria")
+    @PreAuthorize("hasRole('ADMIN')")
     public CategoriaProducto crearCategoria(@RequestBody CategoriaProducto categoriaProducto){
         return categoriaProductoServicio.crearCategoriaProducto(categoriaProducto);
     }
 
     //2. Obtener una categoría por ID
-    @GetMapping("/obtenerCategoriaPorId/{id}")
+    @GetMapping("public/obtenercategoriaporid/{id}")
     public CategoriaProducto obtenerCategoriaPorId(@PathVariable Long id) {
         return categoriaProductoServicio.obtenerCategoriaPorId(id);
     }
 
     //3. Obtener todas las categorias
-    @GetMapping("/obtenerCategorias")
+    @GetMapping("public/obtenercategorias")
     public List<CategoriaProducto> obtenerCategorias(){
         return categoriaProductoServicio.obtenerCategorias();
     }
 
     //4. Obtener categorias por estado
-    @GetMapping("/obtenerCategoriasPorEstado/{estadoCategoria}")
+    @GetMapping("private/obtenercategoriasporestado/{estadoCategoria}")
+    @PreAuthorize("hasRole('ADMIN')")
     public List<CategoriaProducto> obtenerCategoriasPorEstado(@PathVariable Boolean estadoCategoria){
         return categoriaProductoServicio.obtenerCategoriasPorEstado(estadoCategoria);
     }
 
     //5. Actualizar categoria
-    @PatchMapping("/actualizarCategoria/{idCategoriaProducto}")
+    @PatchMapping("private/actualizarcategoria/{idCategoria}")
+    @PreAuthorize("hasRole('ADMIN')")
     public CategoriaProducto actualizarCategoria(@PathVariable Long idCategoria, @RequestBody CategoriaProductoDTO categoriaProductoDTO){
         return categoriaProductoServicio.actualizarCategoria(idCategoria, categoriaProductoDTO);
     }
 
     //6. Eliminar Categoría de producto
-    @DeleteMapping("/eliminarCategoria/{idCategoria}")
-    public List<?> eliminarCategoria(Long idCategoria){
+    @DeleteMapping("private/eliminarcategoria/{idCategoria}")
+    @PreAuthorize("hasRole('ADMIN')")
+    public List<?> eliminarCategoria(@PathVariable Long idCategoria){
         return categoriaProductoServicio.eliminarCategoria(idCategoria);
     }
 

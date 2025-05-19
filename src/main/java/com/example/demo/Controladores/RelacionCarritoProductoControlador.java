@@ -4,11 +4,13 @@ import com.example.demo.DTOs.RelCarritoProductoDTO;
 import com.example.demo.Entidades.RelacionCarritoProducto;
 import com.example.demo.Servicios.RelacionCarritoProductoServicio;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 @CrossOrigin("http://127.0.0.1:5500/")
 @RequestMapping("/api/relcarritoproducto")
@@ -19,28 +21,55 @@ public class RelacionCarritoProductoControlador {
     RelacionCarritoProductoServicio relacionCarritoProductoServicio;
 
     //. Agregar producto
-    @PostMapping("/agregarproducto")
-    public RelacionCarritoProducto agregarProducto(@RequestBody RelCarritoProductoDTO producto){
-        return relacionCarritoProductoServicio.crearProducto(producto);
+    @PostMapping("private/agregarproducto")
+    public ResponseEntity<?> agregarProducto(@RequestBody RelCarritoProductoDTO producto) {
+        try {
+            return ResponseEntity.ok(relacionCarritoProductoServicio.crearProducto(producto));
+
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+
+        }
     }
 
-    //Get todoas los productos
-    @GetMapping("/listarproductos")
-    public List<RelacionCarritoProducto> listarProductos(){
+    //. Obtener todos los productos
+    @GetMapping("private/listarproductos")
+    public List<RelacionCarritoProducto> listarProductos() {
         return relacionCarritoProductoServicio.listarProductos();
     }
 
-    //actulizar cantidad
-    @PutMapping("/actualizarcantidad/{id}/{cantidad}")
-    public void actualizarCantidad(@PathVariable Long id, @PathVariable Integer cantidad)
-    {
-        relacionCarritoProductoServicio.actualizarCantidad(id, cantidad);
+    //. Actulizar cantidad
+    @PutMapping("private/actualizarcantidad/{idCarritoProducto}/{cantidad}")
+    public ResponseEntity<String> actualizarCantidad(@PathVariable Long idCarritoProducto, @PathVariable Integer cantidad) {
+        try {
+            relacionCarritoProductoServicio.actualizarCantidad(idCarritoProducto, cantidad);
+            return ResponseEntity.ok("Cantidad actualizada correctamente.");
+
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+
+        }
     }
 
+    //. Eliminar producto
+    @DeleteMapping("private/eliminarproducto/{idCarritoProducto}")
+    public ResponseEntity<String> eliminarProducto(@PathVariable Long idCarritoProducto) {
+        try {
+            relacionCarritoProductoServicio.eliminarProducto(idCarritoProducto);
+            return ResponseEntity.ok("Producto eliminado correctamente.");
 
-    //eliminar producto
-    @DeleteMapping("/eliminarproducto/{id}")
-    public void eliminarProducto(@PathVariable Long id){
-        relacionCarritoProductoServicio.eliminarProducto(id);
+        } catch (NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+
+        }
     }
 }

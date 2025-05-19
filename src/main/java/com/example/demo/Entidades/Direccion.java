@@ -1,5 +1,6 @@
 package com.example.demo.Entidades;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -18,7 +19,7 @@ public class Direccion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idDireccion;
+    private Long idDireccion;
 
     @Column(nullable = false)
     private String tipoVia;
@@ -68,6 +69,7 @@ public class Direccion {
     private LocalDate fechaActualizacion;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "idUsuario", nullable = false)
     private Usuario usuario;
 

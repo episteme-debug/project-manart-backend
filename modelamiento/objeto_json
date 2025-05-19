@@ -1,14 +1,13 @@
 {
-    "idUsuario": 2,
-    "nombreUsuario": "Virginia",
-    "apellidoUsuario": "Woolf",
-    "emailUsuario": "virginia.woolf@example.com",
-    "hashContrasenaUsuario": "$2a$12$EjemploHashContrasena456",
-    "telefonoUsuario": "+44-555-1941",
-    "estadoUsuario": true,
-    "imagenPerfilUsuario": "avatarGenerico.jpg",
-    "rolUsuario": "VENDEDOR"
+  "nombreUsuario": "Severus",
+  "alias" : "slytherin",
+  "apellidoUsuario": "Snape",
+  "emailUsuario": "severus.snape@hogwarts.edu",
+  "hashContrasenaUsuario": "expelliarmus",
+  "telefonoUsuario": "+44-555-1996",
+  "rolUsuario": "ADMIN"
 }
+
 
 {
   "idProducto": 1,

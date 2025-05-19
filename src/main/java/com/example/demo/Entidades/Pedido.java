@@ -1,6 +1,8 @@
 package com.example.demo.Entidades;
 import com.example.demo.Enums.EstadoPedidoEnum;
 import com.example.demo.Enums.MetodoPagoEnum;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,10 +23,6 @@ public class Pedido {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idPedido;
-
-    @ManyToOne
-    @JoinColumn(name = "idUsuario", nullable = false)
-    private Usuario usuario;
 
     @Column(nullable = false)
     private Enum<EstadoPedidoEnum> estado = PENDIENTE;
@@ -48,5 +46,9 @@ public class Pedido {
 
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
     private List<RelacionPedidoProducto> relacionPedidoProductos;
+
+    @ManyToOne
+    @JoinColumn(name = "idUsuario", nullable = false)
+    private Usuario usuario;
 
 }

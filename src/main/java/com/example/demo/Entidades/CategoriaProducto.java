@@ -1,6 +1,7 @@
 package com.example.demo.Entidades;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,7 +31,6 @@ public class CategoriaProducto {
     private String imagenCategoria;
 
     @OneToMany(mappedBy = "categoriaProducto")
-    @JsonIgnore
     private List<RelacionCategoriaProducto> productosXCategoria;
 
     @OneToMany(mappedBy = "categoriaProducto")

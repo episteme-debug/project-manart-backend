@@ -17,7 +17,7 @@ public class RelacionCategoriaProducto {
     private Long idRelacionCategoriaProducto;
 
     @ManyToOne(targetEntity = Producto.class)
-    @JoinColumn(name = "idProducto", nullable = true)
+    @JoinColumn(name = "idProducto")
     private Producto producto;
 
     @ManyToOne(targetEntity = CategoriaProducto.class)

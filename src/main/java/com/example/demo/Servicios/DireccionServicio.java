@@ -3,28 +3,60 @@ package com.example.demo.Servicios;
 import com.example.demo.DTOs.DireccionDTO;
 import com.example.demo.Entidades.Direccion;
 import com.example.demo.Repositorios.DireccionRepositorio;
+import com.example.demo.Repositorios.UsuarioRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @Service
 public class DireccionServicio {
+
     @Autowired
     DireccionRepositorio direccionRepositorio;
 
-    //1. Crear direccion
+    @Autowired
+    UsuarioRepositorio usuarioRepositorio;
+
+    //. Crear direccion
+    // Quité jsonignore porque no lo toma y hace que la validacion sea null
+    // Valida si todos los datos sea diferentes de null para ingresar solo con los obigatorios o los datos minimos
     public Direccion crearDireccion(Direccion direccion) {
+        if (direccion.getTipoVia() == null || direccion.getNumeroViaPrincipal() == null || direccion.getNumeroViaSecundaria() == null || direccion.getNumeroPredio() == null || direccion.getBarrio() == null || direccion.getCiudad() == null || direccion.getDepartamento() == null || direccion.getEsPredeterminada() == null || direccion.getUsuario() == null || direccion.getUsuario().getIdUsuario() == null) {
+
+            throw new IllegalArgumentException("Faltan campos obligatorios para registrar la dirección.");
+        }
         return direccionRepositorio.save(direccion);
     }
 
-    //2. Obtener todas las direcciones asociadas a un usuario
+    //. Obtener todas las direcciones asociadas a un usuario
     public List<Direccion> obtenerDireccionPorUsuario(Long idUsuario) {
+
+        if (idUsuario == null || idUsuario <= 0) {
+            throw new IllegalArgumentException("El ID proporcionado no es válido.");
+        }
+
+        if (!usuarioRepositorio.existsById(idUsuario)) {
+            throw new NoSuchElementException("No existe este usuario");
+        }
+
         return direccionRepositorio.findByUsuario_IdUsuario(idUsuario);
     }
 
-    //3. Actulizacion de Direccion
+    //. Actulizacion de Direccion
     public Direccion actualizarDireccion(Long idDireccion, DireccionDTO direccionDTO) {
+        // Valida si el id o los datos están
+        if (direccionDTO == null || direccionDTO.getIdDireccion() == null || idDireccion == null || idDireccion <= 0) {
+            throw new IllegalArgumentException("El id o los datos a modificar son inválidos");
+        }
+
+        // Vaida si el id existe
+        Optional<Direccion> direccionOptional = direccionRepositorio.findById(direccionDTO.getIdDireccion());
+        if (!direccionOptional.isPresent()) {
+            throw new NoSuchElementException("Direccion no encontrada");
+        }
 
         Direccion direccion = direccionRepositorio.findById(idDireccion).get();
 
@@ -83,28 +115,24 @@ public class DireccionServicio {
         return direccionRepositorio.save(direccion);
     }
 
-    //4. Borrar direccion por el id
-    public List<?> eliminarDireccionId(Long idDireccion) {
+    //. Borrar direccion por el id
+    // Valida que el id exista para eliminar
+    public void eliminarDireccionId(Long idDireccion) {
+
+        if (idDireccion == null || idDireccion <= 0) {
+            throw new IllegalArgumentException("El ID proporcionado no es válido.");
+        }
+
+        if (!direccionRepositorio.existsById(idDireccion)){
+            throw new NoSuchElementException("La direccion no exite.");
+        }
+
         direccionRepositorio.deleteById(idDireccion);
-        return getAllDireccion();
     }
 
-    // Get Todas las Direcciones
-    public List<Direccion> getAllDireccion(){
+    //. Listar todas las direcciones
+    public List<Direccion> listarDirecciones() {
         return direccionRepositorio.findAll();
     }
 
-    //get id de la direccion
-    public Direccion getDireccionId(Long id){
-        return direccionRepositorio.findById(id).get();
-    }
-
-/*
-
-    //Get todas las direciones permanetes
-    public List<Direccion>getAllDireccionesPermanetes(Boolean esPredeterminada){
-        return DireccionRepositorio.findByesPredeterminada(esPredeterminada);
-
-    }
-    }*/
 }

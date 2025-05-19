@@ -1,5 +1,6 @@
 package com.example.demo.Entidades;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
@@ -28,14 +29,14 @@ public class Producto {
     @Column(nullable = false)
     private Integer stockProducto;
 
-    @Column(nullable = false, precision = 10, scale = 2)
+    @Column(nullable = false, scale = 2)
     private BigDecimal precioProducto;
 
     @Column(nullable = false)
-    private String imagenProducto;
+    private String imagenProducto = "avatarGenerico.jpg";
 
-    @Column(nullable = false, columnDefinition = "boolean default true")
-    private Boolean estadoProducto;
+    @Column(nullable = false)
+    private Boolean estadoProducto = true;
 
     //Relaciones
 

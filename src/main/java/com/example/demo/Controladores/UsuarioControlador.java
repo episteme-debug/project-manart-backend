@@ -9,44 +9,37 @@ import com.example.demo.Servicios.UsuarioServicio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
 @RestController
-@RequestMapping("/api/usuarios")
+@RequestMapping("/api/usuario")
 @CrossOrigin("http://127.0.0.1:5500/")
 public class UsuarioControlador {
 
     @Autowired
     UsuarioServicio usuarioServicio;
 
-    //. Crear un usuario (Este controlador recibe un usuario y devuelve un usuario un codigo de estado y un mensaje)
-    @PostMapping("/guardar")
-    public ResponseEntity<?> crear(@RequestBody Usuario usuario) {
-        try {
-            Usuario nuevoUsuario = usuarioServicio.crearUsuario(usuario);
-            return ResponseEntity.status(HttpStatus.CREATED).body(nuevoUsuario);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
-    }
-
-
     //. Obtener un usuario con un respectivo id
-    @GetMapping("/obtenerPorId/{id}")
+    @GetMapping("private/obtenerporid/{id}")
+    @PreAuthorize("@autorizacion.esPropietario(#id) or hasRole('ADMIN')")
     public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
+
         try {
-            Optional<Usuario> usuario = usuarioServicio.obtenerPorId(id);
-            return usuario.map(ResponseEntity::ok)
-                    .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+            UsuarioDTO usuario = usuarioServicio.obtenerPorId(id);
+            return ResponseEntity.ok(usuario);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     //. Obtener usuarios por estado
-    @GetMapping("/obtenerPorEstado/{estado}")
+    @GetMapping("private/obtenerPorEstado/{estado}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> obtenerPorEstado(@PathVariable Boolean estado) {
         try{
             List<Usuario> usuarios = usuarioServicio.obtenerPorEstado(estado);
@@ -57,7 +50,8 @@ public class UsuarioControlador {
     }
 
     //. Obtener usuarios por rol
-    @GetMapping("/obtenerPorRol/{rolUsuario}")
+    @PreAuthorize("hasRole('ADMIN')")
+    @GetMapping("private/obtenerporrol/{rol}")
     public ResponseEntity<?> obtenerPorRol(@PathVariable UsuarioEnum rol) {
         try {
             List<Usuario> usuarios = usuarioServicio.obtenerUsuariosPorRol(rol);
@@ -68,10 +62,11 @@ public class UsuarioControlador {
     }
 
     //. Actualizar datos de usuario excepto la contraseña
-    @PatchMapping("/actualizarDatos")
-    public ResponseEntity<?> actualizarDatos(@RequestBody UsuarioDTO dto) {
+    @PatchMapping("private/actualizardatos/{idUsuario}")
+    @PreAuthorize("@autorizacion.esPropietario(#idUsuario)")
+    public ResponseEntity<?> actualizarDatos(@RequestBody UsuarioDTO dto, @PathVariable Long idUsuario) {
         try {
-            Usuario actualizado = usuarioServicio.actualizarDatos(dto);
+            Usuario actualizado = usuarioServicio.actualizarDatos(dto, idUsuario);
             return ResponseEntity.ok(actualizado);
         } catch (IllegalArgumentException | NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -79,31 +74,27 @@ public class UsuarioControlador {
     }
 
     //. Actualizar contraseña de usuario
-    @PatchMapping("/actualizarContraseña")
-    public ResponseEntity<?> actualizarContraseña(@RequestBody ContraseñaUsuarioDTO dto) {
+    @PatchMapping("private/actualizarcontraseña/{idUsuario}")
+    @PreAuthorize("@autorizacion.esPropietario(#idUsuario)")
+    public ResponseEntity<?> actualizarContraseña(@RequestBody ContraseñaUsuarioDTO dto, @PathVariable Long idUsuario) {
         try {
-            Usuario actualizado = usuarioServicio.actualizarContraseña(dto);
+            Usuario actualizado = usuarioServicio.actualizarContraseña(dto, idUsuario);
             return ResponseEntity.ok(actualizado);
         } catch (IllegalArgumentException | NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
-    //8. Eliminar usuario por id
-    @DeleteMapping("/eliminarPorId/{id}")
-    public ResponseEntity<?> eliminarUsuario(@PathVariable Long id) {
+    //. Eliminar usuario por id
+    @DeleteMapping("private/eliminarporid/{idUsuario}")
+    @PreAuthorize("@autorizacion.esPropietario(#idUsuario) or hasRole('ADMIN')")
+    public ResponseEntity<?> eliminarUsuario(@PathVariable Long idUsuario) {
         try {
-            usuarioServicio.eliminarUsuario(id);
+            usuarioServicio.eliminarUsuario(idUsuario);
             return ResponseEntity.ok().build();
         } catch (IllegalArgumentException | NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
-/*
-
-    @PostMapping("/logIn")
-    public MensajeLogIn logInPersona(@RequestBody LogInDTO dataPersona){
-        return UsuarioServicio.logInPersona(dataPersona);
-    }*/
 }

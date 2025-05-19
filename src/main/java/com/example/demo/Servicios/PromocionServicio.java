@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @Service
@@ -15,28 +16,53 @@ public class PromocionServicio {
     @Autowired
     PromocionRepositorio promocionRepositorio;
 
-    //1. Crear una promocion !!
+    //. Crear una promocion !!
+    // Valida si todos los datos sea diferentes de null para ingresar solo con los obligatorios o los datos minimos
     public Promocion crearPromocion(Promocion promocion) {
+        if(promocion.getDetallesPromocion() == null || promocion.getEstadoPromocion() == null ||
+                promocion.getFechaFinPromocion() == null || promocion.getFechaInicioPromocion() == null||
+                promocion.getNombrePromocion() == null || promocion.getPorcentajeDescuentoPromocion() == null){
+            throw new IllegalArgumentException("Faltas campos obligatorios.");
+        }
         return promocionRepositorio.save(promocion);
     }
 
-    //2. Obtener promoción por el id
-    public Promocion obtenerPromocionById(Long Id) {
-        return promocionRepositorio.findById(Id).get();
+
+    //. Obtener promoción por el id
+    // Valida que id exista para traer
+    public Promocion obtenerPromocionById(Long idPromocion) {
+        if (idPromocion == null || idPromocion <= 0) {
+            throw new IllegalArgumentException("El ID proporcionado no es válido.");
+        }
+        if (!promocionRepositorio.existsById(idPromocion)){
+            throw new NoSuchElementException("Promocion no encontrada.");
+        }
+        return promocionRepositorio.findById(idPromocion).get();
     }
 
-    //3. Obtener todas las promociones
+    //. Obtener todas las promociones
     public List<Promocion> getAllpromocion() {
         return promocionRepositorio.findAll();
     }
 
-    //4. Obtener promociones por estado
+    //. Obtener promociones por estado
     public List<Promocion> obtenerPorEstado(Boolean estadoPromocion) {
         return promocionRepositorio.findByEstadoPromocion(estadoPromocion);
     }
 
-    //6. Actualizacion de Promocion !!
+    //. Actualizacion de Promocion
     public Promocion actualizarPromocion(Long idPromocion, PromocionDTO promocionDTO) {
+        // Valida si el id o lo datos esta
+        if (promocionDTO == null || promocionDTO.getIdPromocion() == null || idPromocion == null ||idPromocion <= 0){
+            throw new IllegalArgumentException("Los datos de la promocion son invalidos.");
+        }
+
+        // Vaida si el id existe
+        Optional<Promocion> promocionOptional = promocionRepositorio.findById(promocionDTO.getIdPromocion());
+        if(!promocionOptional.isPresent()){
+            throw new NoSuchElementException("Pomocion no encontrada.");
+        }
+
         Promocion promocion = promocionRepositorio.findById(idPromocion).get();
 
         if(promocionDTO.getNombrePromocion() != null){
@@ -66,10 +92,17 @@ public class PromocionServicio {
         return promocionRepositorio.save(promocion);
     }
 
-    //7. Borrar promocion por Id
-    public List<?> eliminarPorId (Long idPromocion){
+    //. Borrar promocion por Id
+    // valida que el id exista para eliminar
+    public void eliminarPorId (Long idPromocion){
+        if (idPromocion == null || idPromocion <= 0) {
+            throw new IllegalArgumentException("El ID proporcionado no es válido.");
+        }
+        if (!promocionRepositorio.existsById(idPromocion)){
+            throw new NoSuchElementException("Promocion no existe.");
+        }
+
         promocionRepositorio.deleteById(idPromocion);
-        return getAllpromocion();
     }
 /*
     //get por filtros

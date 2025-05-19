@@ -8,7 +8,12 @@ import com.example.demo.Entidades.Usuario;
 import com.example.demo.Enums.UsuarioEnum;
 import com.example.demo.Repositorios.CarritoCompraRepositorio;
 import com.example.demo.Repositorios.UsuarioRepositorio;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -22,32 +27,19 @@ public class UsuarioServicio {
     @Autowired
     CarritoCompraServicio carritoCompraServicio;
 
-    //. Crear un usuario
-    public Usuario crearUsuario(Usuario usuario) {
-        if (usuario == null || usuario.getNombreUsuario() == null) {
-            throw new IllegalArgumentException("Los datos del usuario son inválidos.");
-        }
-
-        if (usuarioRepositorio.existsByNombreUsuario(usuario.getNombreUsuario())) {
-            throw new IllegalArgumentException("El nombre de usuario ya está en uso.");
-        }
-
-        Usuario usuarioCreado = usuarioRepositorio.save(usuario);
-        // Crear un carrito asociado a este usuario
-        CarritoCompra carritoCompra = new CarritoCompra();
-        carritoCompra.setUsuario(usuarioCreado);
-        carritoCompraServicio.crearCarrito(carritoCompra);
-        return usuarioCreado;
-
-    }
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     //. Obtener usuario por Id
-    public Optional<Usuario> obtenerPorId(Long idUsuario) {
-        if (idUsuario == null || idUsuario <= 0) {
+    public UsuarioDTO obtenerPorId(Long id) {
+        if (id == null || id <= 0) {
             throw new IllegalArgumentException("ID de usuario inválido.");
         }
 
-        return usuarioRepositorio.findById(idUsuario);
+        Usuario usuario = usuarioRepositorio.findById(id).get();
+        UsuarioDTO usuarioDTO = new UsuarioDTO(usuario);
+
+        return usuarioDTO;
     }
 
     //. Obtener usuarios por estado (activo/inactivo)
@@ -67,12 +59,12 @@ public class UsuarioServicio {
     }
 
     //. Actualizar datos de usuario
-    public Usuario actualizarDatos(UsuarioDTO usuarioDTO) {
-        if (usuarioDTO == null || usuarioDTO.getIdUsuario() == null) {
+    public Usuario actualizarDatos(UsuarioDTO usuarioDTO, Long idUsuario) {
+        if (usuarioDTO == null) {
             throw new IllegalArgumentException("Los datos del usuario son inválidos.");
         }
 
-        Optional<Usuario> usuarioOptional = usuarioRepositorio.findById(usuarioDTO.getIdUsuario());
+        Optional<Usuario> usuarioOptional = usuarioRepositorio.findById(idUsuario);
         if (!usuarioOptional.isPresent()) {
             throw new NoSuchElementException("Usuario no encontrado.");
         }
@@ -94,10 +86,6 @@ public class UsuarioServicio {
             usuario.setTelefonoUsuario(usuarioDTO.getTelefonoUsuario());
         }
 
-        if (usuarioDTO.getImagenPerfilUsuario() != null) {
-            usuario.setImagenPerfilUsuario(usuarioDTO.getImagenPerfilUsuario());
-        }
-
         if (usuarioDTO.getEstadoUsuario() != null) {
             usuario.setEstadoUsuario(usuarioDTO.getEstadoUsuario());
         }
@@ -106,26 +94,29 @@ public class UsuarioServicio {
             usuario.setRolUsuario(usuarioDTO.getRolUsuario());
         }
 
+        if (usuarioDTO.getAlias() != null) {
+            usuario.setAlias(usuarioDTO.getAlias());
+        }
+
         return usuarioRepositorio.save(usuario);
     }
 
     //. Actualizar Contraseña
-    public Usuario actualizarContraseña(ContraseñaUsuarioDTO dto) {
-        if (dto == null || dto.getIdUsuario() == null || dto.getContraseñaAntigua() == null || dto.getContraseñaNueva() == null) {
+    public Usuario actualizarContraseña(ContraseñaUsuarioDTO dto, Long id) {
+        if (dto == null || dto.getContraseñaAntigua() == null || dto.getContraseñaNueva() == null) {
             throw new IllegalArgumentException("Datos de contraseña inválidos.");
         }
 
-        Optional<Usuario> usuarioOptional = usuarioRepositorio.findById(dto.getIdUsuario());
+        Optional<Usuario> usuarioOptional = usuarioRepositorio.findById(id);
         if (!usuarioOptional.isPresent()) {
             throw new NoSuchElementException("Usuario no encontrado.");
         }
         Usuario usuario = usuarioOptional.get();
 
-        if (!dto.getContraseñaAntigua().equals(usuario.getHashContrasenaUsuario())) {
+        if (!passwordEncoder.matches(dto.getContraseñaAntigua(), usuario.getHashContrasenaUsuario())) {
             throw new IllegalArgumentException("Contraseña antigua incorrecta.");
         }
-
-        usuario.setHashContrasenaUsuario(dto.getContraseñaNueva());
+        usuario.setHashContrasenaUsuario(passwordEncoder.encode(dto.getContraseñaNueva()));
         return usuarioRepositorio.save(usuario);
     }
 
@@ -147,34 +138,4 @@ public class UsuarioServicio {
         return usuarioRepositorio.findAll();
     }
 
-
-/*    //LogIn Persona
-    public MensajeLogIn logInPersona(LogInDTO dataPersona) {
-        MensajeLogIn dataMessage = new MensajeLogIn();
-        String emailUsuario = dataPersona.getEmailUsuario();
-        String contrasenaUsuario = dataPersona.getContrasenaUsuario();
-        Optional<Usuario> personaExiste = usuarioRepositorio.findByEmailUsuario(emailUsuario);
-
-        if (personaExiste.isPresent()) {
-            Usuario usuario = personaExiste.get();
-            if (usuario.getHashContrasenaUsuario().equals(contrasenaUsuario)) {
-                //Ingresos correctos
-                dataMessage.setMensaje("Inicio de Sesión exitoso!");
-                dataMessage.setError(2);
-                dataMessage.setUsuario(usuario);
-                return dataMessage;
-            } else {
-                //Password incorrecta
-                dataMessage.setMensaje("Contraseña Incorrecta." + " Por favor verifique sus datos.");
-                dataMessage.setError(1);
-                dataMessage.setUsuario(null);
-                return dataMessage;
-            }
-        }
-        //Usuario no encontrado
-        dataMessage.setMensaje("Email Incorrecto." + " Por favor verifique sus datos.");
-        dataMessage.setError(0);
-        dataMessage.setUsuario(null);
-        return dataMessage;
-    }*/
 }

@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class DireccionDTO {
 
-    private Integer idDireccion;
+    private Long idDireccion;
     private String tipoVia;
     private String numeroViaPrincipal;
     private String letraViaPrincipal;

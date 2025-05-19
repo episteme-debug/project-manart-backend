@@ -1,13 +1,18 @@
 package com.example.demo.Servicios;
 
-import com.example.demo.DTOs.ProductoDTO;
+import com.example.demo.DTOs.ProductoDTO.Creacion;
+import com.example.demo.DTOs.ProductoSDTO;
 import com.example.demo.Entidades.Producto;
+import com.example.demo.Entidades.Usuario;
 import com.example.demo.Repositorios.ProductoRepositorio;
+import com.example.demo.Repositorios.UsuarioRepositorio;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
+import java.util.NoSuchElementException;
 
 @Service
 public class ProductoServicio {
@@ -15,56 +20,77 @@ public class ProductoServicio {
     @Autowired
     ProductoRepositorio productoRepositorio;
 
-    //1. Crear nuevo producto
-    public Producto crearProducto(Producto producto) {
+    @Autowired
+    UsuarioRepositorio usuarioRepositorio;
+
+    //. Crear nuevo producto
+    public Producto crearProducto(Creacion productoDTO) throws BadRequestException {
+        Producto producto = new Producto();
+        Usuario usuario = usuarioRepositorio.findById(productoDTO.getIdUsuario())
+                        .orElseThrow(() -> new NoSuchElementException("Usuario no encontrado"));
+
+        producto.setNombreProducto(productoDTO.getNombreProducto());
+        producto.setDescripcionProducto(productoDTO.getDescripcionProducto());
+        producto.setPrecioProducto(productoDTO.getPrecioProducto());
+        producto.setStockProducto(producto.getStockProducto());
+        producto.setUsuario(usuario);
+
         return productoRepositorio.save(producto);
     }
 
-    //2. Obtener producto por Id
-    public Optional<Producto> obtenerProductoPorId(Long idProducto) {
-        return productoRepositorio.findById(idProducto);
+    //. Obtener producto por Id
+    public Producto obtenerProductoPorId(Long id) throws BadRequestException {
+        if (id == null || id <= 0) {
+            throw new BadRequestException("ID inválido.");
+        }
+        return productoRepositorio.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Producto con ID " + id + " no existe."));
     }
 
-    //3. Obtener todos los productos
+    //. Obtener todos los productos
     public List<Producto> obtenerTodosProductos() {
         return productoRepositorio.findAll();
     }
 
-    //4. Obtener productos por nombre
-    public List<Producto> obtenerProductosPorNombre(String nombreProducto) {
-        return productoRepositorio.findByNombreProducto(nombreProducto);
+    //. Obtener productos por nombre
+    public List<Producto> obtenerProductosPorNombre(String nombre) throws BadRequestException {
+        if (nombre == null || nombre.trim().isEmpty()) {
+            throw new BadRequestException("El nombre para buscar es obligatorio.");
+        }
+        return productoRepositorio.findByNombreProducto(nombre);
     }
 
-    //5. Actualizar producto
-    public Producto actualizarProducto(Long idProducto, ProductoDTO productoDTO) {
-        Producto producto = productoRepositorio.findById(idProducto).get();
-
-        if (productoDTO.getNombreProducto() != null) {
-            producto.setNombreProducto(productoDTO.getNombreProducto());
+    // Actualizaar uno o más datos de un producto
+    public Producto actualizarProducto(Long id, ProductoSDTO dto) throws BadRequestException {
+        if (id == null || id <= 0 || !productoRepositorio.existsById(id)) {
+            throw new BadRequestException("ID inválido");
         }
 
-        if (productoDTO.getDescripcionProducto() != null) {
-            producto.setDescripcionProducto(productoDTO.getDescripcionProducto());
+        Producto producto = productoRepositorio.findById(id).get();
+
+        if (dto.getDescripcionProducto() != null) {
+            producto.setDescripcionProducto(dto.getDescripcionProducto().trim());
         }
 
-        if (productoDTO.getStockProducto() != null) {
-            producto.setStockProducto(productoDTO.getStockProducto());
+        if (dto.getPrecioProducto() != null) {
+            producto.setPrecioProducto(dto.getPrecioProducto());
         }
 
-        if (productoDTO.getPrecioProducto() != null) {
-            producto.setPrecioProducto(productoDTO.getPrecioProducto());
+        if (dto.getStockProducto() != null) {
+            producto.setStockProducto(dto.getStockProducto());
         }
 
-        if (productoDTO.getImagenProducto() != null) {
-            producto.setImagenProducto(productoDTO.getImagenProducto());
+        if (dto.getImagenProducto() != null) {
+            producto.setImagenProducto(dto.getImagenProducto().trim());
         }
 
-        if (productoDTO.getEstadoProducto() != null) {
-            producto.setEstadoProducto(productoDTO.getEstadoProducto());
+        if (dto.getEstadoProducto() != null) {
+            producto.setEstadoProducto(dto.getEstadoProducto());
         }
 
         return productoRepositorio.save(producto);
     }
+
 
     //. Actualizar Stock
     public void actualizarStock(Producto producto, int cantidad, boolean esAgregar) {
@@ -76,8 +102,15 @@ public class ProductoServicio {
 
 
     //. Eliminar producto
-    public void eliminarProducto(Long idProducto) {
-        productoRepositorio.deleteById(idProducto);
+    public void eliminarProducto(Long id) throws BadRequestException {
+        if (id == null || id <= 0) {
+            throw new BadRequestException("ID inválido.");
+        }
+        if (!productoRepositorio.existsById(id)) {
+            throw new NoSuchElementException("Producto con ID " + id + " no existe.");
+        }
+        productoRepositorio.deleteById(id);
     }
+
 
 }

@@ -105,7 +105,6 @@ public class PedidoServicio {
         relaciones.clear();
     }
 
-
     //. Comprar, ejecuta todos los métodos anteriores
     @Transactional
     public void comprar(Long idUsuario, MetodoPagoEnum metodoPago) {

@@ -1,5 +1,6 @@
 package com.example.demo.Repositorios;
 
+import com.example.demo.DTOs.UsuarioDTO;
 import com.example.demo.Entidades.Usuario;
 import com.example.demo.Enums.UsuarioEnum;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,11 +14,13 @@ public interface UsuarioRepositorio extends JpaRepository<Usuario, Long>
 {
     Optional<Usuario> findByEmailUsuario(String emailUsuario);
 
-    Optional<Usuario> findByNombreUsuario(String nombreUsuario);
+    Optional<Usuario> findByAlias(String alias);
 
     List<Usuario> findByEstadoUsuario(Boolean estadoUsuario);
 
     List<Usuario> findByRolUsuario(Enum<UsuarioEnum> rolUsuario);
 
     boolean existsByNombreUsuario(String nombreUsuario);
+
+    boolean existsByAlias(String alias);
 }

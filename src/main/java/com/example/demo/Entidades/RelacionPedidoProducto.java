@@ -1,5 +1,7 @@
 package com.example.demo.Entidades;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -16,10 +18,6 @@ public class RelacionPedidoProducto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idPedidoXProducto;
 
-    @ManyToOne
-    @JoinColumn(name = "idProducto", nullable = false)
-    private Producto producto;
-
     @Column(nullable = false, scale = 2, precision = 10)
     private BigDecimal precioUnitario;
 
@@ -32,4 +30,8 @@ public class RelacionPedidoProducto {
     @ManyToOne
     @JoinColumn(name = "idPedido", nullable = false)
     private Pedido pedido;
+
+    @ManyToOne
+    @JoinColumn(name = "idProducto", nullable = false)
+    private Producto producto;
 }
