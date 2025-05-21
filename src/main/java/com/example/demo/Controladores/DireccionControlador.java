@@ -1,7 +1,7 @@
 package com.example.demo.Controladores;
 
-import com.example.demo.DTOs.DireccionDTO;
-import com.example.demo.Entidades.Direccion;
+import com.example.demo.DTOs.DireccionDTO.RespuestaDireccion;
+import com.example.demo.DTOs.DireccionDTO.EnviosDireccion;
 import com.example.demo.Servicios.DireccionServicio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -23,9 +23,9 @@ public class DireccionControlador {
     //. Crear una dirección
     // Devuelve un status 201 de que fue creado o un 400 con mensaje que falta datos
     @PostMapping("private/crear")
-    public ResponseEntity<?> crearDireccion(@RequestBody Direccion direccion) {
+    public ResponseEntity<?> crearDireccion(@RequestBody EnviosDireccion direccion) {
         try {
-            Direccion nueva = direccionServicio.crearDireccion(direccion);
+            RespuestaDireccion nueva = direccionServicio.crearDireccion(direccion);
             return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
 
         } catch (IllegalArgumentException e) {
@@ -36,10 +36,10 @@ public class DireccionControlador {
 
     //. Obtener todas las direcciones asociadas a un usuario
     @GetMapping("private/listarporusuario/{idUsuario}")
-    @PreAuthorize("@autorizacion.esPropietario(#idUsuario)")
+    @PreAuthorize("@autorizacion.esPropietario(#idUsuario) or hasRole('ADMIN')")
     public ResponseEntity<?> direccionesPorUsuario(@PathVariable Long idUsuario) {
         try {
-            List<Direccion> direcciones = direccionServicio.obtenerDireccionPorUsuario(idUsuario);
+            List<RespuestaDireccion> direcciones = direccionServicio.obtenerDireccionPorUsuario(idUsuario);
             return ResponseEntity.ok(direcciones);
 
         } catch (NoSuchElementException e) {
@@ -53,11 +53,11 @@ public class DireccionControlador {
 
     //. Actualizar una dirección
     // Devuelve un 200 si esta bien y actualiza o 400 o 404 con los mensaje
-    @PreAuthorize("@autorizacion.esPropietarioDireccion(#idDireccion)")
+    @PreAuthorize("@autorizacion.esPropietarioDireccion(#idDireccion) or hasRole('ADMIN') ")
     @PutMapping("private/actualizar/{idDireccion}")
-    public ResponseEntity<?> actualizarDireccion(@PathVariable Long idDireccion, @RequestBody DireccionDTO direccionDTO) {
+    public ResponseEntity<?> actualizarDireccion(@PathVariable Long idDireccion, @RequestBody EnviosDireccion enviosDireccion) {
         try {
-            Direccion actualizada = direccionServicio.actualizarDireccion(idDireccion, direccionDTO);
+            RespuestaDireccion actualizada = direccionServicio.actualizarDireccion(idDireccion, enviosDireccion);
             return ResponseEntity.ok(actualizada);
 
         } catch (IllegalArgumentException e) {
@@ -72,7 +72,7 @@ public class DireccionControlador {
     //. Eliminar dirección por ID
     // Devuelve un 200 y elimina o 404 si no se encontró
     @DeleteMapping("private/eliminarporid/{idDireccion}")
-    @PreAuthorize("@autorizacion.esPropietarioDireccion(#idDireccion)")
+    @PreAuthorize("@autorizacion.esPropietarioDireccion(#idDireccion) or hasRole('ADMIN')")
     public ResponseEntity<?> deleteDireccionId(@PathVariable Long idDireccion) {
         try {
             direccionServicio.eliminarDireccionId(idDireccion);
@@ -90,7 +90,7 @@ public class DireccionControlador {
     //. Listar todas las direcciones
     @GetMapping("private/listardirecciones")
     @PreAuthorize("hasRole('ADMIN')")
-    public List<Direccion> listarDirecciones() {
+    public List<RespuestaDireccion> listarDirecciones() {
         return direccionServicio.listarDirecciones();
     }
 }

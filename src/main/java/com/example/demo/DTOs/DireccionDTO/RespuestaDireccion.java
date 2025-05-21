@@ -1,16 +1,17 @@
-package com.example.demo.DTOs;
+package com.example.demo.DTOs.DireccionDTO;
 
-import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class DireccionDTO {
+import java.time.LocalDate;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class RespuestaDireccion {
     private Long idDireccion;
+    private Long idUsuario;
     private String tipoVia;
     private String numeroViaPrincipal;
     private String letraViaPrincipal;
@@ -24,5 +25,5 @@ public class DireccionDTO {
     private String ciudad;
     private String departamento;
     private Boolean esPredeterminada;
-
+    private LocalDate fechaCreacion;
 }

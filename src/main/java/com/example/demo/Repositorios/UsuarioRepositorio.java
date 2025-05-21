@@ -1,6 +1,5 @@
 package com.example.demo.Repositorios;
 
-import com.example.demo.DTOs.UsuarioDTO;
 import com.example.demo.Entidades.Usuario;
 import com.example.demo.Enums.UsuarioEnum;
 import org.springframework.data.jpa.repository.JpaRepository;

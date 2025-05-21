@@ -1,11 +1,10 @@
 package com.example.demo.Seguridad.Configuracion;
 
-import com.example.demo.DTOs.AutenticacionRespuesta;
+import com.example.demo.DTOs.AuthDTO.AutenticacionRespuesta;
 import com.example.demo.Entidades.Usuario;
 import com.example.demo.Enums.UsuarioEnum;
 import com.example.demo.Repositorios.UsuarioRepositorio;
 import com.example.demo.Seguridad.Servicios.JWTServicio;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -19,7 +18,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.Optional;
-import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor

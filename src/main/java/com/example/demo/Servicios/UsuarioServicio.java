@@ -1,127 +1,130 @@
 package com.example.demo.Servicios;
 
-import com.example.demo.DTOs.ContraseñaUsuarioDTO;
-import com.example.demo.DTOs.LogInDTO;
-import com.example.demo.DTOs.UsuarioDTO;
-import com.example.demo.Entidades.CarritoCompra;
+import com.example.demo.DTOs.UsuarioDTO.ActualizacionContraseñaUsuario;
+import com.example.demo.DTOs.UsuarioDTO.RespuestaUsuario;
+import com.example.demo.DTOs.UsuarioDTO.ActualizacionUsuario;
+import com.example.demo.Entidades.ArchivoMultimedia;
 import com.example.demo.Entidades.Usuario;
+import com.example.demo.Enums.EntidadesArchivoMultimediaEnum;
 import com.example.demo.Enums.UsuarioEnum;
-import com.example.demo.Repositorios.CarritoCompraRepositorio;
 import com.example.demo.Repositorios.UsuarioRepositorio;
-import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
 
+@RequiredArgsConstructor
 @Service
 public class UsuarioServicio {
 
-    @Autowired
-    UsuarioRepositorio usuarioRepositorio;
-
-    @Autowired
-    CarritoCompraServicio carritoCompraServicio;
-
-    @Autowired
-    PasswordEncoder passwordEncoder;
+    private final ArchivoMultimediaServicio archivoMultimediaServicio;
+    private final PasswordEncoder passwordEncoder;
+    private final ProductoServicio productoServicio;
+    private final UsuarioRepositorio usuarioRepositorio;
 
     //. Obtener usuario por Id
-    public UsuarioDTO obtenerPorId(Long id) {
+    public RespuestaUsuario obtenerPorId(Long id) {
         if (id == null || id <= 0) {
             throw new IllegalArgumentException("ID de usuario inválido.");
         }
 
-        Usuario usuario = usuarioRepositorio.findById(id).get();
-        UsuarioDTO usuarioDTO = new UsuarioDTO(usuario);
+        Usuario usuario = usuarioRepositorio.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Usuario no encontrado"));
 
-        return usuarioDTO;
+        return generarRespuesta(usuario);
     }
 
     //. Obtener usuarios por estado (activo/inactivo)
-    public List<Usuario> obtenerPorEstado(Boolean estado) {
-        return usuarioRepositorio.findByEstadoUsuario(estado);
+    public List<RespuestaUsuario> obtenerPorEstado(Boolean estado) {
+        List<Usuario> usuarios = usuarioRepositorio.findByEstadoUsuario(estado);
+        List<RespuestaUsuario> usuariosRespuesta = new ArrayList<>();
+
+        for (Usuario usuario : usuarios) {
+            RespuestaUsuario respuesta = generarRespuesta(usuario);
+            usuariosRespuesta.add(respuesta);
+        }
+
+        return usuariosRespuesta;
     }
 
-    //5. Obtener usuarios por rol (ADMIN / COMPRADOR / VENDEDOR / ORGANIZADOR)
-    public List<Usuario> obtenerUsuariosPorRol(UsuarioEnum rolUsuario) {
+    //5. Obtener usuarios por rol (ADMIN / COMPRADOR / VENDEDOR)
+    public List<RespuestaUsuario> obtenerUsuariosPorRol(UsuarioEnum rolUsuario) {
         if (rolUsuario == null ) {
             throw new IllegalArgumentException("El rol de usuario no puede ser nulo.");
         } else if (!UsuarioEnum.existe(String.valueOf(rolUsuario))) {
             throw new IllegalArgumentException("El rol de usuario es inválido.");
         }
 
-        return usuarioRepositorio.findByRolUsuario(rolUsuario);
+        List<Usuario> usuarios = usuarioRepositorio.findByRolUsuario(rolUsuario);
+        List<RespuestaUsuario> usuariosRespuesta = new ArrayList<>();
+
+        for (Usuario usuario : usuarios) {
+            RespuestaUsuario respuesta = generarRespuesta(usuario);
+            usuariosRespuesta.add(respuesta);
+        }
+
+        return usuariosRespuesta;
     }
 
     //. Actualizar datos de usuario
-    public Usuario actualizarDatos(UsuarioDTO usuarioDTO, Long idUsuario) {
-        if (usuarioDTO == null) {
+    public RespuestaUsuario actualizarDatos(ActualizacionUsuario actualizacionUsuario, Long idUsuario) {
+        if (actualizacionUsuario == null) {
             throw new IllegalArgumentException("Los datos del usuario son inválidos.");
         }
 
-        Optional<Usuario> usuarioOptional = usuarioRepositorio.findById(idUsuario);
-        if (!usuarioOptional.isPresent()) {
-            throw new NoSuchElementException("Usuario no encontrado.");
-        }
-        Usuario usuario = usuarioOptional.get();
+        Usuario usuario = usuarioRepositorio.findById(idUsuario)
+                .orElseThrow(() -> new NoSuchElementException("Usuario no encontrado"));
 
-        if (usuarioDTO.getNombreUsuario() != null) {
-            usuario.setNombreUsuario(usuarioDTO.getNombreUsuario());
+        if (actualizacionUsuario.getAlias() != null) {
+            usuario.setAlias(actualizacionUsuario.getAlias());
         }
 
-        if (usuarioDTO.getApellidoUsuario() != null) {
-            usuario.setApellidoUsuario(usuarioDTO.getApellidoUsuario());
+        if (actualizacionUsuario.getNombreUsuario() != null) {
+            usuario.setNombreUsuario(actualizacionUsuario.getNombreUsuario());
         }
 
-        if (usuarioDTO.getEmailUsuario() != null) {
-            usuario.setEmailUsuario(usuarioDTO.getEmailUsuario());
+        if (actualizacionUsuario.getApellidoUsuario() != null) {
+            usuario.setApellidoUsuario(actualizacionUsuario.getApellidoUsuario());
         }
 
-        if (usuarioDTO.getTelefonoUsuario() != null) {
-            usuario.setTelefonoUsuario(usuarioDTO.getTelefonoUsuario());
+        if (actualizacionUsuario.getEmailUsuario() != null) {
+            usuario.setEmailUsuario(actualizacionUsuario.getEmailUsuario());
         }
 
-        if (usuarioDTO.getEstadoUsuario() != null) {
-            usuario.setEstadoUsuario(usuarioDTO.getEstadoUsuario());
+        if (actualizacionUsuario.getTelefonoUsuario() != null) {
+            usuario.setTelefonoUsuario(actualizacionUsuario.getTelefonoUsuario());
         }
 
-        if (usuarioDTO.getRolUsuario() != null) {
-            usuario.setRolUsuario(usuarioDTO.getRolUsuario());
+        if (actualizacionUsuario.getEstadoUsuario() != null) {
+            usuario.setEstadoUsuario(actualizacionUsuario.getEstadoUsuario());
         }
 
-        if (usuarioDTO.getAlias() != null) {
-            usuario.setAlias(usuarioDTO.getAlias());
-        }
+        Usuario usuarioActualizado = usuarioRepositorio.save(usuario);
 
-        return usuarioRepositorio.save(usuario);
+        return generarRespuesta(usuarioActualizado);
     }
 
     //. Actualizar Contraseña
-    public Usuario actualizarContraseña(ContraseñaUsuarioDTO dto, Long id) {
+    public String actualizarContraseña(ActualizacionContraseñaUsuario dto, Long idUsuario) {
         if (dto == null || dto.getContraseñaAntigua() == null || dto.getContraseñaNueva() == null) {
             throw new IllegalArgumentException("Datos de contraseña inválidos.");
         }
 
-        Optional<Usuario> usuarioOptional = usuarioRepositorio.findById(id);
-        if (!usuarioOptional.isPresent()) {
-            throw new NoSuchElementException("Usuario no encontrado.");
-        }
-        Usuario usuario = usuarioOptional.get();
+        Usuario usuario = usuarioRepositorio.findById(idUsuario)
+                .orElseThrow(() -> new NoSuchElementException("Usuario no encontrado"));
 
         if (!passwordEncoder.matches(dto.getContraseñaAntigua(), usuario.getHashContrasenaUsuario())) {
             throw new IllegalArgumentException("Contraseña antigua incorrecta.");
         }
         usuario.setHashContrasenaUsuario(passwordEncoder.encode(dto.getContraseñaNueva()));
-        return usuarioRepositorio.save(usuario);
+
+        usuarioRepositorio.save(usuario);
+        return "La contraseña cambió con éxito";
     }
 
     //8. Eliminar usuario
-    public void eliminarUsuario(Long idUsuario) {
+    public String eliminarUsuario(Long idUsuario) {
         if (idUsuario == null || idUsuario <= 0) {
             throw new IllegalArgumentException("ID inválido para eliminar.");
         }
@@ -131,11 +134,39 @@ public class UsuarioServicio {
         }
 
         usuarioRepositorio.deleteById(idUsuario);
+        return "El usuario se eliminó con éxito";
     }
 
     //Obtener todos los usuarios
-    public List<Usuario> obtenerTodosUsuarios() {
-        return usuarioRepositorio.findAll();
+    public List<RespuestaUsuario> listarUsuarios() {
+        List<Usuario> usuarios = usuarioRepositorio.findAll();
+        List<RespuestaUsuario> usuariosRespuesta = new ArrayList<>();
+
+        for (Usuario usuario : usuarios) {
+            RespuestaUsuario respuesta = generarRespuesta(usuario);
+            usuariosRespuesta.add(respuesta);
+        }
+
+        return usuariosRespuesta;
+    }
+
+    public RespuestaUsuario generarRespuesta (Usuario usuario) {
+        RespuestaUsuario respuesta = new RespuestaUsuario();
+        respuesta.setIdUsuario(usuario.getIdUsuario());
+        respuesta.setAlias(usuario.getAlias());
+        respuesta.setNombreUsuario(usuario.getNombreUsuario());
+        respuesta.setApellidoUsuario(usuario.getApellidoUsuario());
+        respuesta.setEmailUsuario(usuario.getEmailUsuario());
+        respuesta.setTelefonoUsuario(usuario.getTelefonoUsuario());
+        respuesta.setEstadoUsuario(usuario.getEstadoUsuario());
+        respuesta.setRolUsuario(usuario.getRolUsuario());
+
+        List<ArchivoMultimedia> archivos = archivoMultimediaServicio.listarArchivosPorEntidadYId(EntidadesArchivoMultimediaEnum.Usuario, usuario.getIdUsuario());
+
+        respuesta.setListaArchivos(archivos);
+        respuesta.setListaProductos(productoServicio.listarPorUsuario(usuario.getIdUsuario()));
+
+        return respuesta;
     }
 
 }

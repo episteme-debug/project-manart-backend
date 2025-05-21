@@ -1,7 +1,7 @@
 package com.example.demo.Seguridad.Servicios;
 
-import com.example.demo.DTOs.AutenticacionRespuesta;
-import com.example.demo.DTOs.LogInDTO;
+import com.example.demo.DTOs.AuthDTO.AutenticacionRespuesta;
+import com.example.demo.DTOs.AuthDTO.LogIn;
 import com.example.demo.Entidades.CarritoCompra;
 import com.example.demo.Entidades.Usuario;
 import com.example.demo.Repositorios.UsuarioRepositorio;
@@ -11,7 +11,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -48,7 +47,7 @@ public class AutenticacionServicio {
                 .build();
     }
 
-    public AutenticacionRespuesta login(LogInDTO request)
+    public AutenticacionRespuesta login(LogIn request)
     {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(

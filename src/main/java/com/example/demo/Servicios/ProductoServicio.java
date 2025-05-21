@@ -185,6 +185,21 @@ public class ProductoServicio {
         return respuestaProductoProductos;
     }
 
+    public List<RespuestaProducto> listarPorUsuario (Long idUsuario) {
+        Usuario usuario = usuarioRepositorio.findById(idUsuario)
+                .orElseThrow(() -> new NoSuchElementException("Usuario no encontrado"));
+
+        List<Producto> productos = productoRepositorio.findByUsuario_IdUsuario(idUsuario);
+        List<RespuestaProducto> productosRespuesta = new ArrayList<>();
+
+        for (Producto producto : productos) {
+            RespuestaProducto respuesta = generarRespuesta(producto);
+            productosRespuesta.add(respuesta);
+        }
+
+        return productosRespuesta;
+    }
+
     //. Construccion de respuesta
     public RespuestaProducto generarRespuesta(Producto producto) {
         RespuestaProducto respuestaProducto = new RespuestaProducto();

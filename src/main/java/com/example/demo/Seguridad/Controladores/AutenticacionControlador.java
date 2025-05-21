@@ -1,7 +1,7 @@
 package com.example.demo.Seguridad.Controladores;
 
-import com.example.demo.DTOs.AutenticacionRespuesta;
-import com.example.demo.DTOs.LogInDTO;
+import com.example.demo.DTOs.AuthDTO.AutenticacionRespuesta;
+import com.example.demo.DTOs.AuthDTO.LogIn;
 import com.example.demo.Entidades.Usuario;
 import com.example.demo.Seguridad.Servicios.AutenticacionServicio;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ public class AutenticacionControlador {
     }
 
     @PostMapping("public/login")
-    public ResponseEntity<?> login(@RequestBody LogInDTO request)
+    public ResponseEntity<?> login(@RequestBody LogIn request)
     {
         try {
             AutenticacionRespuesta respuesta = autenticacionServicio.login(request);

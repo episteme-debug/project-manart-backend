@@ -33,3 +33,4 @@ build/
 .vscode/
 
 src/main/resources/application-oauth2.properties
+target/classes/application-oauth2.properties

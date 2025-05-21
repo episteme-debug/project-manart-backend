@@ -3,7 +3,6 @@ package com.example.demo.Repositorios;
 import com.example.demo.Entidades.ArchivoMultimedia;
 import com.example.demo.Enums.EntidadesArchivoMultimediaEnum;
 import com.example.demo.Enums.TipoArchivoEnum;
-import com.example.demo.Interfaces.ArchivoMultimediaInterfaz;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
