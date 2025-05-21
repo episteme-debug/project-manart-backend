@@ -1,5 +1,6 @@
 package com.example.demo.Entidades;
 
+import com.example.demo.Enums.EntidadesArchivoMultimediaEnum;
 import com.example.demo.Enums.TipoArchivoEnum;
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
@@ -34,24 +35,11 @@ public class ArchivoMultimedia {
     @Column(nullable = false)
     private LocalDate fechaCreacion;
 
-    // Relación con Publicación
-    @ManyToOne
-    @JoinColumn(name = "idPublicacion", nullable = true)
-    private Publicacion publicacion;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private EntidadesArchivoMultimediaEnum tipoEntidad;
 
-    // Relación con Producto
-    @ManyToOne
-    @JoinColumn(name = "idProducto", nullable = true)
-    private Producto producto;
-
-    // Relación con Categoría de Producto
-    @ManyToOne
-    @JoinColumn(name = "idCategoriaProducto", nullable = true)
-    private CategoriaProducto categoriaProducto;
-
-    // Relación con Usuario
-    @ManyToOne
-    @JoinColumn(name = "idUsuario", nullable = true)
-    private Usuario usuario;
+    @Column(nullable = false)
+    private Long idObjetoEntidad;
 
 }

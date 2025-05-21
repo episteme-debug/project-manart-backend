@@ -1,4 +1,4 @@
-package com.example.demo.DTOs;
+package com.example.demo.DTOs.ProductoDTO;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProductoSDTO {
+public class ActualizacionProducto {
 
     private Long idProducto;
     private String nombreProducto;

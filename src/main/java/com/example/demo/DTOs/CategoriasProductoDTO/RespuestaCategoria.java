@@ -1,18 +1,19 @@
-package com.example.demo.DTOs;
+package com.example.demo.DTOs.CategoriasProductoDTO;
 
-import jakarta.persistence.Column;
+import com.example.demo.Entidades.ArchivoMultimedia;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class CategoriaProductoDTO {
+import java.util.List;
 
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class RespuestaCategoria {
     private Long idCategoria;
     private String nombreCategoria;
     private String descripcionCategoria;
     private Boolean estadoCategoria;
-    private String imagenCategoria;
+    private List<ArchivoMultimedia> archivoMultimedia;
 }

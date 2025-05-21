@@ -1,30 +1,35 @@
 package com.example.demo.Servicios;
 
-import com.example.demo.DTOs.ProductoDTO.Creacion;
-import com.example.demo.DTOs.ProductoSDTO;
+import com.example.demo.DTOs.ProductoDTO.CreacionProducto;
+import com.example.demo.DTOs.ProductoDTO.RespuestaProducto;
+import com.example.demo.DTOs.ProductoDTO.ActualizacionProducto;
+import com.example.demo.Entidades.ArchivoMultimedia;
+import com.example.demo.Entidades.CategoriaProducto;
 import com.example.demo.Entidades.Producto;
 import com.example.demo.Entidades.Usuario;
+import com.example.demo.Enums.EntidadesArchivoMultimediaEnum;
+import com.example.demo.Repositorios.CategoriaProductoRepositorio;
 import com.example.demo.Repositorios.ProductoRepositorio;
 import com.example.demo.Repositorios.UsuarioRepositorio;
+import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
+@RequiredArgsConstructor
 public class ProductoServicio {
 
-    @Autowired
-    ProductoRepositorio productoRepositorio;
-
-    @Autowired
-    UsuarioRepositorio usuarioRepositorio;
+    private final ProductoRepositorio productoRepositorio;
+    private final UsuarioRepositorio usuarioRepositorio;
+    private final ArchivoMultimediaServicio archivoMultimediaServicio;
+    private final CategoriaProductoRepositorio categoriaProductoRepositorio;
 
     //. Crear nuevo producto
-    public Producto crearProducto(Creacion productoDTO) throws BadRequestException {
+    public RespuestaProducto crearProducto(CreacionProducto productoDTO) throws BadRequestException {
         Producto producto = new Producto();
         Usuario usuario = usuarioRepositorio.findById(productoDTO.getIdUsuario())
                         .orElseThrow(() -> new NoSuchElementException("Usuario no encontrado"));
@@ -32,41 +37,69 @@ public class ProductoServicio {
         producto.setNombreProducto(productoDTO.getNombreProducto());
         producto.setDescripcionProducto(productoDTO.getDescripcionProducto());
         producto.setPrecioProducto(productoDTO.getPrecioProducto());
-        producto.setStockProducto(producto.getStockProducto());
+        producto.setStockProducto(productoDTO.getStockProducto());
         producto.setUsuario(usuario);
 
-        return productoRepositorio.save(producto);
+        Producto nuevoProducto = productoRepositorio.save(producto);
+
+        return generarRespuesta(nuevoProducto);
     }
 
     //. Obtener producto por Id
-    public Producto obtenerProductoPorId(Long id) throws BadRequestException {
+    public RespuestaProducto obtenerProductoPorId(Long id) throws BadRequestException {
         if (id == null || id <= 0) {
             throw new BadRequestException("ID inválido.");
         }
-        return productoRepositorio.findById(id)
+
+        Producto producto = productoRepositorio.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Producto con ID " + id + " no existe."));
+
+        return generarRespuesta(producto);
     }
 
     //. Obtener todos los productos
-    public List<Producto> obtenerTodosProductos() {
-        return productoRepositorio.findAll();
+    public List<RespuestaProducto> listarProductos() {
+        List<RespuestaProducto> listadoRespuestaProducto = new ArrayList<>();
+        List<Producto> listadoProductos = productoRepositorio.findAll();
+
+        for (int i = 0; i < listadoProductos.size(); i++) {
+            Producto producto = listadoProductos.get(i);
+            RespuestaProducto respuestaProducto = generarRespuesta(producto);
+            listadoRespuestaProducto.add(respuestaProducto);
+        }
+
+        return listadoRespuestaProducto;
     }
 
     //. Obtener productos por nombre
-    public List<Producto> obtenerProductosPorNombre(String nombre) throws BadRequestException {
+    public List<RespuestaProducto> obtenerProductosPorNombre(String nombre) throws BadRequestException {
         if (nombre == null || nombre.trim().isEmpty()) {
             throw new BadRequestException("El nombre para buscar es obligatorio.");
         }
-        return productoRepositorio.findByNombreProducto(nombre);
+        List<RespuestaProducto> listadoRespuestaProducto = new ArrayList<>();
+        List<Producto> listadoProductos = productoRepositorio.findByNombreProducto(nombre);
+
+        for (int i = 0; i < listadoProductos.size(); i++) {
+            Producto producto = listadoProductos.get(i);
+            RespuestaProducto respuestaProducto = generarRespuesta(producto);
+            listadoRespuestaProducto.add(respuestaProducto);
+        }
+
+        return listadoRespuestaProducto;
     }
 
     // Actualizaar uno o más datos de un producto
-    public Producto actualizarProducto(Long id, ProductoSDTO dto) throws BadRequestException {
+    public RespuestaProducto actualizarProducto(Long id, ActualizacionProducto dto) throws BadRequestException {
         if (id == null || id <= 0 || !productoRepositorio.existsById(id)) {
             throw new BadRequestException("ID inválido");
         }
 
-        Producto producto = productoRepositorio.findById(id).get();
+        Producto producto = productoRepositorio.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Producto no encontrado"));
+
+        if (dto.getNombreProducto() != null) {
+            producto.setNombreProducto(dto.getNombreProducto().trim());
+        }
 
         if (dto.getDescripcionProducto() != null) {
             producto.setDescripcionProducto(dto.getDescripcionProducto().trim());
@@ -88,7 +121,9 @@ public class ProductoServicio {
             producto.setEstadoProducto(dto.getEstadoProducto());
         }
 
-        return productoRepositorio.save(producto);
+        Producto productoActualizado = productoRepositorio.save(producto);
+
+        return generarRespuesta(productoActualizado);
     }
 
 
@@ -100,7 +135,6 @@ public class ProductoServicio {
         producto.setStockProducto(producto.getStockProducto() + cantidad);
     }
 
-
     //. Eliminar producto
     public void eliminarProducto(Long id) throws BadRequestException {
         if (id == null || id <= 0) {
@@ -110,6 +144,72 @@ public class ProductoServicio {
             throw new NoSuchElementException("Producto con ID " + id + " no existe.");
         }
         productoRepositorio.deleteById(id);
+    }
+
+    //. Categorizar productos
+    public void categorizarProducto(Long idProducto, List<Long> idsCategorias) {
+        Producto producto = productoRepositorio.findById(idProducto)
+                .orElseThrow( () -> new NoSuchElementException("El producto no fue encontrado."));
+
+        if (idsCategorias.isEmpty()) {
+            throw new IllegalArgumentException("La lista no puede estar vacía.");
+        }
+
+        List<CategoriaProducto> listadoCategorias = new ArrayList<>();
+
+        for (Long idCategoria : idsCategorias) {
+            CategoriaProducto categoria = categoriaProductoRepositorio.findById(idCategoria)
+                    .orElseThrow(() -> new NoSuchElementException("Categoría no encontrada en la base de datos."));
+
+            listadoCategorias.add(categoria);
+        }
+
+        producto.setCategorias(listadoCategorias);
+
+        productoRepositorio.save(producto);
+    }
+
+    //. Listado de productos por categoría
+    public List<RespuestaProducto> listarProductosPorCategoria(Long idCategoria) {
+        CategoriaProducto categoria = categoriaProductoRepositorio.findById(idCategoria)
+                .orElseThrow(() -> new NoSuchElementException("No se puede encontrar la categoría."));
+
+        List<Producto> productos = productoRepositorio.findByCategorias_IdCategoria(idCategoria);
+        List<RespuestaProducto> respuestaProductoProductos = new ArrayList<>();
+
+        for (Producto producto : productos) {
+            RespuestaProducto respuestaProducto = generarRespuesta(producto);
+            respuestaProductoProductos.add(respuestaProducto);
+        }
+
+        return respuestaProductoProductos;
+    }
+
+    //. Construccion de respuesta
+    public RespuestaProducto generarRespuesta(Producto producto) {
+        RespuestaProducto respuestaProducto = new RespuestaProducto();
+
+        respuestaProducto.setIdProducto(producto.getIdProducto());
+        respuestaProducto.setNombreProducto(producto.getNombreProducto());
+        respuestaProducto.setDescripcionProducto(producto.getDescripcionProducto());
+        respuestaProducto.setStockProducto(producto.getStockProducto());
+        respuestaProducto.setPrecioProducto(producto.getPrecioProducto());
+        respuestaProducto.setIdUsuario(producto.getUsuario().getIdUsuario());
+
+        List<String> nombreCategorias = new ArrayList<>();
+        List<CategoriaProducto> categorias = producto.getCategorias();
+        for (CategoriaProducto categoria : categorias) {
+            String nombre = categoria.getNombreCategoria();
+            nombreCategorias.add(nombre);
+        }
+
+        respuestaProducto.setListaCategorias(nombreCategorias);
+
+        List<ArchivoMultimedia> listaArchivos = archivoMultimediaServicio.listarArchivosPorEntidadYId(EntidadesArchivoMultimediaEnum.Producto, producto.getIdProducto());
+
+        respuestaProducto.setListaArchivos(listaArchivos);
+
+        return respuestaProducto;
     }
 
 

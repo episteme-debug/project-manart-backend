@@ -1,11 +1,9 @@
 package com.example.demo.Controladores;
 
-import com.example.demo.DTOs.ArchivoMultimediaDTO;
 import com.example.demo.Entidades.ArchivoMultimedia;
-import com.example.demo.Interfaces.ArchivoMultimediaInterfaz;
+import com.example.demo.Enums.EntidadesArchivoMultimediaEnum;
+import com.example.demo.Enums.TipoArchivoEnum;
 import com.example.demo.Servicios.ArchivoMultimediaServicio;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,82 +18,80 @@ import java.util.NoSuchElementException;
 @RequestMapping("/api/archivomultimedia/")
 @RestController
 public class ArchivoMultimediaControlador {
-    @Autowired
-    ArchivoMultimediaServicio archivoMultimediaServicio;
 
-    //Transferir archivo, por el dto se comparte la relacion y el id de la relacion
-    @PostMapping("transferirarchivos")
+    @Autowired
+    private ArchivoMultimediaServicio archivoMultimediaServicio;
+
+    /* Transfiere una lista de archivos a un directorio correspondiente según la entidad y el ID del objeto. */
+    @PostMapping("private/transferirarchivos/{entidad}/{idObjeto}")
     public ResponseEntity<?> transferirArchivos(
             @RequestPart("archivos") List<MultipartFile> archivos,
-            @RequestPart("dto") String dtoString) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        ArchivoMultimediaDTO dto = mapper.readValue(dtoString, ArchivoMultimediaDTO.class);
-        System.out.println(dto);
+            @PathVariable EntidadesArchivoMultimediaEnum entidad,
+            @PathVariable Long idObjeto) {
         try {
-            // Procesar archivos y DTO
-            return ResponseEntity.ok(archivoMultimediaServicio.transferirArchivos(archivos, dto));
-        } catch (JsonProcessingException e) {
-            return ResponseEntity.badRequest().body("DTO inválido");
+            List<ArchivoMultimedia> archivosTransferidos = archivoMultimediaServicio.transferirArchivos(archivos, entidad, idObjeto);
+            return ResponseEntity.ok(archivosTransferidos);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al transferir archivos: " + e.getMessage());
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body("Error de aplicación: " + e.getMessage());
         }
     }
 
-    @GetMapping("obtenerporid/{id}")
+    // Lista todos los archivos multimedia relacionados a una entidad específica y un ID.
+    @GetMapping("private/listararchivos/{entidad}/{idObjeto}")
+    public ResponseEntity<?> listarArchivosPorEntidadYId(
+            @PathVariable EntidadesArchivoMultimediaEnum entidad,
+            @PathVariable Long idObjeto) {
+        try {
+            List<ArchivoMultimedia> listaArchivos = archivoMultimediaServicio.listarArchivosPorEntidadYId(entidad, idObjeto);
+            return ResponseEntity.ok(listaArchivos);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al listar archivos: " + e.getMessage());
+        }
+    }
+
+    // Lista los archivos de una entidad, ID y tipo específico.
+    @GetMapping("private/listararchivos/{entidad}/{idObjeto}/{tipo}")
+    public ResponseEntity<?> listarArchivosPorEntidadYIdYTipo(
+            @PathVariable EntidadesArchivoMultimediaEnum entidad,
+            @PathVariable Long idObjeto,
+            @PathVariable TipoArchivoEnum tipo) {
+        try {
+            List<ArchivoMultimedia> listaArchivos = archivoMultimediaServicio.listarArchivosPorEntidadYIdYTipo(entidad, idObjeto, tipo);
+            return ResponseEntity.ok(listaArchivos);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al filtrar archivos: " + e.getMessage());
+        }
+    }
+
+    // Obtiene un archivo por su ID.
+    @GetMapping("public/obtenerporid/{id}")
     public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
         try {
             ArchivoMultimedia archivo = archivoMultimediaServicio.obtenerPorId(id);
             return ResponseEntity.ok(archivo);
-
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Archivo no encontrado con ID: " + id);
-
         } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflicto: " + e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error inesperado: " + e.getMessage());
         }
     }
 
-    @GetMapping("obtenerporrelacion/{relacion}/{id}")
-    public ResponseEntity<?> obtenerPorRelacion(@PathVariable String relacion, @PathVariable Long id) {
-        try {
-            List<ArchivoMultimediaInterfaz> resultado = switch (relacion.toLowerCase()) {
-                case "publicacion" -> archivoMultimediaServicio.listarArchivosPorPublicacion(id);
-                case "producto" -> archivoMultimediaServicio.listarArchivosPorProducto(id);
-                case "categoria" -> archivoMultimediaServicio.listarArchivosPorCategoria(id);
-                case "usuario" -> archivoMultimediaServicio.listarArchivosPorUsuario(id);
-                default -> throw new IllegalArgumentException("Relación no válida: " + relacion);
-            };
-            return ResponseEntity.ok(resultado);
-
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-
-        } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error inesperado: " + e.getMessage());
-
-        }
-    }
-
-    @DeleteMapping("eliminarporid/{id}")
+    // Elimina un archivo por su ID.
+    @DeleteMapping("private/eliminarporid/{id}")
     public ResponseEntity<?> eliminarPorId(@PathVariable Long id) {
         try {
             archivoMultimediaServicio.eliminarPorId(id);
             return ResponseEntity.ok("Archivo eliminado correctamente con ID: " + id);
         } catch (NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontró el archivo a eliminar con ID: " + id);
-
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("No se encontró el archivo con ID: " + id);
         } catch (IllegalStateException e) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getMessage());
-
+            return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflicto: " + e.getMessage());
         } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al eliminar archivo físico: " + e.getMessage());
-
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al eliminar el archivo físico: " + e.getMessage());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error inesperado: " + e.getMessage());
         }

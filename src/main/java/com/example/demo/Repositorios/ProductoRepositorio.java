@@ -15,4 +15,6 @@ public interface ProductoRepositorio extends JpaRepository<Producto, Long> {
     @Query(value = "SELECT * FROM producto p\n" +
             "WHERE LOWER(REPLACE(p.nombre_producto, ' ', '')) LIKE LOWER(CONCAT('%', :nombreProducto, '%'))", nativeQuery = true)
     List<Producto> findByNombreProducto(@Param("nombreProducto") String nombreProducto);
+
+    List<Producto> findByCategorias_IdCategoria(Long idCategoria);
 }

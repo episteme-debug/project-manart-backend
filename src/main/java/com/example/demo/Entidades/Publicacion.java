@@ -43,7 +43,5 @@ public class Publicacion {
     @JoinColumn(name = "idUsuario", nullable = false)
     private Usuario usuario;
 
-    @OneToMany(mappedBy = "publicacion")
-    private List<ArchivoMultimedia> archivosMultimedia;
 
 }

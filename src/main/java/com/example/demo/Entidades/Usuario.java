@@ -70,9 +70,6 @@ public class Usuario implements UserDetails {
     private List<Pedido> pedido = new ArrayList<>();
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ArchivoMultimedia> archivosMultimedia = new ArrayList<>();
-
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReseñaProducto> reseñaProducto = new ArrayList<>();
 
     // Metodos reescritos automáticamente tras la implementacion

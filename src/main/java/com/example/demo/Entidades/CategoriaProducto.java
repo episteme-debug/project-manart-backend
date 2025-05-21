@@ -25,16 +25,12 @@ public class CategoriaProducto {
     private String descripcionCategoria;
 
     @Column(nullable = false)
-    private Boolean estadoCategoria;
+    private Boolean estadoCategoria = true;
 
-    @Column(nullable = true)
-    private String imagenCategoria;
+    @Column(nullable = false)
+    private String imagenCategoria = "avatarGenerico.jpg";
 
-    @OneToMany(mappedBy = "categoriaProducto")
-    private List<RelacionCategoriaProducto> productosXCategoria;
-
-    @OneToMany(mappedBy = "categoriaProducto")
-    private List<ArchivoMultimedia> archivosMultimedia;
-
+    @ManyToMany(mappedBy = "categorias")
+    private List<Producto> productos;
 
 }

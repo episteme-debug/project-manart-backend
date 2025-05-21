@@ -48,16 +48,18 @@ public class Producto {
     @JoinColumn(name = "idPromocion", nullable = true)
     private Promocion promocion;
 
-    @OneToMany(mappedBy = "producto")
-    private List<RelacionCategoriaProducto> categoriasXProducto;
-
     @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RelacionCarritoProducto> relacionCarritoProductos;
 
     @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ArchivoMultimedia> archivosMultimedia;
-
-    @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReseñaProducto> reseñaProducto;
+
+    @ManyToMany
+    @JoinTable(
+            name = "relacionProductoCategoria",
+            joinColumns = @JoinColumn(name = "producto_id"),
+            inverseJoinColumns = @JoinColumn(name = "categoria_id")
+    )
+    private List<CategoriaProducto> categorias;
 
 }

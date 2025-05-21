@@ -1,172 +1,149 @@
 package com.example.demo.Servicios;
 
-import com.example.demo.DTOs.ArchivoMultimediaDTO;
 import com.example.demo.Entidades.ArchivoMultimedia;
+import com.example.demo.Enums.EntidadesArchivoMultimediaEnum;
 import com.example.demo.Enums.TipoArchivoEnum;
-import com.example.demo.Interfaces.ArchivoMultimediaInterfaz;
-import com.example.demo.Repositorios.ArchivoMultimediaRepositorio;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.demo.Repositorios.*;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.List;
 import java.util.NoSuchElementException;
 
 import static com.example.demo.Enums.TipoArchivoEnum.*;
 
 @Service
+@RequiredArgsConstructor
 public class ArchivoMultimediaServicio {
 
-    @Autowired
-    ArchivoMultimediaRepositorio archivoMultimediaRepositorio;
+    private final ArchivoMultimediaRepositorio archivoMultimediaRepositorio;
+    private final ProductoRepositorio productoRepositorio;
+    private final UsuarioRepositorio usuarioRepositorio;
+    private final CategoriaProductoRepositorio categoriaProductoRepositorio;
+    private final PublicacionRepositorio publicacionRepositorio;
 
-    private static final String dirPersonal = "D:\\Manart\\backend\\";
-    private static final String dirGeneral = "project-manart-backend\\src\\main\\resources\\static\\cargascliente\\";
-    private static final String dirCategoriaProductos = dirPersonal + dirGeneral + "categoriaproductos\\";
-    private static final String dirProductos = dirPersonal + dirGeneral + "productos\\";
-    private static final String dirPublicaciones = dirPersonal + dirGeneral + "publicaciones\\";
-    private static final String dirUsuarios = dirPersonal + dirGeneral + "usuarios\\";
+    private static final String DIR_BASE = "D:\\Manart\\backend\\project-manart-backend\\src\\main\\resources\\static\\cargascliente\\";
 
-    // Metodo reutilizable que encuentra el tipo de archivo extrayendo una parte de getContentType
+    private static final Map<EntidadesArchivoMultimediaEnum, String> DIRECTORIOS = Map.of(
+            EntidadesArchivoMultimediaEnum.Usuario, DIR_BASE + "usuarios\\",
+            EntidadesArchivoMultimediaEnum.Producto, DIR_BASE + "productos\\",
+            EntidadesArchivoMultimediaEnum.Publicacion, DIR_BASE + "publicaciones\\",
+            EntidadesArchivoMultimediaEnum.CategoriaProducto, DIR_BASE + "categoriaproductos\\"
+    );
+
+
     public TipoArchivoEnum obtenerTipoArchivo(String tipoFormato) throws IOException {
-        if (tipoFormato == null || tipoFormato.isEmpty()) {
+        if (tipoFormato == null || tipoFormato.isEmpty())
             throw new IOException("Formato de archivo no especificado.");
-        }
-        if (tipoFormato.startsWith("image/")) return TipoArchivoEnum.IMAGEN;
-        if (tipoFormato.startsWith("video/")) return TipoArchivoEnum.VIDEO;
-        if (tipoFormato.startsWith("audio/")) return TipoArchivoEnum.AUDIO;
-        throw new IOException("Tipo de archivo no permitido: " + tipoFormato);
+
+        return switch (tipoFormato.split("/")[0]) {
+            case "image" -> TipoArchivoEnum.IMAGEN;
+            case "video" -> TipoArchivoEnum.VIDEO;
+            case "audio" -> TipoArchivoEnum.AUDIO;
+            default -> throw new IOException("Tipo de archivo no permitido: " + tipoFormato);
+        };
     }
 
-    // Metodo reutilizable que identifica la entidad que se quiere relacionar
-    public String obtenerDirectorioBase(ArchivoMultimediaDTO relacion) throws IOException {
-        if (relacion == null) {
-            throw new IOException("Relación no puede ser nula.");
-        }
-        if (relacion.getUsuario() != null) return dirUsuarios;
-        if (relacion.getProducto() != null) return dirProductos;
-        if (relacion.getPublicacion() != null) return dirPublicaciones;
-        if (relacion.getCategoriaProducto() != null) return dirCategoriaProductos;
-        throw new IOException("Relación no válida para el archivo.");
+    public String obtenerDirectorioBase(EntidadesArchivoMultimediaEnum entidad) throws IOException {
+        String dir = DIRECTORIOS.get(entidad);
+        if (dir == null)
+            throw new IOException("Relación no válida o nula para el archivo.");
+        return dir;
     }
 
-    // Metodo reutilizable que identifica la subcarpeta a partir del metodo obtenerTipoArchivo
-    public String obtenerSubcarpeta(TipoArchivoEnum tipoArchivo) {
-        if (tipoArchivo == null) {
-            throw new IllegalArgumentException("Tipo de archivo no puede ser nulo.");
-        }
-        switch (tipoArchivo) {
-            case IMAGEN: return "imagen";
-            case VIDEO: return "video";
-            case AUDIO: return "audio";
-            default: throw new IllegalArgumentException("Subcarpeta no definida para el tipo de archivo.");
-        }
+    public String obtenerSubcarpeta(TipoArchivoEnum tipo) {
+        return switch (tipo) {
+            case IMAGEN -> "imagen";
+            case VIDEO -> "video";
+            case AUDIO -> "audio";
+        };
     }
 
-    // Metodo reutilizable por transferir archivos
-    public ArchivoMultimedia transferirArchivo(MultipartFile archivo, ArchivoMultimediaDTO relacion) throws IOException {
-        if (archivo == null) {
-            throw new IOException("Archivo no proporcionado.");
-        }
-        if (archivo.isEmpty()) {
-            throw new IOException("El archivo está vacío.");
-        }
+    public ArchivoMultimedia transferirArchivo(MultipartFile archivo, EntidadesArchivoMultimediaEnum entidad, Long idObjeto) throws IOException {
+        validarArchivo(archivo);
 
-        String tipoFormato = archivo.getContentType();
         String nombreArchivo = archivo.getOriginalFilename();
+        TipoArchivoEnum tipo = obtenerTipoArchivo(archivo.getContentType());
+        String ruta = obtenerDirectorioBase(entidad) + obtenerSubcarpeta(tipo) + "\\" + nombreArchivo;
 
-        if (nombreArchivo == null || nombreArchivo.isEmpty()) {
-            throw new IOException("El nombre del archivo no puede ser nulo o vacío.");
+        archivo.transferTo(Paths.get(ruta));
+
+        if (!comprobarExistenciaObjeto(entidad, idObjeto)) {
+            throw new NoSuchElementException(entidad + " con id " + idObjeto + " no existe");
         }
 
-        TipoArchivoEnum tipoArchivo = obtenerTipoArchivo(tipoFormato);
-        String dirBase = obtenerDirectorioBase(relacion);
-        String subcarpeta = obtenerSubcarpeta(tipoArchivo);
+        ArchivoMultimedia nuevo = new ArchivoMultimedia();
+        nuevo.setNombre(nombreArchivo);
+        nuevo.setRuta(ruta);
+        nuevo.setTipo(tipo);
+        nuevo.setTipoEntidad(entidad);
+        nuevo.setIdObjetoEntidad(idObjeto);
 
-        String rutaArchivo = dirBase + "\\" + subcarpeta + File.separator + nombreArchivo;
-        archivo.transferTo(Paths.get(rutaArchivo));
-
-        ArchivoMultimedia archivox = new ArchivoMultimedia();
-        archivox.setNombre(nombreArchivo);
-        archivox.setRuta(rutaArchivo);
-        archivox.setTipo(tipoArchivo);
-
-        archivox.setUsuario(relacion.getUsuario());
-        archivox.setProducto(relacion.getProducto());
-        archivox.setPublicacion(relacion.getPublicacion());
-        archivox.setCategoriaProducto(relacion.getCategoriaProducto());
-
-        return archivoMultimediaRepositorio.save(archivox);
+        return archivoMultimediaRepositorio.save(nuevo);
     }
 
-    public List<ArchivoMultimedia> transferirArchivos(List<MultipartFile> archivos, ArchivoMultimediaDTO relacion) throws IOException {
-        if (archivos == null || archivos.isEmpty()) {
-            throw new IOException("No se proporcionaron archivos para transferir.");
-        }
-
-        List<ArchivoMultimedia> guardados = new ArrayList<>();
+    public List<ArchivoMultimedia> transferirArchivos(List<MultipartFile> archivos, EntidadesArchivoMultimediaEnum entidad, Long idObjeto) throws IOException {
+        if (archivos == null || archivos.isEmpty())
+            throw new IOException("No se proporcionaron archivos.");
+        List<ArchivoMultimedia> resultado = new ArrayList<>();
         for (MultipartFile archivo : archivos) {
-            guardados.add(transferirArchivo(archivo, relacion));
+            resultado.add(transferirArchivo(archivo, entidad, idObjeto));
         }
+        return resultado;
+    }
 
-        return guardados;
+    public List<ArchivoMultimedia> listarArchivosPorEntidadYId(EntidadesArchivoMultimediaEnum entidad, Long idObjeto) {
+        validarExistencia(entidad, idObjeto);
+        return archivoMultimediaRepositorio.findByTipoEntidadAndIdObjetoEntidad(entidad, idObjeto);
+    }
+
+    public List<ArchivoMultimedia> listarArchivosPorEntidadYIdYTipo(EntidadesArchivoMultimediaEnum entidad, Long idObjeto, TipoArchivoEnum tipo) {
+        validarExistencia(entidad, idObjeto);
+        return archivoMultimediaRepositorio.findByTipoEntidadAndIdObjetoEntidadAndTipo(entidad, idObjeto, tipo);
     }
 
     public ArchivoMultimedia obtenerPorId(Long id) {
-        ArchivoMultimedia archivo = archivoMultimediaRepositorio.findById(id).get();
-        if (archivo == null){
-            throw new NoSuchElementException("Archivo multimedia no encontrado con ID: " + id);
-        }
-        return archivo;
-    }
-
-    public List<ArchivoMultimediaInterfaz> listarArchivosPorPublicacion(Long id) {
-        if (id == null) {
-            throw new IllegalArgumentException("ID de publicación no puede ser nulo.");
-        }
-        return archivoMultimediaRepositorio.findByPublicacion_Id(id);
-    }
-
-    public List<ArchivoMultimediaInterfaz> listarArchivosPorUsuario(Long id) {
-        if (id == null) {
-            throw new IllegalArgumentException("ID de usuario no puede ser nulo.");
-        }
-        return archivoMultimediaRepositorio.findByUsuario_IdUsuario(id);
-    }
-
-    public List<ArchivoMultimediaInterfaz> listarArchivosPorCategoria(Long id) {
-        if (id == null) {
-            throw new IllegalArgumentException("ID de categoría no puede ser nulo.");
-        }
-        return archivoMultimediaRepositorio.findByCategoriaProducto_IdCategoria(id);
-    }
-
-    public List<ArchivoMultimediaInterfaz> listarArchivosPorProducto(Long id) {
-        if (id == null) {
-            throw new IllegalArgumentException("ID de producto no puede ser nulo.");
-        }
-        return archivoMultimediaRepositorio.findByProducto_IdProducto(id);
+        return archivoMultimediaRepositorio.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Elemento no encontrado"));
     }
 
     public void eliminarPorId(Long id) throws IOException {
-        ArchivoMultimedia archivo = archivoMultimediaRepositorio.findById(id).get();
-        if (archivo == null){
-            throw new NoSuchElementException("Archivo multimedia no encontrado con ID: " + id);
-        }
-
+        ArchivoMultimedia archivo = obtenerPorId(id);
         String ruta = archivo.getRuta();
-        if (ruta == null || ruta.isEmpty()) {
+        if (ruta == null || ruta.isEmpty())
             throw new IOException("Ruta del archivo no especificada.");
-        }
 
-        Path path = Paths.get(ruta);
-        Files.deleteIfExists(path);
+        Files.deleteIfExists(Paths.get(ruta));
         archivoMultimediaRepositorio.deleteById(id);
+    }
+
+    // Métodos auxiliares
+
+    private void validarArchivo(MultipartFile archivo) throws IOException {
+        if (archivo == null || archivo.isEmpty())
+            throw new IOException("Archivo no proporcionado o vacío.");
+        if (archivo.getOriginalFilename() == null || archivo.getOriginalFilename().isEmpty())
+            throw new IOException("Nombre de archivo no puede ser nulo o vacío.");
+    }
+
+    private void validarExistencia(EntidadesArchivoMultimediaEnum entidad, Long id) {
+        if (!comprobarExistenciaObjeto(entidad, id)) {
+            throw new NoSuchElementException(entidad + " con id " + id + " no existe");
+        }
+    }
+
+    public boolean comprobarExistenciaObjeto(EntidadesArchivoMultimediaEnum entidad, Long id) {
+        return switch (entidad) {
+            case Usuario -> usuarioRepositorio.existsById(id);
+            case Producto -> productoRepositorio.existsById(id);
+            case Publicacion -> publicacionRepositorio.existsById(id);
+            case CategoriaProducto -> categoriaProductoRepositorio.existsById(id);
+        };
     }
 }
