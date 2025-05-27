@@ -1,10 +1,23 @@
 package com.example.demo.Repositorios;
 
 import com.example.demo.Entidades.Usuario;
+import com.example.demo.Enums.UsuarioEnum;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
-public interface UsuarioRepositorio extends JpaRepository<Usuario, Integer> {
+@Repository
+public interface UsuarioRepositorio extends JpaRepository<Usuario, Long>
+{
     Optional<Usuario> findByEmailUsuario(String emailUsuario);
+    Optional<Usuario> findByAlias(String alias);
+    List<Usuario> findByEstadoUsuario(Boolean estadoUsuario);
+    List<Usuario> findByRolUsuario(Enum<UsuarioEnum> rolUsuario);
+
+    boolean existsByAlias(String alias);
+    boolean existsByEmailUsuario(String email);
+
+
 }

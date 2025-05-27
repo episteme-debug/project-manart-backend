@@ -1,14 +1,22 @@
 package com.example.demo.Entidades;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class CategoriaProducto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idCategoria;
+    private Long idCategoria;
 
     @Column(nullable = false, length = 100)
     private String nombreCategoria;
@@ -17,101 +25,12 @@ public class CategoriaProducto {
     private String descripcionCategoria;
 
     @Column(nullable = false)
-    private boolean estadoCategoria;
-
-    @Lob
-    @Column(nullable = false, columnDefinition = "LONGBLOB")
-    private byte[] imagenCategoria;
+    private Boolean estadoCategoria = true;
 
     @Column(nullable = false)
-    private int ordenVisualizacionCategoria;
+    private String imagenCategoria = "avatarGenerico.jpg";
 
-    @ManyToMany
-    @JoinTable(
-            name = "categoriaxproducto",  // Nombre de la tabla intermedia
-            joinColumns = @JoinColumn(name = "idCategoria"),  // FK de la entidad 'Categoria'
-            inverseJoinColumns = @JoinColumn(name = "idProducto")  // FK de la entidad 'Producto'
-    )
+    @ManyToMany(mappedBy = "categorias")
     private List<Producto> productos;
 
-    public CategoriaProducto() {
-    }
-
-    public CategoriaProducto(List<Producto> productos, Integer idCategoria, String nombreCategoria, String descripcionCategoria, boolean estadoCategoria, byte[] imagenCategoria, int ordenVisualizacionCategoria) {
-        this.productos = productos;
-        this.idCategoria = idCategoria;
-        this.nombreCategoria = nombreCategoria;
-        this.descripcionCategoria = descripcionCategoria;
-        this.estadoCategoria = estadoCategoria;
-        this.imagenCategoria = imagenCategoria;
-        this.ordenVisualizacionCategoria = ordenVisualizacionCategoria;
-    }
-
-    public Integer getIdCategoria() {
-        return idCategoria;
-    }
-
-    public void setIdCategoria(Integer idCategoria) {
-        this.idCategoria = idCategoria;
-    }
-
-    public String getNombreCategoria() {
-        return nombreCategoria;
-    }
-
-    public void setNombreCategoria(String nombreCategoria) {
-        this.nombreCategoria = nombreCategoria;
-    }
-
-    public String getDescripcionCategoria() {
-        return descripcionCategoria;
-    }
-
-    public void setDescripcionCategoria(String descripcionCategoria) {
-        this.descripcionCategoria = descripcionCategoria;
-    }
-
-    public boolean getEstadoCategoria() {
-        return estadoCategoria;
-    }
-
-    public void setEstadoCategoria(boolean estadoCategoria) {
-        this.estadoCategoria = estadoCategoria;
-    }
-
-    public byte[] getImagenCategoria() {
-        return imagenCategoria;
-    }
-
-    public void setImagenCategoria(byte[] imagenCategoria) {
-        this.imagenCategoria = imagenCategoria;
-    }
-
-    public int getOrdenVisualizacionCategoria() {
-        return ordenVisualizacionCategoria;
-    }
-
-    public void setOrdenVisualizacionCategoria(int ordenVisualizacionCategoria) {
-        this.ordenVisualizacionCategoria = ordenVisualizacionCategoria;
-    }
-
-    public List<Producto> getProductos() {
-        return productos;
-    }
-
-    public void setProductos(List<Producto> productos) {
-        this.productos = productos;
-    }
-
-    @Override
-    public String toString() {
-        return "CategoriaProducto{" +
-                "idCategoria=" + idCategoria +
-                ", nombreCategoria='" + nombreCategoria + '\'' +
-                ", descripcionCategoria='" + descripcionCategoria + '\'' +
-                ", estadoCategoria=" + estadoCategoria +
-                ", imagenCategoria='" + imagenCategoria + '\'' +
-                ", ordenVisualizacionCategoria=" + ordenVisualizacionCategoria +
-                '}';
-    }
 }

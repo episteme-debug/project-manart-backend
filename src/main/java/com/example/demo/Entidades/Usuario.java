@@ -1,164 +1,112 @@
 package com.example.demo.Entidades;
 
+import com.example.demo.Enums.*;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED)
-public class Usuario {
+public class Usuario implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    protected Integer idUsuario;
+    private Long idUsuario;
 
     @Column(nullable = false, length = 100)
-    protected String nombreUsuario;
+    private String alias;
 
     @Column(nullable = false, length = 100)
-    protected String apellidoUsuario;
+    private String nombreUsuario;
 
-    @Column(nullable = false, length = 20)
-    protected String telefonoUsuario;
-
-    @Column(nullable = false)
-    protected boolean estadoUsuario = true;
-
-    @Column(nullable = false)
-    protected String imagenPerfilUsuario = "avatarGenerico.jpg";
-
-    @Column(nullable = false)
-    protected int tipoUsuario;
+    @Column(nullable = false, length = 100)
+    private String apellidoUsuario;
 
     @Column(nullable = false, length = 200)
     private String emailUsuario;
 
     @Column(nullable = false, length = 250)
-    private String contrasenaUsuario;
+    private String hashContrasenaUsuario;
 
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
-    List<Publicacion> publicaciones;
-    
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
-    List<Direccion> direcciones;
+    @Column(nullable = false, length = 20)
+    private String telefonoUsuario;
 
+    @Column(nullable = false)
+    private Boolean estadoUsuario = true;
 
-/*    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL)
-    private List<Valoracion> valoraciones;*/
+    @Column(nullable = false)
+    private String imagenPerfilUsuario = "avatarGenerico.jpg";
 
-    public Usuario() {
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UsuarioEnum rolUsuario;
+
+    // Relaciones
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Producto> productos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Publicacion> publicaciones = new ArrayList<>();
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Direccion> direcciones = new ArrayList<>();
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CarritoCompra> carritoCompras = new ArrayList<>();
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Pedido> pedido = new ArrayList<>();
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ReseñaProducto> reseñaProducto = new ArrayList<>();
+
+    // Metodos reescritos automáticamente tras la implementacion
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of(new SimpleGrantedAuthority("ROLE_" +rolUsuario.name()));
     }
 
-    public Usuario(Integer idUsuario, String nombreUsuario, String apellidoUsuario, String telefonoUsuario, boolean estadoUsuario, String imagenPerfilUsuario, int tipoUsuario, String emailUsuario, String contrasenaUsuario) {
-        this.idUsuario = idUsuario;
-        this.nombreUsuario = nombreUsuario;
-        this.apellidoUsuario = apellidoUsuario;
-        this.telefonoUsuario = telefonoUsuario;
-        this.estadoUsuario = estadoUsuario;
-        this.imagenPerfilUsuario = imagenPerfilUsuario;
-        this.tipoUsuario = tipoUsuario;
-        this.emailUsuario = emailUsuario;
-        this.contrasenaUsuario = contrasenaUsuario;
+    @Override
+    public String getPassword() {
+        return hashContrasenaUsuario;
     }
 
-    public Usuario(Integer idUsuario, String nombreUsuario, String apellidoUsuario, String telefonoUsuario, boolean estadoUsuario, String imagenPerfilUsuario, int tipoUsuario, String emailUsuario, String contrasenaUsuario, List<Publicacion> publicaciones, List<Direccion> direcciones) {
-        this.idUsuario = idUsuario;
-        this.nombreUsuario = nombreUsuario;
-        this.apellidoUsuario = apellidoUsuario;
-        this.telefonoUsuario = telefonoUsuario;
-        this.estadoUsuario = estadoUsuario;
-        this.imagenPerfilUsuario = imagenPerfilUsuario;
-        this.tipoUsuario = tipoUsuario;
-        this.emailUsuario = emailUsuario;
-        this.contrasenaUsuario = contrasenaUsuario;
-        this.publicaciones = publicaciones;
-        this.direcciones = direcciones;
+    @Override
+    public String getUsername() {
+        return alias;
     }
 
-    public Integer getIdUsuario() {
-        return idUsuario;
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
     }
 
-    public void setIdUsuario(Integer idUsuario) {
-        this.idUsuario = idUsuario;
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
     }
 
-    public String getNombreUsuario() {
-        return nombreUsuario;
+    // Caducidad de las credenciales
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
     }
 
-    public void setNombreUsuario(String nombreUsuario) {
-        this.nombreUsuario = nombreUsuario;
-    }
-
-    public String getApellidoUsuario() {
-        return apellidoUsuario;
-    }
-
-    public void setApellidoUsuario(String apellidoUsuario) {
-        this.apellidoUsuario = apellidoUsuario;
-    }
-
-    public String getTelefonoUsuario() {
-        return telefonoUsuario;
-    }
-
-    public void setTelefonoUsuario(String telefonoUsuario) {
-        this.telefonoUsuario = telefonoUsuario;
-    }
-
-    public boolean isEstadoUsuario() {
-        return estadoUsuario;
-    }
-
-    public void setEstadoUsuario(boolean estadoUsuario) {
-        this.estadoUsuario = estadoUsuario;
-    }
-
-    public String getImagenPerfilUsuario() {
-        return imagenPerfilUsuario;
-    }
-
-    public void setImagenPerfilUsuario(String imagenPerfilUsuario) {
-        this.imagenPerfilUsuario = imagenPerfilUsuario;
-    }
-
-    public int getTipoUsuario() {
-        return tipoUsuario;
-    }
-
-    public void setTipoUsuario(int tipoUsuario) {
-        this.tipoUsuario = tipoUsuario;
-    }
-
-    public String getEmailUsuario() {
-        return emailUsuario;
-    }
-
-    public void setEmailUsuario(String emailUsuario) {
-        this.emailUsuario = emailUsuario;
-    }
-
-    public String getContrasenaUsuario() {
-        return contrasenaUsuario;
-    }
-
-    public void setContrasenaUsuario(String contrasenaUsuario) {
-        this.contrasenaUsuario = contrasenaUsuario;
-    }
-
-    public List<Publicacion> getPublicaciones() {
-        return publicaciones;
-    }
-
-    public void setPublicaciones(List<Publicacion> publicaciones) {
-        this.publicaciones = publicaciones;
-    }
-
-    public List<Direccion> getDirecciones() {
-        return direcciones;
-    }
-
-    public void setDirecciones(List<Direccion> direcciones) {
-        this.direcciones = direcciones;
+    @Override
+    public boolean isEnabled() {
+        return true;
     }
 }

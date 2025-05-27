@@ -1,96 +1,54 @@
 package com.example.demo.Entidades;
 import com.example.demo.Enums.EstadoPedidoEnum;
+import com.example.demo.Enums.MetodoPagoEnum;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
+
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
+import static com.example.demo.Enums.EstadoPedidoEnum.PENDIENTE;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 public class Pedido {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer idPedido;
 
-    @Column(nullable = false )
+    @Column(nullable = false)
+    private Enum<EstadoPedidoEnum> estado = PENDIENTE;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private MetodoPagoEnum metodoPago;
+
+    @CreationTimestamp
+    @Column(nullable = false)
     private LocalDate fechaPedido;
 
-  /*  @Column(nullable = false)
-    private LocalDate fechaUltimaModificacion = LocalDate.now();
-*/
+    @Column(nullable = false, scale = 2)
+    private BigDecimal subtotal = BigDecimal.valueOf(0.00);
 
-    @Column(nullable = false)
-    private Enum<EstadoPedidoEnum> estado;
+    @Column(nullable = false, scale = 2)
+    private BigDecimal descuento = BigDecimal.valueOf(0.00);
+
+    @Column(nullable = false, scale = 2)
+    private BigDecimal total = BigDecimal.valueOf(0.00);
+
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
+    private List<RelacionPedidoProducto> relacionPedidoProductos;
 
     @ManyToOne
     @JoinColumn(name = "idUsuario", nullable = false)
-    private Comprador comprador;
+    private Usuario usuario;
 
-    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL)
-    private List<CarritoCompra> carritoCompras;
-
-/*
-  @OneToOne(mappedBy = "pedido", cascade = CascadeType.ALL)
-    private Factura facturas;
-*/
-
-    public Pedido() {
-    }
-
-    public Pedido(Integer idPedido, LocalDate fechaPedido, LocalDate fechaUltimaModificacion, Enum<EstadoPedidoEnum> estado, Comprador comprador, List<CarritoCompra> carritoCompras) {
-        this.idPedido = idPedido;
-        this.fechaPedido = fechaPedido;
-        this.estado = estado;
-        this.comprador = comprador;
-        this.carritoCompras = carritoCompras;
-    }
-
-    public Integer getIdPedido() {
-        return idPedido;
-    }
-
-    public void setIdPedido(Integer idPedido) {
-        this.idPedido = idPedido;
-    }
-
-    public LocalDate getFechaPedido() {
-        return fechaPedido;
-    }
-
-    public void setFechaPedido(LocalDate fechaPedido) {
-        this.fechaPedido = fechaPedido;
-    }
-
-    public Enum<EstadoPedidoEnum> getEstado() {
-        return estado;
-    }
-
-    public void setEstado(Enum<EstadoPedidoEnum> estado) {
-        this.estado = estado;
-    }
-
-    public Comprador getComprador() {
-        return comprador;
-    }
-
-    public void setComprador(Comprador comprador) {
-        this.comprador = comprador;
-    }
-
-    public List<CarritoCompra> getCarritoCompras() {
-        return carritoCompras;
-    }
-
-    public void setCarritoCompras(List<CarritoCompra> carritoCompras) {
-        this.carritoCompras = carritoCompras;
-    }
-
-    @Override
-    public String toString() {
-        return "Pedido{" +
-                "idPedido=" + idPedido +
-                ", fechaPedido=" + fechaPedido +
-               ", estado=" + estado +
-                ", comprador=" + comprador +
-                ", carritoCompras=" + carritoCompras +
-                '}';
-    }
 }
