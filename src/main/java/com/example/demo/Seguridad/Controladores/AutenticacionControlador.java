@@ -1,9 +1,13 @@
 package com.example.demo.Seguridad.Controladores;
 
+import com.example.demo.DTOs.ApiMensaje;
 import com.example.demo.DTOs.AuthDTO.AutenticacionRespuesta;
 import com.example.demo.DTOs.AuthDTO.LogIn;
+import com.example.demo.DTOs.UsuarioDTO.CreacionUsuario;
 import com.example.demo.Entidades.Usuario;
 import com.example.demo.Seguridad.Servicios.AutenticacionServicio;
+import com.example.demo.Servicios.UsuarioServicio;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,29 +21,38 @@ import org.springframework.web.bind.annotation.*;
 public class AutenticacionControlador {
 
     private final AutenticacionServicio autenticacionServicio;
+    private final UsuarioServicio usuarioServicio;
 
     @PostMapping("public/registro")
-    public ResponseEntity<?> registro(@RequestBody Usuario request)
+    public ResponseEntity<?> registro(@RequestBody CreacionUsuario request, HttpServletResponse response)
     {
         try {
-            return ResponseEntity.ok(autenticacionServicio.registroUsuario(request));
+            String rol = autenticacionServicio.registroUsuario(request, response);
+            return ResponseEntity.ok(new ApiMensaje(rol));
 
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiMensaje(e.getMessage()));
         }
     }
 
     @PostMapping("public/login")
-    public ResponseEntity<?> login(@RequestBody LogIn request)
+    public ResponseEntity<ApiMensaje> login(@RequestBody LogIn request, HttpServletResponse response)
     {
         try {
-            AutenticacionRespuesta respuesta = autenticacionServicio.login(request);
-            return ResponseEntity.ok(respuesta);
+            String rol = autenticacionServicio.login(request, response);
+            return ResponseEntity.ok(new ApiMensaje(rol));
+
         } catch (BadCredentialsException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ApiMensaje(e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error inesperado: " + e.getMessage());
+                    .body(new ApiMensaje("Error inesperado: " + e.getMessage()));
         }
+    }
+
+    @GetMapping("public/detalleusuario")
+    public ResponseEntity<Usuario> obtenerusuarioAutenticado() {
+        Usuario usuario = usuarioServicio.obtenerDetalleUsuario();
+        return ResponseEntity.ok(usuario);
     }
 }

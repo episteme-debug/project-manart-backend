@@ -4,7 +4,10 @@ import com.example.demo.Entidades.*;
 import com.example.demo.Enums.MetodoPagoEnum;
 import com.example.demo.Repositorios.*;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -13,22 +16,27 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
+@RequiredArgsConstructor
 public class PedidoServicio {
 
-    @Autowired
-    CarritoCompraRepositorio carritoCompraRepositorio;
+    private final CarritoCompraRepositorio carritoCompraRepositorio;
+    private final RelacionCarritoProductoRepositorio relacionCarritoProductoRepositorio;
+    private final PedidoRepositorio pedidoRepositorio;
+    private final RelacionPedidoProductoRepositorio relacionPedidoProductoRepositorio;
+    private final ProductoServicio productoServicio;
 
-    @Autowired
-    RelacionCarritoProductoRepositorio relacionCarritoProductoRepositorio;
+    public Long obtenerIdUsuarioAutenticado() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-    @Autowired
-    PedidoRepositorio pedidoRepositorio;
+        if (auth == null || !auth.isAuthenticated()) {
+            throw new IllegalStateException("No hay un usuario autenticado.");
+        }
 
-    @Autowired
-    RelacionPedidoProductoRepositorio relacionPedidoProductoRepositorio;
+        Usuario usuarioAutenticado = (Usuario) auth.getPrincipal();
+        Long idUsuario = usuarioAutenticado.getIdUsuario();
 
-    @Autowired
-    ProductoServicio productoServicio;
+        return idUsuario;
+    }
 
     //. Validar que el carrito exista y no esté vacío
     public CarritoCompra validarCarrito(Long idUsuario) {
@@ -87,8 +95,6 @@ public class PedidoServicio {
         return pedido;
     }
 
-
-
     //. Guardar pedido en la base de datos
     public void guardarPedido(Pedido pedido){
         pedidoRepositorio.save(pedido);
@@ -107,12 +113,15 @@ public class PedidoServicio {
 
     //. Comprar, ejecuta todos los métodos anteriores
     @Transactional
-    public void comprar(Long idUsuario, MetodoPagoEnum metodoPago) {
+    public Pedido comprar(MetodoPagoEnum metodoPago) {
+        Long idUsuario = obtenerIdUsuarioAutenticado();
         try {
             CarritoCompra carritoCompra = validarCarrito(idUsuario);
             Pedido pedido = transferirDatosPedido(carritoCompra, metodoPago);
             guardarPedido(pedido);
             vaciarCarrito(carritoCompra);
+
+            return pedido;
         } catch (Exception e) {
             throw new RuntimeException("Error al procesar la compra: " + e.getMessage(), e);
         }

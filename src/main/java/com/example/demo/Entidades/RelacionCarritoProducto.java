@@ -15,10 +15,10 @@ import java.math.BigDecimal;
 public class RelacionCarritoProducto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idCarritoXProducto;
+    private Long idItem;
 
     @Column(nullable = false)
-    private Integer cantidad = 0;
+    private Integer cantidad;
 
     @Column(nullable = false, scale = 2)
     private BigDecimal precioUnitario = BigDecimal.valueOf(0.00);

@@ -9,6 +9,7 @@ import com.example.demo.Enums.EntidadesArchivoMultimediaEnum;
 import com.example.demo.Enums.UsuarioEnum;
 import com.example.demo.Repositorios.UsuarioRepositorio;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -50,7 +51,7 @@ public class UsuarioServicio {
 
     //5. Obtener usuarios por rol (ADMIN / COMPRADOR / VENDEDOR)
     public List<RespuestaUsuario> obtenerUsuariosPorRol(UsuarioEnum rolUsuario) {
-        if (rolUsuario == null ) {
+        if (rolUsuario == null) {
             throw new IllegalArgumentException("El rol de usuario no puede ser nulo.");
         } else if (!UsuarioEnum.existe(String.valueOf(rolUsuario))) {
             throw new IllegalArgumentException("El rol de usuario es inválido.");
@@ -148,6 +149,19 @@ public class UsuarioServicio {
         }
 
         return usuariosRespuesta;
+    }
+
+    public Usuario obtenerPorAlias(String alias) {
+        Usuario usuario = usuarioRepositorio.findByAlias(alias)
+                .orElseThrow(() -> new NoSuchElementException("Usuario no encontrado"));
+
+        return usuario;
+    }
+
+    public Usuario obtenerDetalleUsuario() {
+        String alias = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        return obtenerPorAlias(alias);
     }
 
     public RespuestaUsuario generarRespuesta (Usuario usuario) {

@@ -12,14 +12,12 @@ import java.util.Optional;
 public interface UsuarioRepositorio extends JpaRepository<Usuario, Long>
 {
     Optional<Usuario> findByEmailUsuario(String emailUsuario);
-
     Optional<Usuario> findByAlias(String alias);
-
     List<Usuario> findByEstadoUsuario(Boolean estadoUsuario);
-
     List<Usuario> findByRolUsuario(Enum<UsuarioEnum> rolUsuario);
 
-    boolean existsByNombreUsuario(String nombreUsuario);
-
     boolean existsByAlias(String alias);
+    boolean existsByEmailUsuario(String email);
+
+
 }

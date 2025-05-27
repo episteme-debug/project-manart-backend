@@ -46,7 +46,7 @@ public class JWTServicio {
                 .claim("emailUsuario", usuario.getEmailUsuario())
                 .subject(usuario.getUsername()) // Establece el "subject" (normalmente, el nombre de usuario).
                 .issuedAt(new Date(System.currentTimeMillis())) // Fecha de emisión (ahora).
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // Expira en 60 minutos.
+                .expiration(new Date(System.currentTimeMillis() + 7 * 24 * 60 * 60 * 1000)) // Expira en 7 días.
                 .signWith(generarClave()) // Firma el token usando la clave y el algoritmo HS256.
                 .compact(); // Compacta todo en un String JWT.
     }

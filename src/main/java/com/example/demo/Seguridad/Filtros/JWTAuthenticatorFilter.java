@@ -3,6 +3,7 @@ package com.example.demo.Seguridad.Filtros;
 import com.example.demo.Seguridad.Servicios.JWTServicio;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetailsS
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
+import org.springframework.web.util.WebUtils;
 
 import java.io.IOException;
 
@@ -27,7 +29,7 @@ public class JWTAuthenticatorFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        final String token = getTokenFromRequest(request);
+        final String token = getToken(request);
         final String username;
 
         if(token == null)
@@ -54,12 +56,9 @@ public class JWTAuthenticatorFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    private String getTokenFromRequest(HttpServletRequest request){
-        final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
+    private String getToken(HttpServletRequest request) {
+        Cookie cookie = WebUtils.getCookie(request, "token");
 
-        if(StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")){
-            return authHeader.substring(7);
-        }
-        return null;
+        return cookie != null ? cookie.getValue():null;
     }
 }

@@ -1,29 +1,34 @@
 package com.example.demo.Controladores;
 
-import com.example.demo.DTOs.CompraDTO;
+import com.example.demo.Entidades.Pedido;
 import com.example.demo.Enums.MetodoPagoEnum;
+import com.example.demo.Servicios.PayUServicio;
 import com.example.demo.Servicios.PedidoServicio;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
 import java.util.NoSuchElementException;
 
-@CrossOrigin("http://127.0.0.1:5500/")
+@CrossOrigin("http://127.0.0.1:3000")
 @RequestMapping("/api/pedido/")
+@RequiredArgsConstructor
 @RestController
 public class PedidoControlador {
 
-    @Autowired
-    PedidoServicio pedidoServicio;
+    private final PedidoServicio pedidoServicio;
+    private final PayUServicio payUServicio;
 
-    @PostMapping("private/comprar")
-    public ResponseEntity<?> comprar(@RequestBody CompraDTO compraDTO) {
+    @PostMapping("private/comprar/{metodoPago}")
+    public ResponseEntity<?> comprar(@PathVariable String metodoPago) {
         try {
-            MetodoPagoEnum metodoPagoEnum = MetodoPagoEnum.valueOf(compraDTO.getMetodoPago().toUpperCase());
-            pedidoServicio.comprar(compraDTO.getIdUsuario(), metodoPagoEnum);
-            return ResponseEntity.ok().build();
+            MetodoPagoEnum metodoPagoEnum = MetodoPagoEnum.valueOf(metodoPago.toUpperCase());
+            Pedido pedido = pedidoServicio.comprar(metodoPagoEnum);
+
+            Map<String, String> datosFormulario = payUServicio.prepararFormularioPago(pedido);
+            return ResponseEntity.ok(datosFormulario);
 
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());

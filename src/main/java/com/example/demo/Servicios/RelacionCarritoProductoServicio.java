@@ -1,52 +1,70 @@
 package com.example.demo.Servicios;
 
-import com.example.demo.DTOs.RelCarritoProductoDTO;
+import com.example.demo.DTOs.CarritoProductoDTO.AgregarItem;
+import com.example.demo.DTOs.CarritoProductoDTO.RespuestaCarrito;
 import com.example.demo.Entidades.CarritoCompra;
 import com.example.demo.Entidades.Producto;
 import com.example.demo.Entidades.RelacionCarritoProducto;
+import com.example.demo.Entidades.Usuario;
 import com.example.demo.Repositorios.CarritoCompraRepositorio;
 import com.example.demo.Repositorios.ProductoRepositorio;
 import com.example.demo.Repositorios.RelacionCarritoProductoRepositorio;
-import com.example.demo.Repositorios.UsuarioRepositorio;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+@RequiredArgsConstructor
 @Service
 public class RelacionCarritoProductoServicio {
 
-    @Autowired
-    RelacionCarritoProductoRepositorio relacionCarritoProductoRepositorio;
+    private final RelacionCarritoProductoRepositorio relacionCarritoProductoRepositorio;
+    private final ProductoRepositorio productoRepositorio;
+    private final CarritoCompraRepositorio carritoCompraRepositorio;
 
-    @Autowired
-    ProductoRepositorio productoRepositorio;
+    public Long obtenerIdUsuarioAutenticado() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
-    @Autowired
-    CarritoCompraRepositorio carritoCompraRepositorio;
-
-    @Autowired
-    UsuarioRepositorio usuarioRepositorio;
-
-    // Agrega un producto al carrito sin duplicarlo. Si ya existe, actualiza la cantidad.
-    public RelacionCarritoProducto crearProducto(RelCarritoProductoDTO productoDTO) {
-        Long idProducto = productoDTO.getProducto().getIdProducto();
-        Long idUsuario = productoDTO.getUsuario().getIdUsuario();
-        // Validacion de datos
-        validarDTO(productoDTO, idProducto, idUsuario);
-
-        // Verifica si el producto ya está en el carrito, de estar no lo vuelve a insertar, solamente modifica la cantidad
-        RelacionCarritoProducto relacionExistente = relacionCarritoProductoRepositorio
-                .findByProducto_IdProducto(idProducto);
-
-        if (relacionExistente != null) {
-            relacionExistente.setCantidad(productoDTO.getCantidad());
-            return relacionCarritoProductoRepositorio.save(relacionExistente);
+        if (auth == null || !auth.isAuthenticated()) {
+            throw new IllegalStateException("No hay un usuario autenticado.");
         }
 
-        // De no estar agrega el producto
-        Producto producto = productoRepositorio.findById(idProducto).get();
+        Usuario usuarioAutenticado = (Usuario) auth.getPrincipal();
+        Long idUsuario = usuarioAutenticado.getIdUsuario();
+
+        return idUsuario;
+    }
+
+    // Agrega un producto al carrito sin duplicarlo. Si ya existe, actualiza la cantidad.
+    public RespuestaCarrito crearProducto(AgregarItem dto) {
+        Long idProducto = dto.getIdProducto();
+        Integer cantidad = dto.getCantidad();
+        Long idUsuario = obtenerIdUsuarioAutenticado();
+
+        // Buscar si ya existe una relación con ese producto en el carrito del usuario
+        RelacionCarritoProducto relacion = relacionCarritoProductoRepositorio.findByProducto_IdProducto(idProducto);
+
+        if (relacion != null) {
+            return generarRespuesta(actualizarCantidadProductoExistente(relacion, cantidad));
+        }
+
+        return generarRespuesta(agregarNuevoProductoAlCarrito(idProducto, idUsuario, cantidad));
+    }
+
+    private RelacionCarritoProducto actualizarCantidadProductoExistente(RelacionCarritoProducto relacion, Integer cantidad) {
+        relacion.setCantidad(cantidad);
+        relacion.setSubtotal(relacion.getPrecioUnitario().multiply(BigDecimal.valueOf(cantidad)));
+        return relacionCarritoProductoRepositorio.save(relacion);
+    }
+
+    private RelacionCarritoProducto agregarNuevoProductoAlCarrito(Long idProducto, Long idUsuario, Integer cantidad) {
+        Producto producto = productoRepositorio.findById(idProducto)
+                .orElseThrow(() -> new NoSuchElementException("Producto no encontrado con ID: " + idProducto));
 
         CarritoCompra carrito = carritoCompraRepositorio.findByUsuarioIdUsuario(idUsuario);
         if (carrito == null) {
@@ -56,62 +74,24 @@ public class RelacionCarritoProductoServicio {
         RelacionCarritoProducto nuevaRelacion = new RelacionCarritoProducto();
         nuevaRelacion.setProducto(producto);
         nuevaRelacion.setPrecioUnitario(producto.getPrecioProducto());
-        nuevaRelacion.setCantidad(productoDTO.getCantidad());
-        nuevaRelacion.setSubtotal(productoDTO.getSubtotal());
+        nuevaRelacion.setCantidad(cantidad);
+        nuevaRelacion.setSubtotal(producto.getPrecioProducto().multiply(BigDecimal.valueOf(cantidad)));
         nuevaRelacion.setCarritoCompra(carrito);
 
         return relacionCarritoProductoRepositorio.save(nuevaRelacion);
     }
 
-    // Submetodo de crear, valida la informacion del dto
-    public void validarDTO (RelCarritoProductoDTO productoDTO, Long idProducto, Long idUsuario) {
-        if (productoDTO == null) {
-            throw new IllegalArgumentException("El DTO del producto no puede ser nulo.");
-        }
-
-        if (productoDTO.getProducto() == null || productoDTO.getProducto().getIdProducto() == null) {
-            throw new IllegalArgumentException("El producto o su ID no pueden ser nulos.");
-        }
-
-        if (productoDTO.getUsuario() == null || productoDTO.getUsuario().getIdUsuario() == null) {
-            throw new IllegalArgumentException("El usuario o su ID no pueden ser nulos.");
-        }
-
-        if (productoDTO.getCantidad() == null || productoDTO.getCantidad() <= 0) {
-            throw new IllegalArgumentException("La cantidad debe ser mayor que cero.");
-        }
-
-        if (productoDTO.getSubtotal() == null || productoDTO.getSubtotal().doubleValue() <= 0) {
-            throw new IllegalArgumentException("El subtotal debe ser mayor que cero.");
-        }
-
-        if (!productoRepositorio.existsById(idProducto)) {
-            throw new NoSuchElementException("El producto con dicho Id no existe");
-        }
-
-        if(!usuarioRepositorio.existsById(idUsuario)) {
-            throw new NoSuchElementException("El usuario con dicho Id no existe");
-        }
-    }
-
     //. Traer a todo los productos de carrito
-    public List<RelacionCarritoProducto> listarProductos(){
-        return relacionCarritoProductoRepositorio.findAll();
-    }
+    public List<RespuestaCarrito> listarProductos(){
+        List<RelacionCarritoProducto> items = relacionCarritoProductoRepositorio.findAll();
+        List<RespuestaCarrito> listadoRespuesta =new ArrayList<>();
 
-    //. Actualizar la cantidad
-    public void actualizarCantidad(Long idCarritoXProducto, Integer nuevaCantidad) {
-        if (idCarritoXProducto == null || idCarritoXProducto <= 0) {
-            throw new IllegalArgumentException("El ID proporcionado no es válido.");
-        }
-        if (!relacionCarritoProductoRepositorio.existsById(idCarritoXProducto)){
-            throw new NoSuchElementException("No se encontro el id del producto.");
-        }
-        if (nuevaCantidad <= 0) {
-            throw new IllegalArgumentException("La cantidad no puede ser 0 ni un número negativo.");
+        for (RelacionCarritoProducto item : items) {
+            RespuestaCarrito respuestaItem = generarRespuesta(item);
+            listadoRespuesta.add(respuestaItem);
         }
 
-        relacionCarritoProductoRepositorio.actualizarCantidad(idCarritoXProducto, nuevaCantidad);
+        return listadoRespuesta;
     }
 
     //. Eliminar producto
@@ -123,6 +103,20 @@ public class RelacionCarritoProductoServicio {
             throw new NoSuchElementException("Producto no existe");
         }
         relacionCarritoProductoRepositorio.deleteById(idCarritoXProducto);
+    }
+
+    public RespuestaCarrito generarRespuesta (RelacionCarritoProducto item) {
+        RespuestaCarrito respuesta = new RespuestaCarrito();
+
+        respuesta.setIdCarrito(item.getCarritoCompra().getIdCarrito());
+        respuesta.setIdItem(item.getIdItem());
+        respuesta.setIdProducto(item.getProducto().getIdProducto());
+        respuesta.setNombreProducto(item.getProducto().getNombreProducto());
+        respuesta.setCantidad(item.getCantidad());
+        respuesta.setPrecioUnitario(item.getPrecioUnitario());
+        respuesta.setSubtotal(item.getSubtotal());
+
+        return respuesta;
     }
 
 }
