@@ -2,7 +2,7 @@ package com.example.demo.Controladores;
 
 import com.example.demo.Entidades.Pedido;
 import com.example.demo.Enums.MetodoPagoEnum;
-import com.example.demo.Servicios.PayUServicio;
+import com.example.demo.Servicios.PasarelaPago.FormularioPagoServicio;
 import com.example.demo.Servicios.PedidoServicio;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,7 +19,7 @@ import java.util.NoSuchElementException;
 public class PedidoControlador {
 
     private final PedidoServicio pedidoServicio;
-    private final PayUServicio payUServicio;
+    private final FormularioPagoServicio formularioPagoServicio;
 
     @PostMapping("private/comprar/{metodoPago}")
     public ResponseEntity<?> comprar(@PathVariable String metodoPago) {
@@ -27,7 +27,7 @@ public class PedidoControlador {
             MetodoPagoEnum metodoPagoEnum = MetodoPagoEnum.valueOf(metodoPago.toUpperCase());
             Pedido pedido = pedidoServicio.comprar(metodoPagoEnum);
 
-            Map<String, String> datosFormulario = payUServicio.prepararFormularioPago(pedido);
+            Map<String, String> datosFormulario = formularioPagoServicio.prepararFormularioPago(pedido);
             return ResponseEntity.ok(datosFormulario);
 
         } catch (NoSuchElementException e) {

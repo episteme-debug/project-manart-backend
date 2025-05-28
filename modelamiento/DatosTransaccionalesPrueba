@@ -1,0 +1,35 @@
+Card	Number
+AMEX Credit Card	377813000000001 - 377847626810864 - 376402004977124 - 376414000000009
+CODENSA Credit Card	5907120000000009
+CRM Credit Card	5282096712463427
+DAVIVIENDA Credit Card	5247081012761500
+DINERS Credit Card	36032400000007 - 36032404150519 - 36032440201896
+MASTERCARD Credit Card	5471300000000003 - 5120697176068275
+NEQUI Credit Card	4093551018099251
+VISA Credit Card	4097440000000004 - 4037997623271984 - 4111111111111111
+VISA Debit Card	4509420000000008
+
+Estados de Prueba
+Al probar los pagos, utilice los siguientes valores en su solicitud en función del estado que desea simular:
+
+Para simular aprobado transacciones:
+
+Incluir APPROVED en el nombre de los titulares de la tarjeta.
+Usar 777 como los cardenales CVV (para tarjetas AMEX, use 7777).
+El test el parámetro y la descripción de la transacción también pueden afectar el resultado. Si no funciona con test establecer a falsointenta configurarlo cierto.
+Para la fecha de vencimiento de la tarjeta, use un mes menos que 6 y un año después del actual (por ejemplo 05/202_).
+Para simular declinado transacciones:
+
+Incluir REJECTED en el nombre de los titulares de la tarjeta.
+Usar 666 como los cardenales CVV (para tarjetas AMEX, use 666).
+El test el parámetro y la descripción de la transacción también pueden afectar el resultado. Si no funciona con test establecer a falsointenta configurarlo cierto.
+Para la fecha de vencimiento de la tarjeta, use un mes mayor que 6 y un año después del actual (por ejemplo 07/202_).
+Para simular pendiente transacciones:
+
+Incluir PENDING en el nombre de los titulares de la tarjeta.
+Usar 777 como los cardenales CVV (para tarjetas AMEX, use 7777).
+Establecer el test parámetro a cierto.
+En la información del comprador y pagador, use la dirección de correo electrónico manual-review-hub@email.com.
+Para el número de tarjeta, utilice un número válido correspondiente a la marca enviada en la solicitud. Puede utilizar un generador de tarjetas de crédito en línea o seleccionar una de las tarjetas para su país mencionado anteriormente.
+
+Para probar las transferencias bancarias a través de PSE (disponible en Colombia) en el entorno PayU Sandbox, consulte el Guía de prueba de PSE (PDF).

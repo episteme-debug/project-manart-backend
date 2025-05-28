@@ -1,4 +1,4 @@
-package com.example.demo.Servicios;
+package com.example.demo.Servicios.PasarelaPago;
 
 import com.example.demo.Configuraciones.PayUConfig;
 import com.example.demo.Entidades.Pedido;
@@ -13,7 +13,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class PayUServicio {
+public class FormularioPagoServicio {
 
     private final PayUConfig config;
 
@@ -34,7 +34,7 @@ public class PayUServicio {
         datos.put("test", config.isTest() ? "1" : "0");
         datos.put("buyerEmail", pedido.getUsuario().getEmailUsuario());
         datos.put("responseUrl", "https://tusitio.com/respuesta");
-        datos.put("confirmationUrl", "https://tusitio.com/confirmacion");
+        datos.put("confirmationUrl", "https://b98e-2800-484-f179-cc10-25b1-14e2-b0c8-49c3.ngrok-free.app/api/pago/public/notificacion");
 
         return datos;
     }

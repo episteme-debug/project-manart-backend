@@ -22,10 +22,11 @@ import static com.example.demo.Enums.EstadoPedidoEnum.PENDIENTE;
 public class Pedido {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer idPedido;
+    private Long idPedido;
 
     @Column(nullable = false)
-    private Enum<EstadoPedidoEnum> estado = PENDIENTE;
+    @Enumerated(EnumType.STRING)
+    private EstadoPedidoEnum estado = PENDIENTE;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

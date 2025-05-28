@@ -8,6 +8,10 @@
   "rolUsuario": "ADMIN"
 }
 
+{
+    "alias":"slytherin",
+    "contraseña":"expelliarmus"
+}
 
 {
   "idProducto": 1,

@@ -1,5 +1,5 @@
 package com.example.demo.Enums;
 
 public enum EstadoPedidoEnum {
-    CANCELADO, PENDIENTE, ENTREGADO
+    PENDIENTE, COMPLETADO, DECLINADO, ERROR
 }
