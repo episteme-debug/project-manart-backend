@@ -1,0 +1,63 @@
+{
+  "nombreUsuario": "Severus",
+  "alias" : "slytherin",
+  "apellidoUsuario": "Snape",
+  "emailUsuario": "severus.snape@hogwarts.edu",
+  "hashContrasenaUsuario": "expelliarmus",
+  "telefonoUsuario": "+44-555-1996",
+  "rolUsuario": "ADMIN"
+}
+
+
+{
+  "idProducto": 1,
+  "nombreProducto": "Mochila Wayuu",
+  "descripcionProducto": "Mochila tejida a mano con diseños geométricos tradicionales de la comunidad Wayuu.",
+  "stockProducto": 30,
+  "precioProducto": 150.75,
+  "imagenProducto": "https://example.com/imagenes/mochila-wayuu.jpg",
+  "categorias": [],
+  "usuario": {"idUsuario" : 1},
+  "promocion": null,
+  "carritoCompras": []
+}
+
+{
+    "tipoVia": "Carrera",
+    "numeroViaPrincipal": "12",
+    "letraViaPrincipal": "B",
+    "bisViaPrincipal": true,
+    "numeroViaSecundaria": "34",
+    "letraViaSecundaria": "C",
+    "bisViaSecundaria": false,
+    "numeroPredio": "56-78",
+    "complemento": "Casa 2",
+    "barrio": "San Fernando",
+    "ciudad": "Cali",
+    "departamento": "Valle del Cauca",
+    "esPredeterminada": false,
+    "fechaCreacion": "2024-06-23",
+    "fechaActualizacion": "2024-06-23",
+    "usuario": {
+        "idUsuario": 6
+}
+
+{
+  "nombrePromocion": "Descuento de Verano",
+  "detallesPromocion": "30% de descuento en todos los productos seleccionados.",
+  "fechaInicioPromocion": "2024-07-01",
+  "fechaFinPromocion": "2024-07-31",
+  "porcentajeDescuentoPromocion": 30,
+  "estadoPromocion": true
+}
+
+{
+    "producto" : {"idProducto" : 26},
+    "usuario" : {"idUsuario" : 1},
+    "cantidad" : 7
+}
+
+{
+    "idUsuario" : 1,
+    "metodoPago" : "TARJETA_CREDITO"
+}
