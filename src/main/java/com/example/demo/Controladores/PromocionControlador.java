@@ -16,7 +16,7 @@ import java.util.NoSuchElementException;
 @RequestMapping("/api/promocion")
 @RestController
 public class PromocionControlador {
-
+///api/promocion/public/listarpromociones
     @Autowired
     PromocionServicio promocionServicio;
 

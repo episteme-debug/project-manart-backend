@@ -20,4 +20,5 @@ public class RespuestaProducto {
     private Long idUsuario;
     private List<ArchivoMultimedia> listaArchivos;
     private List<String> listaCategorias;
+
 }

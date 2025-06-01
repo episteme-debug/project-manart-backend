@@ -14,7 +14,7 @@ import java.util.List;
 @RequestMapping("/api/categoriaproducto")
 @RestController
 public class CategoriaProductoControlador {
-
+///
     @Autowired
     CategoriaProductoServicio categoriaProductoServicio;
 

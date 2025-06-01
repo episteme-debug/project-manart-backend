@@ -56,6 +56,12 @@ public class RelacionCarritoProductoServicio {
 
         return generarRespuesta(agregarNuevoProductoAlCarrito(idProducto, idUsuario, cantidad));
     }
+    public RelacionCarritoProducto actualizarCantidad(Long idRelacion, Integer nuevaCantidad) {
+        RelacionCarritoProducto relacion = relacionCarritoProductoRepositorio.findById(idRelacion)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado en el carrito"));
+
+        return actualizarCantidadProductoExistente(relacion, nuevaCantidad);
+    }
 
     private RelacionCarritoProducto actualizarCantidadProductoExistente(RelacionCarritoProducto relacion, Integer cantidad) {
         relacion.setCantidad(cantidad);
