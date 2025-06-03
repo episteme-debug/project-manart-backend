@@ -11,6 +11,21 @@ import java.util.List;
 
 @Repository
 public interface ProductoRepositorio extends JpaRepository<Producto, Long> {
+
+    @Query(value = "SELECT p.*, c.nombre_categoria, o.nombre_promocion, o.porcentaje_descuento_promocion " +
+            "FROM producto p " +
+            "INNER JOIN relacion_categoria_producto rcp ON p.id_producto = rcp.id_producto " +
+            "INNER JOIN categoria_producto c ON rcp.id_categoria_producto = c.id_categoria " +
+            "LEFT JOIN promocion o ON p.id_promocion = o.id_promocion " +
+            "WHERE (:nombreCategoria IS NULL OR c.nombre_categoria = :nombreCategoria) " +
+            "AND (:porcentajeDescuento IS NULL OR o.porcentaje_descuento_promocion = :porcentajeDescuento) " +
+            "AND (:precioMin IS NULL OR p.precio_producto >= :precioMin) " +
+            "AND (:precioMax IS NULL OR p.precio_producto <= :precioMax)",
+            nativeQuery = true)
+
+    List<Producto> buscarProductosFiltrados(String nombreCategoria, Integer porcentajeDescuento, Double precioMin, Double precioMax);
+
+
     // Obtener productos por nombre
     @Query(value = "SELECT * FROM producto p\n" +
             "WHERE LOWER(REPLACE(p.nombre_producto, ' ', '')) LIKE LOWER(CONCAT('%', :nombreProducto, '%'))", nativeQuery = true)

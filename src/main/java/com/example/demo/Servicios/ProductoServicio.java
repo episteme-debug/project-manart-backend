@@ -1,6 +1,8 @@
 package com.example.demo.Servicios;
 
+import com.example.demo.DTOs.FlitroProductoDTO;
 import com.example.demo.DTOs.ProductoDTO.CreacionProducto;
+import com.example.demo.DTOs.ProductoDTO.RespuestaFiltro;
 import com.example.demo.DTOs.ProductoDTO.RespuestaProducto;
 import com.example.demo.DTOs.ProductoDTO.ActualizacionProducto;
 import com.example.demo.Entidades.ArchivoMultimedia;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -227,5 +230,25 @@ public class ProductoServicio {
         return respuestaProducto;
     }
 
+    public List<RespuestaFiltro> buscarProductosFiltrados(FlitroProductoDTO dto) {
+        List<Producto> productos = productoRepositorio.buscarProductosFiltrados(
+                dto.getNombreCategoria(),
+                dto.getPorcentajeDescuento(),
+                dto.getPrecioMin(),
+                dto.getPrecioMax()
+        );
+        List<RespuestaFiltro> respuesta = productos.stream().map(p->{
+            RespuestaFiltro rp = new RespuestaFiltro();
+            rp.setIdProducto(p.getIdProducto());
+            rp.setNombreProducto(p.getNombreProducto());
+            rp.setDescripcionProducto(p.getDescripcionProducto());
+            rp.setStockProducto(p.getStockProducto());
+            rp.setPrecioProducto(p.getPrecioProducto());
+            rp.setIdUsuario(p.getUsuario().getIdUsuario());
+            rp.setCategorias(p.getCategorias());
 
+            return rp;
+        }).collect(Collectors.toList());
+        return respuesta;
+    }
 }

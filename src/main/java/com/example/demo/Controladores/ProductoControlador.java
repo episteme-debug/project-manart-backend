@@ -1,8 +1,11 @@
 package com.example.demo.Controladores;
 
+import com.example.demo.DTOs.FlitroProductoDTO;
 import com.example.demo.DTOs.ProductoDTO.CreacionProducto;
+import com.example.demo.DTOs.ProductoDTO.RespuestaFiltro;
 import com.example.demo.DTOs.ProductoDTO.RespuestaProducto;
 import com.example.demo.DTOs.ProductoDTO.ActualizacionProducto;
+import com.example.demo.Entidades.Producto;
 import com.example.demo.Servicios.ProductoServicio;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +21,7 @@ import java.util.NoSuchElementException;
 @RequestMapping("/api/producto")
 @CrossOrigin("http://127.0.0.1:5500/")
 public class ProductoControlador {
-
+//
     @Autowired
     ProductoServicio productoServicio;
 
@@ -119,6 +122,10 @@ public class ProductoControlador {
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
+    }
+    @GetMapping("public/filtar")
+    public List<RespuestaFiltro> buscarProductosFiltrados(FlitroProductoDTO filtro) {
+        return productoServicio.buscarProductosFiltrados(filtro);
     }
 
 }
