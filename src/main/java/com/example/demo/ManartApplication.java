@@ -12,8 +12,7 @@ public class ManartApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(ManartApplication.class, args);
 
-/*
-		SecureRandom secureRandom = new SecureRandom();
+/*SecureRandom secureRandom = new SecureRandom();
 
 		byte[] secretKeybytes = new byte[32];
 		secureRandom.nextBytes(secretKeybytes);

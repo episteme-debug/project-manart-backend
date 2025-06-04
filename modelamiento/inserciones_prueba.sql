@@ -100,3 +100,60 @@ VALUES
 ('Festival de Máscaras', 'Promoción del 20% en máscaras artesanales pintadas a mano.', '2024-08-25', '2024-09-05', 20, TRUE),
 ('Hecho a Mano con Amor', '10% de descuento en todos los productos de la tienda.', '2024-05-01', '2024-05-07', 10, TRUE);
 
+##Inset pruedad productos
+INSERT INTO producto (descripcion_producto, estado_producto, imagen_producto, nombre_producto, precio_producto, stock_producto, id_promocion, id_usuario) VALUES
+('Mochila Wayuu tejida a mano por artesanas de La Guajira', 1, 'mochila1.jpg', 'Mochila Wayuu', 120000.00, 10, 1, 1),
+('Sombrero Vueltiao tradicional con 21 vueltas', 1, 'sombrero1.jpg', 'Sombrero Vueltiao', 85000.00, 12, 2, 1),
+('Collar Embera con chaquiras multicolor', 1, 'collar1.jpg', 'Collar Embera', 50000.00, 15, 3, 1),
+('Hamaca caribeña doble, tejida en algodón', 1, 'hamaca1.jpg', 'Hamaca Guajira', 150000.00, 7, 4, 1),
+('Aretes en filigrana de Mompox', 1, 'aretes1.jpg', 'Aretes Filigrana', 45000.00, 20, 5, 1),
+
+('Cartera de fique decorada con flores bordadas', 1, 'cartera1.jpg', 'Cartera de Fique', 60000.00, 9, 1, 1),
+('Pulsera tejida con patrones zenú', 1, 'pulsera1.jpg', 'Pulsera Zenú', 35000.00, 14, 2, 1),
+('Escultura en madera del Amazonas', 1, 'escultura1.jpg', 'Escultura Amazónica', 200000.00, 3, 3, 1),
+('Cerámica pintada a mano de Ráquira', 1, 'ceramica1.jpg', 'Vasija de Ráquira', 70000.00, 18, 4, 1),
+('Bolso ecológico con fibra de plátano', 1, 'bolso1.jpg', 'Bolso de Fibra', 55000.00, 11, 5, 1),
+
+('Juego de mates en cerámica artesanal', 1, 'mates1.jpg', 'Juego de Mates', 85000.00, 8, 1, 1),
+('Máscara tradicional del Carnaval de Barranquilla', 1, 'mascara1.jpg', 'Máscara Carnaval', 90000.00, 5, 2, 1),
+('Tapete tejida con lana natural', 1, 'tapete1.jpg', 'Tapete Andino', 120000.00, 6, 3, 1),
+('Llaveros de madera tallada a mano', 1, 'llaveros1.jpg', 'Llaveros Artesanales', 25000.00, 30, 4, 1),
+('Vaso de barro pintado a mano', 1, 'vaso1.jpg', 'Vaso de Barro', 35000.00, 22, 5, 1),
+
+('Figura de cerámica de cueva de los guácharos', 1, 'figura1.jpg', 'Figura Guácharos', 65000.00, 9, 1, 1),
+('Bufanda de lana de alpaca', 1, 'bufanda1.jpg', 'Bufanda Alpaca', 110000.00, 10, 2, 1),
+('Cinturón en cuero con diseño indígena', 1, 'cinturon1.jpg', 'Cinturón Indígena', 70000.00, 12, 3, 1),
+('Juego de platos pintados a mano', 1, 'platos1.jpg', 'Platos Artesanales', 95000.00, 8, 4, 1),
+('Pulsera con piedras semipreciosas', 1, 'pulsera2.jpg', 'Pulsera Piedras', 40000.00, 14, 5, 1),
+
+('Juego de cuchillos tallados a mano', 1, 'cuchillos1.jpg', 'Cuchillos Artesanales', 130000.00, 5, 1, 1),
+('Reloj de madera con diseño étnico', 1, 'reloj1.jpg', 'Reloj de Madera', 85000.00, 7, 2, 1),
+('Bolígrafo tallado en madera', 1, 'boligrafo1.jpg', 'Bolígrafo Madera', 45000.00, 20, 3, 1),
+('Cojín bordado a mano', 1, 'cojin1.jpg', 'Cojín Bordado', 55000.00, 15, 4, 1),
+('Cuadro pintado con técnicas ancestrales', 1, 'cuadro1.jpg', 'Cuadro Ancestral', 140000.00, 6, 5, 1),
+
+('Sombrero de palma tejida', 1, 'sombrero2.jpg', 'Sombrero de Palma', 70000.00, 11, 1, 1),
+('Juego de tazas de cerámica', 1, 'tazas1.jpg', 'Tazas Cerámicas', 65000.00, 18, 2, 1),
+('Alfombra tejida a mano', 1, 'alfombra1.jpg', 'Alfombra Tejida', 125000.00, 4, 3, 1),
+('Cesta tejida con fibras naturales', 1, 'cesta1.jpg', 'Cesta Artesanal', 60000.00, 13, 4, 1),
+('Pendientes de plata y oro', 1, 'pendientes1.jpg', 'Pendientes Plata', 95000.00, 9, 5, 1),
+
+('Bolsa de cuero con bordados tradicionales', 1, 'bolsa1.jpg', 'Bolsa de Cuero', 90000.00, 7, 1, 1),
+('Cuenco decorativo en cerámica', 1, 'cuenco1.jpg', 'Cuenco Cerámico', 40000.00, 20, 2, 1),
+('Collar de semillas naturales', 1, 'collar2.jpg', 'Collar Semillas', 30000.00, 16, 3, 1),
+('Mantón de lana con motivos indígenas', 1, 'manton1.jpg', 'Mantón de Lana', 115000.00, 8, 4, 1),
+('Porta velas de madera tallada', 1, 'portavelas1.jpg', 'Porta Velas', 45000.00, 22, 5, 1),
+
+('Alfileres artesanales', 1, 'alfileres1.jpg', 'Alfileres Artesanales', 15000.00, 25, 1, 1),
+('Cucharas de madera talladas', 1, 'cucharas1.jpg', 'Cucharas Madera', 20000.00, 30, 2, 1),
+('Sombrero de paja toquilla', 1, 'sombrero3.jpg', 'Sombrero Toquilla', 75000.00, 10, 3, 1),
+('Juego de juegos de mesa tradicionales', 1, 'juegosmesa1.jpg', 'Juegos de Mesa', 90000.00, 8, 4, 1),
+('Tapiz hecho a mano', 1, 'tapiz1.jpg', 'Tapiz Artesanal', 110000.00, 5, 5, 1);
+
+#Promociones
+INSERT INTO promocion (detalles_promocion, estado_promocion, fecha_fin_promocion, fecha_inicio_promocion, nombre_promocion, porcentaje_descuento_promocion) VALUES
+('Descuento verano 2025', 1, '2025-08-31', '2025-06-01', 'Promo Verano', 15),
+('Oferta especial', 1, '2025-09-30', '2025-07-01', 'Oferta Especial', 10),
+('Promoción aniversario', 1, '2025-12-31', '2025-11-01', 'Aniversario', 20),
+('Rebajas navideñas', 1, '2025-12-25', '2025-12-01', 'Navidad', 25),
+('Liquidación final', 1, '2025-07-31', '2025-07-01', 'Liquidación', 30);
