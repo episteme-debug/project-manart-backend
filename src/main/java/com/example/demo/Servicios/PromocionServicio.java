@@ -6,6 +6,7 @@ import com.example.demo.Repositorios.PromocionRepositorio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -41,8 +42,14 @@ public class PromocionServicio {
     }
 
     //. Obtener todas las promociones
-    public List<Promocion> getAllpromocion() {
-        return promocionRepositorio.findAll();
+    public List<PromocionDTO> getAllpromocion() {
+        List<Promocion> promocion = promocionRepositorio.findAll();
+        List<PromocionDTO> respuestaPromocion = new ArrayList<>();
+        for(Promocion p: promocion){
+            PromocionDTO respuesta = generarRespuesta(p);
+            respuestaPromocion.add(respuesta);
+        }
+        return respuestaPromocion;
     }
 
     //. Obtener promociones por estado
@@ -103,7 +110,21 @@ public class PromocionServicio {
         }
 
         promocionRepositorio.deleteById(idPromocion);
+
     }
+    public PromocionDTO generarRespuesta(Promocion promocion) {
+        PromocionDTO dto = new PromocionDTO();
+        dto.setIdPromocion(promocion.getIdPromocion());
+        dto.setNombrePromocion(promocion.getNombrePromocion());
+        dto.setDetallesPromocion(promocion.getDetallesPromocion());
+        dto.setFechaInicioPromocion(promocion.getFechaInicioPromocion());
+        dto.setFechaFinPromocion(promocion.getFechaFinPromocion());
+        dto.setPorcentajeDescuentoPromocion(promocion.getPorcentajeDescuentoPromocion());
+        dto.setEstadoPromocion(promocion.getEstadoPromocion());
+        // Si tu DTO también incluye productos relacionados, debes mapearlos aquí
+        return dto;
+    }
+
 /*
     //get por filtros
     public List<Promocion> buscarPromociones(String palabraClave, Integer descuento, LocalDate fechaInicio, LocalDate fechaFin) {

@@ -1,5 +1,6 @@
 package com.example.demo.Repositorios;
 
+import com.example.demo.DTOs.ProductoDTO.RangoDePreciosDTO;
 import com.example.demo.Entidades.Producto;
 import com.example.demo.Entidades.RelacionCategoriaProducto;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -24,7 +25,6 @@ public interface ProductoRepositorio extends JpaRepository<Producto, Long> {
             nativeQuery = true)
 
     List<Producto> buscarProductosFiltrados(String nombreCategoria, Integer porcentajeDescuento, Double precioMin, Double precioMax);
-
 
     // Obtener productos por nombre
     @Query(value = "SELECT * FROM producto p\n" +

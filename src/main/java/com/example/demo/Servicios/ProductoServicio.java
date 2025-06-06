@@ -1,10 +1,7 @@
 package com.example.demo.Servicios;
 
 import com.example.demo.DTOs.FlitroProductoDTO;
-import com.example.demo.DTOs.ProductoDTO.CreacionProducto;
-import com.example.demo.DTOs.ProductoDTO.RespuestaFiltro;
-import com.example.demo.DTOs.ProductoDTO.RespuestaProducto;
-import com.example.demo.DTOs.ProductoDTO.ActualizacionProducto;
+import com.example.demo.DTOs.ProductoDTO.*;
 import com.example.demo.Entidades.ArchivoMultimedia;
 import com.example.demo.Entidades.CategoriaProducto;
 import com.example.demo.Entidades.Producto;
@@ -251,4 +248,6 @@ public class ProductoServicio {
         }).collect(Collectors.toList());
         return respuesta;
     }
+
+
 }

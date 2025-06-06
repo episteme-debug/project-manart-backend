@@ -1,11 +1,9 @@
 package com.example.demo.Controladores;
 
 import com.example.demo.DTOs.FlitroProductoDTO;
-import com.example.demo.DTOs.ProductoDTO.CreacionProducto;
-import com.example.demo.DTOs.ProductoDTO.RespuestaFiltro;
-import com.example.demo.DTOs.ProductoDTO.RespuestaProducto;
-import com.example.demo.DTOs.ProductoDTO.ActualizacionProducto;
+import com.example.demo.DTOs.ProductoDTO.*;
 import com.example.demo.Entidades.Producto;
+import com.example.demo.Repositorios.ProductoRepositorio;
 import com.example.demo.Servicios.ProductoServicio;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;

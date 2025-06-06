@@ -1,5 +1,6 @@
 package com.example.demo.Controladores;
 
+
 import com.example.demo.DTOs.PromocionDTO;
 import com.example.demo.Entidades.Promocion;
 import com.example.demo.Servicios.PromocionServicio;
@@ -53,7 +54,7 @@ public class PromocionControlador {
 
     //. Obtener todas las promociones
     @GetMapping("public/listarpromociones")
-    public List<Promocion> listarpromociones() {
+    public List<PromocionDTO> listarpromociones() {
         return promocionServicio.getAllpromocion();
     }
 
