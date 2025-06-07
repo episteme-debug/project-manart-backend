@@ -126,5 +126,10 @@ public class ProductoControlador {
         return productoServicio.buscarProductosFiltrados(filtro);
     }
 
+    @GetMapping("public/rango-precios")
+    public ResponseEntity<RangoDePreciosDTO> obtenerRangoPrecios() {
+        RangoDePreciosDTO rango = productoServicio.obtenerRangoDePrecios();
+        return (rango != null) ? ResponseEntity.ok(rango) : ResponseEntity.noContent().build();
+    }
 }
 

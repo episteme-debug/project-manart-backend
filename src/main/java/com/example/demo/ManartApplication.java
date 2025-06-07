@@ -21,6 +21,9 @@ public class ManartApplication {
 
 		System.out.println(SECRET_KEY);
 */
+		/*
+		correo: manartc01o@gmail.com
+		contraseña: ManArt123*/
 
 	}
 

@@ -249,5 +249,8 @@ public class ProductoServicio {
         return respuesta;
     }
 
+    public RangoDePreciosDTO obtenerRangoDePrecios() {
+        return productoRepositorio.rango_precios();
+    }
 
 }

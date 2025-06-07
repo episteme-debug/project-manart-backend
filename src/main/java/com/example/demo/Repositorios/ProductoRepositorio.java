@@ -26,6 +26,9 @@ public interface ProductoRepositorio extends JpaRepository<Producto, Long> {
 
     List<Producto> buscarProductosFiltrados(String nombreCategoria, Integer porcentajeDescuento, Double precioMin, Double precioMax);
 
+    @Query("SELECT new com.example.demo.DTOs.ProductoDTO.RangoDePreciosDTO(MIN(p.precioProducto), MAX(p.precioProducto)) FROM Producto p")
+    RangoDePreciosDTO rango_precios();
+
     // Obtener productos por nombre
     @Query(value = "SELECT * FROM producto p\n" +
             "WHERE LOWER(REPLACE(p.nombre_producto, ' ', '')) LIKE LOWER(CONCAT('%', :nombreProducto, '%'))", nativeQuery = true)

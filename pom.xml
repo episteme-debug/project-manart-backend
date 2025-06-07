@@ -30,6 +30,14 @@
         <java.version>23</java.version>
     </properties>
     <dependencies>
+        <!-- Dependecias de la prueda de enviar gmail-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId> </dependency>
         <!--Dependencias de starter-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
