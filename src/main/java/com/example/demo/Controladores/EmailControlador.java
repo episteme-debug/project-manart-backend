@@ -1,7 +1,7 @@
 package com.example.demo.Controladores;
 
 
-import com.example.demo.Servicios.DTO.EmailDTO;
+import com.example.demo.DTOs.EmailDTO;
 import com.example.demo.Servicios.impl.EmailServicoImpl;
 import jakarta.mail.MessagingException;
 import org.springframework.beans.factory.annotation.Autowired;

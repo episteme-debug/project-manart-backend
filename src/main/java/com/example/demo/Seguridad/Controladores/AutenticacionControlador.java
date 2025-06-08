@@ -3,12 +3,16 @@ package com.example.demo.Seguridad.Controladores;
 import com.example.demo.DTOs.ApiMensaje;
 import com.example.demo.DTOs.AuthDTO.AutenticacionRespuesta;
 import com.example.demo.DTOs.AuthDTO.LogIn;
+import com.example.demo.DTOs.EmailDTO;
 import com.example.demo.DTOs.UsuarioDTO.CreacionUsuario;
 import com.example.demo.Entidades.Usuario;
 import com.example.demo.Seguridad.Servicios.AutenticacionServicio;
 import com.example.demo.Servicios.UsuarioServicio;
+import com.example.demo.Servicios.impl.EmailServicoImpl;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -23,15 +27,26 @@ public class AutenticacionControlador {
     private final AutenticacionServicio autenticacionServicio;
     private final UsuarioServicio usuarioServicio;
 
+    @Autowired
+    private EmailServicoImpl emailServico;
+
     @PostMapping("public/registro")
     public ResponseEntity<?> registro(@RequestBody CreacionUsuario request, HttpServletResponse response)
     {
         try {
             String rol = autenticacionServicio.registroUsuario(request, response);
+            EmailDTO emailDTO = new EmailDTO();
+            emailDTO.setDestinatario(request.getEmailUsuario());
+            emailDTO.setNombre(request.getAlias());
+            emailDTO.setAsunto("Bienvenido a nuestra plataforma");
+            emailDTO.setMensaje("Gracias por registrarte.");
+            emailServico.sendMail(emailDTO);
             return ResponseEntity.ok(new ApiMensaje(rol));
 
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ApiMensaje(e.getMessage()));
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
         }
     }
 

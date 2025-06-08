@@ -1,4 +1,4 @@
-package com.example.demo.Servicios.DTO;
+package com.example.demo.DTOs;
 
 import lombok.*;
 
@@ -10,4 +10,5 @@ public class EmailDTO {
     private String nombre;
     private String asunto;
     private String mensaje;
+    private String linkRedirecionPagina;
 }

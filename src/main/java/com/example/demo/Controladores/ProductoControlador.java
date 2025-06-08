@@ -22,7 +22,7 @@ public class ProductoControlador {
 //
     @Autowired
     ProductoServicio productoServicio;
-
+///
     //. Crear nuevo producto
     @PostMapping("private/crear")
     @PreAuthorize("hasRole('ADMIN') or hasRole('VENDEDOR')")
