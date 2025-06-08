@@ -8,6 +8,7 @@ import com.example.demo.Entidades.CategoriaProducto;
 import com.example.demo.Entidades.Producto;
 import com.example.demo.Entidades.Usuario;
 import com.example.demo.Enums.EntidadesArchivoMultimediaEnum;
+import com.example.demo.Enums.RegionesDeColombiaEnum;
 import com.example.demo.Repositorios.CategoriaProductoRepositorio;
 import com.example.demo.Repositorios.ProductoRepositorio;
 import com.example.demo.Repositorios.UsuarioRepositorio;
@@ -36,6 +37,7 @@ public class ProductoServicio {
 
         producto.setNombreProducto(productoDTO.getNombreProducto());
         producto.setDescripcionProducto(productoDTO.getDescripcionProducto());
+        producto.setRegionProducto(productoDTO.getRegionProducto());
         producto.setPrecioProducto(productoDTO.getPrecioProducto());
         producto.setStockProducto(productoDTO.getStockProducto());
         producto.setUsuario(usuario);
@@ -103,6 +105,10 @@ public class ProductoServicio {
 
         if (dto.getDescripcionProducto() != null) {
             producto.setDescripcionProducto(dto.getDescripcionProducto().trim());
+        }
+
+        if (dto.getRegionProducto() != null) {
+            producto.setRegionProducto(dto.getRegionProducto());
         }
 
         if (dto.getPrecioProducto() != null) {
@@ -200,6 +206,18 @@ public class ProductoServicio {
         return productosRespuesta;
     }
 
+    public List<RespuestaProducto> listarPorRegion (RegionesDeColombiaEnum region) {
+        List<Producto> productos = productoRepositorio.findByRegionProducto(region);
+        List<RespuestaProducto> productosRespuesta = new ArrayList<>();
+
+        for (Producto producto : productos) {
+            RespuestaProducto respuesta = generarRespuesta(producto);
+            productosRespuesta.add(respuesta);
+        }
+
+        return productosRespuesta;
+    }
+
     //. Construccion de respuesta
     public RespuestaProducto generarRespuesta(Producto producto) {
         RespuestaProducto respuestaProducto = new RespuestaProducto();
@@ -207,6 +225,7 @@ public class ProductoServicio {
         respuestaProducto.setIdProducto(producto.getIdProducto());
         respuestaProducto.setNombreProducto(producto.getNombreProducto());
         respuestaProducto.setDescripcionProducto(producto.getDescripcionProducto());
+        respuestaProducto.setRegionProducto(producto.getRegionProducto());
         respuestaProducto.setStockProducto(producto.getStockProducto());
         respuestaProducto.setPrecioProducto(producto.getPrecioProducto());
         respuestaProducto.setIdUsuario(producto.getUsuario().getIdUsuario());

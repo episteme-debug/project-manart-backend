@@ -16,13 +16,13 @@ public class RelacionPedidoProducto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idPedidoXProducto;
 
-    @Column(nullable = false, scale = 2, precision = 10)
+    @Column(nullable = false, scale = 2)
     private BigDecimal precioUnitario;
 
     @Column(nullable = false)
     private Integer cantidad;
 
-    @Column(nullable = false, scale = 2, precision = 10)
+    @Column(nullable = false, scale = 2)
     private BigDecimal subtotal;
 
     @ManyToOne

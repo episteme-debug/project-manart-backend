@@ -1,8 +1,5 @@
 package com.example.demo.Entidades;
 import com.example.demo.Enums.EstadoPedidoEnum;
-import com.example.demo.Enums.MetodoPagoEnum;
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,19 +25,9 @@ public class Pedido {
     @Enumerated(EnumType.STRING)
     private EstadoPedidoEnum estado = PENDIENTE;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private MetodoPagoEnum metodoPago;
-
     @CreationTimestamp
     @Column(nullable = false)
     private LocalDate fechaPedido;
-
-    @Column(nullable = false, scale = 2)
-    private BigDecimal subtotal = BigDecimal.valueOf(0.00);
-
-    @Column(nullable = false, scale = 2)
-    private BigDecimal descuento = BigDecimal.valueOf(0.00);
 
     @Column(nullable = false, scale = 2)
     private BigDecimal total = BigDecimal.valueOf(0.00);
@@ -51,5 +38,9 @@ public class Pedido {
     @ManyToOne
     @JoinColumn(name = "idUsuario", nullable = false)
     private Usuario usuario;
+
+    @OneToOne(mappedBy = "pedido")
+    private Factura factura;
+
 
 }

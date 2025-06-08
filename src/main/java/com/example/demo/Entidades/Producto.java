@@ -1,5 +1,6 @@
 package com.example.demo.Entidades;
 
+import com.example.demo.Enums.RegionesDeColombiaEnum;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -25,6 +26,10 @@ public class Producto {
 
     @Column(nullable = false, length = 500)
     private String descripcionProducto;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private RegionesDeColombiaEnum regionProducto;
 
     @Column(nullable = false)
     private Integer stockProducto;

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
@@ -165,6 +166,12 @@ public class DireccionServicio {
         }
 
         return direccionesRespuesta;
+    }
+
+    public String construirDireccionComoTexto (Direccion direccion) {
+        String dir = direccion.getTipoVia() + " " + direccion.getNumeroViaPrincipal() + " " + direccion.getLetraViaPrincipal() + " " + direccion.getNumeroViaSecundaria() + " " + direccion.getLetraViaSecundaria() + " "  + direccion.getNumeroPredio() + " " + direccion.getComplemento();
+
+        return dir;
     }
 
     public RespuestaDireccion generarRespuesta (Direccion direccion) {

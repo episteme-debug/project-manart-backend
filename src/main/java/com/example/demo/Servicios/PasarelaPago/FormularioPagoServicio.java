@@ -18,7 +18,7 @@ public class FormularioPagoServicio {
     private final PayUConfig config;
 
     public Map<String, String> prepararFormularioPago(Pedido pedido) {
-        String referencia = "pedido-" + pedido.getIdPedido();
+        String referencia = "pedido-10" + pedido.getIdPedido();
         String monto = pedido.getTotal().setScale(2, RoundingMode.HALF_UP).toPlainString();
         String firma = generarFirma(config.getApiKey(), config.getMerchantId(), referencia, monto, config.getCurrency());
 
@@ -34,7 +34,7 @@ public class FormularioPagoServicio {
         datos.put("test", config.isTest() ? "1" : "0");
         datos.put("buyerEmail", pedido.getUsuario().getEmailUsuario());
         datos.put("responseUrl", "https://tusitio.com/respuesta");
-        datos.put("confirmationUrl", "https://b98e-2800-484-f179-cc10-25b1-14e2-b0c8-49c3.ngrok-free.app/api/pago/public/notificacion");
+        datos.put("confirmationUrl", "https://8c15-2800-484-f179-cc10-54f4-a0c5-1cc3-9ce3.ngrok-free.app/api/pago/public/notificacion");
 
         return datos;
     }
