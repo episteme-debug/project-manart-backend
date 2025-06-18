@@ -28,7 +28,7 @@ public class CategoriaProductoServicio {
 
         categoriaProducto.setNombreCategoria(creacionCategoria.getNombreCategoria());
         categoriaProducto.setDescripcionCategoria(creacionCategoria.getDescripcionCategoria());
-
+        
         CategoriaProducto nuevaCategoria = categoriaProductoRepositorio.save(categoriaProducto);
 
         return generarRespuesta(nuevaCategoria);

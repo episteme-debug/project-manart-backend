@@ -28,7 +28,7 @@ public class ArchivoMultimediaServicio {
     private final CategoriaProductoRepositorio categoriaProductoRepositorio;
     private final PublicacionRepositorio publicacionRepositorio;
 
-    private static final String DIR_BASE = "D:\\Manart\\backend\\project-manart-backend\\src\\main\\resources\\static\\cargascliente\\";
+    private static final String DIR_BASE = "C:\\Users\\javier cardenas\\OneDrive\\Desktop\\Backend\\project-manart-backend\\src\\main\\resources\\static\\cargascliente\\";
 
     private static final Map<EntidadesArchivoMultimediaEnum, String> DIRECTORIOS = Map.of(
             EntidadesArchivoMultimediaEnum.Usuario, DIR_BASE + "usuarios\\",

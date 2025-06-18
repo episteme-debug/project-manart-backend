@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/autenticacion/")
 @RestController
 public class AutenticacionControlador {
-
+///api/autenticacion/public/registro
     private final AutenticacionServicio autenticacionServicio;
     private final UsuarioServicio usuarioServicio;
 
