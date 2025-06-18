@@ -4,6 +4,7 @@ import com.example.demo.Configuraciones.PayUConfig;
 import com.example.demo.Entidades.Pedido;
 import com.example.demo.Enums.EstadoPedidoEnum;
 import com.example.demo.Repositorios.PedidoRepositorio;
+import com.example.demo.Servicios.Facturacion.FacturaServicio;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,12 +18,13 @@ import java.util.Map;
 @Service
 public class NotificacionPagoServicio {
 
+    private final FacturaServicio facturaServicio;
     private final PayUConfig payUConfig;
     private final PedidoRepositorio pedidoRepositorio;
 
-    public void procesarNotificacion(Map<String, String> payload) {
+    public void procesarNotificacion(Map<String, String> payload) throws Exception {
         String referencia = payload.get("reference_sale");
-        Long idPedido = Long.parseLong( referencia.replace("pedido-", ""));
+        Long idPedido = Long.parseLong( referencia.replace("pedido-10", ""));
         String estado = payload.get("state_pol");
         String firmaRecibida = payload.get("sign");
 
@@ -36,7 +38,7 @@ public class NotificacionPagoServicio {
         }
 
         // Cambiar estado del pedido
-        cambiarEstadoPedido(estado, pedido);
+        cambiarEstadoPedido(estado, pedido, payload.get("payment_method_name"));
     }
 
 
@@ -72,20 +74,24 @@ public class NotificacionPagoServicio {
         }
     }
 
-    public void cambiarEstadoPedido (String estado, Pedido pedido) {
+    public void cambiarEstadoPedido (String estado, Pedido pedido, String metodoPago) throws Exception {
         switch (estado) {
             case "4": // Transacción aprobada
                 pedido.setEstado(EstadoPedidoEnum.COMPLETADO);
+                pedidoRepositorio.save(pedido);
+                facturaServicio.crearFactura(pedido.getIdPedido(), metodoPago);
                 break;
             case "6": // Transacción Rechazada
                 pedido.setEstado(EstadoPedidoEnum.DECLINADO);
+                pedidoRepositorio.save(pedido);
                 break;
             case "104":
                 pedido.setEstado(EstadoPedidoEnum.ERROR);
+                pedidoRepositorio.save(pedido);
                 break;
             default:
                 pedido.setEstado(EstadoPedidoEnum.PENDIENTE);
+                pedidoRepositorio.save(pedido);
         }
-        pedidoRepositorio.save(pedido);
     }
 }

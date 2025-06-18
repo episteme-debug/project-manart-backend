@@ -19,40 +19,40 @@ public class CategoriaProductoControlador {
     CategoriaProductoServicio categoriaProductoServicio;
 
     //1. Crear categoría de producto
-    @PostMapping("private/crearcategoria")
+    @PostMapping("private/crear")
     @PreAuthorize("hasRole('ADMIN')")
     public RespuestaCategoria crearCategoria(@RequestBody CreacionCategoria creacionCategoria){
         return categoriaProductoServicio.crearCategoriaProducto(creacionCategoria);
     }
 
     //2. Obtener una categoría por ID
-    @GetMapping("public/obtenercategoriaporid/{id}")
+    @GetMapping("public/obtenerporid/{id}")
     public RespuestaCategoria obtenerCategoriaPorId(@PathVariable Long id) {
         return categoriaProductoServicio.obtenerCategoriaPorId(id);
     }
 
     //3. Obtener todas las categorias
-    @GetMapping("public/obtenercategorias")
+    @GetMapping("public/listar")
     public List<RespuestaCategoria> obtenerCategorias(){
         return categoriaProductoServicio.obtenerCategorias();
     }
 
     //4. Obtener categorias por estado
-    @GetMapping("private/obtenercategoriasporestado/{estadoCategoria}")
+    @GetMapping("private/listarporestado/{estadoCategoria}")
     @PreAuthorize("hasRole('ADMIN')")
     public List<RespuestaCategoria> obtenerCategoriasPorEstado(@PathVariable Boolean estadoCategoria){
         return categoriaProductoServicio.obtenerCategoriasPorEstado(estadoCategoria);
     }
 
     //5. Actualizar categoria
-    @PatchMapping("private/actualizarcategoria/{idCategoria}")
+    @PatchMapping("private/actualizar/{idCategoria}")
     @PreAuthorize("hasRole('ADMIN')")
     public RespuestaCategoria actualizarCategoria(@PathVariable Long idCategoria, @RequestBody ActualizacionCategoria actualizacionCategoria){
         return categoriaProductoServicio.actualizarCategoria(idCategoria, actualizacionCategoria);
     }
 
     //6. Eliminar Categoría de producto
-    @DeleteMapping("private/eliminarcategoria/{idCategoria}")
+    @DeleteMapping("private/eliminar/{idCategoria}")
     @PreAuthorize("hasRole('ADMIN')")
     public void eliminarCategoria(@PathVariable Long idCategoria){
         categoriaProductoServicio.eliminarCategoria(idCategoria);

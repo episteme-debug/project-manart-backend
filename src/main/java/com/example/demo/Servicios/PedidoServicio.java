@@ -1,11 +1,9 @@
 package com.example.demo.Servicios;
 
 import com.example.demo.Entidades.*;
-import com.example.demo.Enums.MetodoPagoEnum;
 import com.example.demo.Repositorios.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -57,16 +55,11 @@ public class PedidoServicio {
 
 
     //. Tranferencia de datos de carrito a pedido (subtotal-total, usuario)
-    public Pedido transferirDatosPedido(CarritoCompra carritoCompra, MetodoPagoEnum metodoPago) {
+    public Pedido transferirDatosPedido(CarritoCompra carritoCompra) {
         Pedido pedido = new Pedido();
 
         pedido.setUsuario(carritoCompra.getUsuario());
-        pedido.setMetodoPago(metodoPago);
-        pedido.setSubtotal(carritoCompra.getTotal());
-
-        BigDecimal descuento = carritoCompra.getTotal().multiply(BigDecimal.valueOf(0.10));
-        pedido.setDescuento(descuento);
-        pedido.setTotal(carritoCompra.getTotal().subtract(descuento));
+        pedido.setTotal(carritoCompra.getTotal());
 
         pedido = pedidoRepositorio.save(pedido);
 
@@ -113,11 +106,11 @@ public class PedidoServicio {
 
     //. Comprar, ejecuta todos los métodos anteriores
     @Transactional
-    public Pedido comprar(MetodoPagoEnum metodoPago) {
+    public Pedido comprar() {
         Long idUsuario = obtenerIdUsuarioAutenticado();
         try {
             CarritoCompra carritoCompra = validarCarrito(idUsuario);
-            Pedido pedido = transferirDatosPedido(carritoCompra, metodoPago);
+            Pedido pedido = transferirDatosPedido(carritoCompra);
             guardarPedido(pedido);
             vaciarCarrito(carritoCompra);
 
@@ -126,6 +119,5 @@ public class PedidoServicio {
             throw new RuntimeException("Error al procesar la compra: " + e.getMessage(), e);
         }
     }
-
 
 }

@@ -4,6 +4,7 @@ import com.example.demo.DTOs.CarritoProductoDTO.AgregarItem;
 import com.example.demo.DTOs.CarritoProductoDTO.RespuestaCarrito;
 import com.example.demo.Entidades.RelacionCarritoProducto;
 import com.example.demo.Servicios.RelacionCarritoProductoServicio;
+import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,8 @@ public class RelacionCarritoProductoControlador {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
 
+        } catch (BadRequestException e) {
+            throw new RuntimeException(e);
         }
     }
 

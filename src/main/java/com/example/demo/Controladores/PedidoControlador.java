@@ -1,7 +1,6 @@
 package com.example.demo.Controladores;
 
 import com.example.demo.Entidades.Pedido;
-import com.example.demo.Enums.MetodoPagoEnum;
 import com.example.demo.Servicios.PasarelaPago.FormularioPagoServicio;
 import com.example.demo.Servicios.PedidoServicio;
 import lombok.RequiredArgsConstructor;
@@ -21,11 +20,10 @@ public class PedidoControlador {
     private final PedidoServicio pedidoServicio;
     private final FormularioPagoServicio formularioPagoServicio;
 
-    @PostMapping("private/comprar/{metodoPago}")
-    public ResponseEntity<?> comprar(@PathVariable String metodoPago) {
+    @PostMapping("private/comprar")
+    public ResponseEntity<?> comprar() {
         try {
-            MetodoPagoEnum metodoPagoEnum = MetodoPagoEnum.valueOf(metodoPago.toUpperCase());
-            Pedido pedido = pedidoServicio.comprar(metodoPagoEnum);
+            Pedido pedido = pedidoServicio.comprar();
 
             Map<String, String> datosFormulario = formularioPagoServicio.prepararFormularioPago(pedido);
             return ResponseEntity.ok(datosFormulario);

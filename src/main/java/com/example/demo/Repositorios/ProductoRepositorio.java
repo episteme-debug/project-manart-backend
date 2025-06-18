@@ -2,6 +2,7 @@ package com.example.demo.Repositorios;
 
 import com.example.demo.Entidades.Producto;
 import com.example.demo.Entidades.RelacionCategoriaProducto;
+import com.example.demo.Enums.RegionesDeColombiaEnum;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,4 +20,6 @@ public interface ProductoRepositorio extends JpaRepository<Producto, Long> {
     List<Producto> findByCategorias_IdCategoria(Long idCategoria);
 
     List<Producto> findByUsuario_IdUsuario(Long idUsuario);
+
+    List<Producto> findByRegionProducto(RegionesDeColombiaEnum region);
 }
