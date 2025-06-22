@@ -1,8 +1,11 @@
 package com.example.demo.Servicios;
 
+import com.example.demo.DTOs.Publicacion.CrearPublicacion;
 import com.example.demo.DTOs.Publicacion.PublicacionDTO;
 import com.example.demo.Entidades.Publicacion;
+import com.example.demo.Entidades.Usuario;
 import com.example.demo.Repositorios.PublicacionRepositorio;
+import com.example.demo.Repositorios.UsuarioRepositorio;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,6 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -18,23 +22,37 @@ public class PublicacionServicio {
     @Autowired
     PublicacionRepositorio publicacionRepositorio;
 
-    public Publicacion crearPublicacion(Publicacion publicacion){
-        if(publicacion.getTitulo() == null || publicacion.getContenido() == null)
-        {
-            throw new IllegalArgumentException("Fañlta campos obligatorias");
-        }
-        return publicacionRepositorio.save(publicacion);
+    @Autowired
+    private UsuarioRepositorio usuarioRepositorio;
+
+    public PublicacionDTO crearPublicacion(CrearPublicacion dto) {
+        Usuario usuario = usuarioRepositorio.findById(dto.getIdUsuario())
+                .orElseThrow(() -> new NoSuchElementException("Usuario no encontrado"));
+
+        Publicacion publicacion = new Publicacion();
+        publicacion.setTitulo(dto.getTitulo());
+        publicacion.setContenido(dto.getContenido());
+        publicacion.setEstado(dto.getEstado());
+        publicacion.setUsuario(usuario);
+
+        Publicacion nueva = publicacionRepositorio.save(publicacion);
+
+        return generarRespuesta(nueva); // usa el DTO normal
     }
 
-    public Publicacion obtenerPublicacionById (Long id){
-        if(id == null || id<= 0){
-            throw new IllegalArgumentException("El ID publicacion no es válido.");
+
+
+    public PublicacionDTO obtenerPublicacionById(Long id) {
+        if(id == null || id <= 0){
+            throw new IllegalArgumentException("El ID de la publicación no es válido.");
         }
-        if(!publicacionRepositorio.existsById(id)){
-            throw new NoSuchElementException("Publicacion no encontrado");
-        }
-        return publicacionRepositorio.findById(id).get();
+
+        Publicacion publicacion = publicacionRepositorio.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("Publicación no encontrada"));
+
+        return generarRespuesta(publicacion);
     }
+
 
     public List<PublicacionDTO> obtenerTodasPublicaciones(){
        List<Publicacion>publicacion = publicacionRepositorio.findAll();
@@ -46,9 +64,13 @@ public class PublicacionServicio {
       return publicacionDTOS;
     }
 
-    public List<Publicacion> obtenerPorEstado (Boolean Estado){
-        return publicacionRepositorio.findByestado(Estado);
+    public List<PublicacionDTO> obtenerPorEstado(Boolean estado) {
+        List<Publicacion> publicaciones = publicacionRepositorio.findByestado(estado);
+        return publicaciones.stream()
+                .map(this::generarRespuesta)
+                .collect(Collectors.toList());
     }
+
 
     public Publicacion actulizarPublicacion(Long id,PublicacionDTO publicacionDTO){
         if(publicacionDTO == null || publicacionDTO.getId() == null || id == null || id <= 0){

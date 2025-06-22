@@ -1,5 +1,6 @@
 package com.example.demo.Controladores;
 
+import com.example.demo.DTOs.Publicacion.CrearPublicacion;
 import com.example.demo.DTOs.Publicacion.PublicacionDTO;
 import com.example.demo.Entidades.Publicacion;
 import com.example.demo.Servicios.PublicacionServicio;
@@ -23,19 +24,21 @@ public class PublicacionControlador {
 
     @PostMapping("private/crear")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> crearPublicacion(@RequestBody Publicacion publicacion){
-        try{
-            Publicacion nueva = publicacionServicio.crearPublicacion(publicacion);
-            return  ResponseEntity.status(HttpStatus.CREATED).body(nueva);
-        }catch (IllegalArgumentException e){
-            return  ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+    public ResponseEntity<?> crearPublicacion(@RequestBody CrearPublicacion dto) {
+        try {
+            PublicacionDTO nueva = publicacionServicio.crearPublicacion(dto);
+            return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
+        } catch (IllegalArgumentException | NoSuchElementException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
+
+
 
     @GetMapping("public/obtenerporId/{idPubicacion}")
     public  ResponseEntity<?> obtenerPublicacionById(@PathVariable Long idPubicacion){
         try {
-            Publicacion publicacion = publicacionServicio.obtenerPublicacionById(idPubicacion);
+            PublicacionDTO publicacion = publicacionServicio.obtenerPublicacionById(idPubicacion);
             return  ResponseEntity.ok(publicacion);
         }catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -52,7 +55,7 @@ public class PublicacionControlador {
 
     @GetMapping("private/listarporestado/{estado}")
     @PreAuthorize("hasRole('ADMIN')")
-    public List<Publicacion> listarporestado(@PathVariable Boolean estado){
+    public List<PublicacionDTO> listarporestado(@PathVariable Boolean estado){
         return  publicacionServicio.obtenerPorEstado(estado);
     }
 
