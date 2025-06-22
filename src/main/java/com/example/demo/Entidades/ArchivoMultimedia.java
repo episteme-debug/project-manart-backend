@@ -43,3 +43,4 @@ public class ArchivoMultimedia {
     private Long idObjetoEntidad;
 
 }
+

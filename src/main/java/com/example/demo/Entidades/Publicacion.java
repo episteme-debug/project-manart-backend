@@ -40,7 +40,7 @@ public class Publicacion {
     private LocalDateTime fechaUltimaActualizacion;
 
     @ManyToOne(targetEntity = Usuario.class)
-    @JoinColumn(name = "idUsuario", nullable = false)
+    @JoinColumn(name = "id_usuario", nullable = false)
     private Usuario usuario;
 
 

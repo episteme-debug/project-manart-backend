@@ -18,7 +18,7 @@ import java.util.NoSuchElementException;
 @RequestMapping("/api/archivomultimedia/")
 @RestController
 public class ArchivoMultimediaControlador {
-///api/archivomultimedia/private/transferirarchivos
+
     @Autowired
     private ArchivoMultimediaServicio archivoMultimediaServicio;
 

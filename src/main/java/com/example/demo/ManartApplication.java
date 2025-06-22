@@ -25,6 +25,8 @@ public class ManartApplication {
 		correo: manartc01o@gmail.com
 		contraseña: ManArt123*/
 
+
+
 	}
 
 }
