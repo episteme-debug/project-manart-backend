@@ -25,6 +25,7 @@ public class UsuarioControlador {
     @GetMapping("private/obtenerporid/{id}")
     @PreAuthorize("@autorizacion.esPropietario(#id) or hasRole('ADMIN')")
     public ResponseEntity<?> obtenerPorId(@PathVariable Long id) {
+        System.out.println("Holi");
         try {
             RespuestaUsuario usuario = usuarioServicio.obtenerPorId(id);
             return ResponseEntity.ok(usuario);
