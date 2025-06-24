@@ -148,7 +148,7 @@ public class ProductoServicio {
     //. Eliminar producto
     public void eliminarProducto(Long id) throws BadRequestException {
         if (id == null || id <= 0) {
-            throw new BadRequestException("ID inválido.");
+            throw new BadRequestException("ID de producto inválido.");
         }
         if (!productoRepositorio.existsById(id)) {
             throw new NoSuchElementException("Producto con ID " + id + " no existe.");
