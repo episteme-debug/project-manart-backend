@@ -1,6 +1,6 @@
 package com.example.demo.Servicios;
 
-import com.example.demo.DTOs.FlitroProductoDTO;
+import com.example.demo.DTOs.ProductoDTO.FlitroProductoDTO;
 import com.example.demo.DTOs.ProductoDTO.*;
 import com.example.demo.Entidades.ArchivoMultimedia;
 import com.example.demo.Entidades.CategoriaProducto;

@@ -1,4 +1,4 @@
-package com.example.demo.DTOs;
+package com.example.demo.DTOs.ProductoDTO;
 
 import lombok.*;
 
