@@ -8,6 +8,7 @@ import com.example.demo.Entidades.CategoriaProducto;
 import com.example.demo.Entidades.Producto;
 import com.example.demo.Entidades.Usuario;
 import com.example.demo.Enums.EntidadesArchivoMultimediaEnum;
+import com.example.demo.Enums.RegionesDeColombiaEnum;
 import com.example.demo.Repositorios.CategoriaProductoRepositorio;
 import com.example.demo.Repositorios.ProductoRepositorio;
 import com.example.demo.Repositorios.UsuarioRepositorio;
@@ -29,18 +30,23 @@ public class ProductoServicio {
     private final CategoriaProductoRepositorio categoriaProductoRepositorio;
 
     //. Crear nuevo producto
-    public RespuestaProducto crearProducto(CreacionProducto productoDTO) throws BadRequestException {
+    public RespuestaProducto crearProducto(CreacionProducto productoDTO) throws Exception {
         Producto producto = new Producto();
         Usuario usuario = usuarioRepositorio.findById(productoDTO.getIdUsuario())
                         .orElseThrow(() -> new NoSuchElementException("Usuario no encontrado"));
 
+        if (productoDTO.getIdProducto() != 0)
+            producto.setIdProducto(productoDTO.getIdProducto());
+
         producto.setNombreProducto(productoDTO.getNombreProducto());
         producto.setDescripcionProducto(productoDTO.getDescripcionProducto());
+        producto.setRegionProducto(productoDTO.getRegionProducto());
         producto.setPrecioProducto(productoDTO.getPrecioProducto());
         producto.setStockProducto(productoDTO.getStockProducto());
         producto.setUsuario(usuario);
 
         Producto nuevoProducto = productoRepositorio.save(producto);
+        nuevoProducto.setCategorias(categorizarProducto(nuevoProducto.getIdProducto(), productoDTO.getListaCategorias()));
 
         return generarRespuesta(nuevoProducto);
     }
@@ -105,6 +111,10 @@ public class ProductoServicio {
             producto.setDescripcionProducto(dto.getDescripcionProducto().trim());
         }
 
+        if (dto.getRegionProducto() != null) {
+            producto.setRegionProducto(dto.getRegionProducto());
+        }
+
         if (dto.getPrecioProducto() != null) {
             producto.setPrecioProducto(dto.getPrecioProducto());
         }
@@ -147,9 +157,10 @@ public class ProductoServicio {
     }
 
     //. Categorizar productos
-    public void categorizarProducto(Long idProducto, List<Long> idsCategorias) {
+    public List<CategoriaProducto> categorizarProducto(Long idProducto, List<Long> idsCategorias) throws Exception {
         Producto producto = productoRepositorio.findById(idProducto)
                 .orElseThrow( () -> new NoSuchElementException("El producto no fue encontrado."));
+        List<CategoriaProducto> categoriaProductos = producto.getCategorias();
 
         if (idsCategorias.isEmpty()) {
             throw new IllegalArgumentException("La lista no puede estar vacía.");
@@ -160,13 +171,14 @@ public class ProductoServicio {
         for (Long idCategoria : idsCategorias) {
             CategoriaProducto categoria = categoriaProductoRepositorio.findById(idCategoria)
                     .orElseThrow(() -> new NoSuchElementException("Categoría no encontrada en la base de datos."));
+            if (categoriaProductos.contains(categoria))
+                continue;
 
-            listadoCategorias.add(categoria);
+            categoriaProductos.add(categoria);
         }
 
-        producto.setCategorias(listadoCategorias);
-
         productoRepositorio.save(producto);
+        return categoriaProductos;
     }
 
     //. Listado de productos por categoría
@@ -200,6 +212,18 @@ public class ProductoServicio {
         return productosRespuesta;
     }
 
+    public List<RespuestaProducto> listarPorRegion (RegionesDeColombiaEnum region) {
+        List<Producto> productos = productoRepositorio.findByRegionProducto(region);
+        List<RespuestaProducto> productosRespuesta = new ArrayList<>();
+
+        for (Producto producto : productos) {
+            RespuestaProducto respuesta = generarRespuesta(producto);
+            productosRespuesta.add(respuesta);
+        }
+
+        return productosRespuesta;
+    }
+
     //. Construccion de respuesta
     public RespuestaProducto generarRespuesta(Producto producto) {
         RespuestaProducto respuestaProducto = new RespuestaProducto();
@@ -207,6 +231,7 @@ public class ProductoServicio {
         respuestaProducto.setIdProducto(producto.getIdProducto());
         respuestaProducto.setNombreProducto(producto.getNombreProducto());
         respuestaProducto.setDescripcionProducto(producto.getDescripcionProducto());
+        respuestaProducto.setRegionProducto(producto.getRegionProducto());
         respuestaProducto.setStockProducto(producto.getStockProducto());
         respuestaProducto.setPrecioProducto(producto.getPrecioProducto());
         respuestaProducto.setIdUsuario(producto.getUsuario().getIdUsuario());

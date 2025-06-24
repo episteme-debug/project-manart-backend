@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 public class CreacionUsuario {
     private String alias;
     private String nombreUsuario;
+    private String numeroDocumentoUsuario;
     private String apellidoUsuario;
     private String emailUsuario;
     private String hashContrasenaUsuario;

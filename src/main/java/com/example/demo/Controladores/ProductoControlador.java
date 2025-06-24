@@ -3,6 +3,7 @@ package com.example.demo.Controladores;
 import com.example.demo.DTOs.ProductoDTO.CreacionProducto;
 import com.example.demo.DTOs.ProductoDTO.RespuestaProducto;
 import com.example.demo.DTOs.ProductoDTO.ActualizacionProducto;
+import com.example.demo.Enums.RegionesDeColombiaEnum;
 import com.example.demo.Servicios.ProductoServicio;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,8 @@ public class ProductoControlador {
 
         } catch (BadRequestException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
 
     }
@@ -64,6 +67,12 @@ public class ProductoControlador {
         return productoServicio.listarProductosPorCategoria(idCategoria);
     }
 
+    //. Listar productos por region
+    @GetMapping("public/listarporregion/{region}")
+    public List<RespuestaProducto> listarProductosPorRegion(@PathVariable RegionesDeColombiaEnum region) {
+        return productoServicio.listarPorRegion(region);
+    }
+
 
     //. Obtener lista de productos por nombre
     @GetMapping("public/obtenerpornombre/{nombreProducto}")
@@ -81,7 +90,7 @@ public class ProductoControlador {
 
     //. Actualizar un producto existente
     @PatchMapping("private/actualizarproducto/{idProducto}")
-    @PreAuthorize("@autorizacion.esPropietarioProducto(#idProducto)")
+    @PreAuthorize("@autorizacion.esPropietarioProducto(#idProducto) or hasRole('ADMIN')")
     public ResponseEntity<?> actualizarProducto(@PathVariable Long idProducto, @RequestBody ActualizacionProducto dto) {
         try {
             RespuestaProducto actualizado = productoServicio.actualizarProducto(idProducto, dto);
@@ -110,14 +119,16 @@ public class ProductoControlador {
         }
     }
 
-    @PatchMapping("private/categorizarProducto/{idProducto}")
+    @PatchMapping("private/categorizarproducto/{idProducto}")
     @PreAuthorize("@autorizacion.esPropietarioProducto(#idProducto) or hasRole('ADMIN')")
     public ResponseEntity<?> categorizarProducto (@PathVariable Long idProducto, @RequestBody List<Long> idsCategorias) {
         try {
             productoServicio.categorizarProducto(idProducto, idsCategorias);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok().body("Categorización exitosa");
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 

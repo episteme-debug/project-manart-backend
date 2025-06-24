@@ -14,5 +14,6 @@ import java.util.Optional;
 public interface DireccionRepositorio extends JpaRepository<Direccion, Long> {
 
     List<Direccion> findByUsuario_IdUsuario(Long idUsuario);
+    Optional<Direccion> findByUsuario_IdUsuarioAndEsPredeterminadaTrue(Long idUsuario);
 
 }

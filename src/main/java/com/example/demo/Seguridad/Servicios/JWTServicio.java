@@ -44,6 +44,7 @@ public class JWTServicio {
                 .claims(extraClaims) // Establece claims adicionales (puede ser vacío).
                 .claim("idUsuario", usuario.getIdUsuario())
                 .claim("emailUsuario", usuario.getEmailUsuario())
+                .claim("rolUsuario", usuario.getRolUsuario())
                 .subject(usuario.getUsername()) // Establece el "subject" (normalmente, el nombre de usuario).
                 .issuedAt(new Date(System.currentTimeMillis())) // Fecha de emisión (ahora).
                 .expiration(new Date(System.currentTimeMillis() + 7 * 24 * 60 * 60 * 1000)) // Expira en 7 días.

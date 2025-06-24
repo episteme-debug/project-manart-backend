@@ -38,6 +38,7 @@ public class AutenticacionServicio {
         carritoCompraServicio.crearCarrito(carritoCompra);
 
         String token = jwtService.generarToken(usuarioCreado);
+        cookieServicio.deleteCookie("token", response);
         cookieServicio.addHttpOnlyCookie("token", token, 7*24*60*60, response);
 
             return usuarioCreado.getRolUsuario().toString();
@@ -55,6 +56,7 @@ public class AutenticacionServicio {
             Usuario usuario = usuarioServicio.obtenerPorAlias(request.getAlias());
             String token = jwtService.generarToken(usuario);
 
+            cookieServicio.deleteCookie("token", response);
             cookieServicio.addHttpOnlyCookie("token", token, 7*24*60*60, response);
 
             return usuario.getRolUsuario().toString();
@@ -64,6 +66,7 @@ public class AutenticacionServicio {
         if (dto == null ||
                 isNullOrEmpty(dto.getAlias()) ||
                 isNullOrEmpty(dto.getNombreUsuario()) ||
+                isNullOrEmpty(dto.getNumeroDocumentoUsuario()) ||
                 isNullOrEmpty(dto.getApellidoUsuario()) ||
                 isNullOrEmpty(dto.getEmailUsuario()) ||
                 isNullOrEmpty(dto.getHashContrasenaUsuario()) ||
@@ -81,6 +84,7 @@ public class AutenticacionServicio {
         Usuario usuario = new Usuario();
         usuario.setAlias(dto.getAlias());
         usuario.setNombreUsuario(dto.getNombreUsuario());
+        usuario.setNumeroDocumentoUsuario(dto.getNumeroDocumentoUsuario());
         usuario.setApellidoUsuario(dto.getApellidoUsuario());
         usuario.setEmailUsuario(dto.getEmailUsuario());
         usuario.setHashContrasenaUsuario(passwordEncoder.encode(dto.getHashContrasenaUsuario()));

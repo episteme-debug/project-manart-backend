@@ -1,5 +1,6 @@
 package com.example.demo.Entidades;
 
+import com.example.demo.Enums.RegionesDeColombiaEnum;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -7,8 +8,10 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cascade;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -25,6 +28,10 @@ public class Producto {
 
     @Column(nullable = false, length = 500)
     private String descripcionProducto;
+
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private RegionesDeColombiaEnum regionProducto;
 
     @Column(nullable = false)
     private Integer stockProducto;
@@ -54,12 +61,12 @@ public class Producto {
     @OneToMany(mappedBy = "producto", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReseñaProducto> reseñaProducto;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(
             name = "relacionProductoCategoria",
             joinColumns = @JoinColumn(name = "producto_id"),
             inverseJoinColumns = @JoinColumn(name = "categoria_id")
     )
-    private List<CategoriaProducto> categorias;
+    private List<CategoriaProducto> categorias = new ArrayList<>();
 
 }
