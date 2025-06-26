@@ -200,6 +200,23 @@ public class ProductoServicio {
         return productosRespuesta;
     }
 
+
+    public List<RespuestaProducto> obtenerRelacionados(Long idProducto) {
+        List<Producto> productos = productoRepositorio.findRelacionados(idProducto);
+
+        List<RespuestaProducto> productosRespuesta = new ArrayList<>();
+        for (Producto producto : productos) {
+            RespuestaProducto respuesta = generarRespuesta(producto);
+            productosRespuesta.add(respuesta);
+        }
+
+        return productosRespuesta;
+    }
+
+
+
+
+
     //. Construccion de respuesta
     public RespuestaProducto generarRespuesta(Producto producto) {
         RespuestaProducto respuestaProducto = new RespuestaProducto();

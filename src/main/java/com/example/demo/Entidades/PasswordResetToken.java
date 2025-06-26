@@ -20,6 +20,7 @@ public class PasswordResetToken {
     private LocalDateTime expirarData;
 
     @ManyToOne
+    @JoinColumn(name = "usuario_id_usuario", nullable = false)
     private Usuario usuario;
 
 }

@@ -6,6 +6,7 @@ import com.example.demo.DTOs.AuthDTO.LogIn;
 import com.example.demo.DTOs.EmailDTO;
 import com.example.demo.DTOs.UsuarioDTO.CreacionUsuario;
 import com.example.demo.Entidades.Usuario;
+import com.example.demo.Interfaces.EmailInterface;
 import com.example.demo.Seguridad.Servicios.AutenticacionServicio;
 import com.example.demo.Servicios.UsuarioServicio;
 import com.example.demo.Servicios.impl.EmailServicoImpl;
@@ -28,7 +29,7 @@ public class AutenticacionControlador {
     private final UsuarioServicio usuarioServicio;
 
     @Autowired
-    private EmailServicoImpl emailServico;
+    private EmailInterface emailServico;
 
     @PostMapping("public/registro")
     public ResponseEntity<?> registro(@RequestBody CreacionUsuario request, HttpServletResponse response)

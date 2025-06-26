@@ -2,6 +2,7 @@ package com.example.demo.Controladores;
 
 import com.example.demo.DTOs.ProductoDTO.FlitroProductoDTO;
 import com.example.demo.DTOs.ProductoDTO.*;
+import com.example.demo.Entidades.Producto;
 import com.example.demo.Servicios.ProductoServicio;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,6 +120,14 @@ public class ProductoControlador {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
+
+    @GetMapping("public/relacionados/{idProducto}")
+    public ResponseEntity<List<RespuestaProducto>> obtenerRelacionados(@PathVariable Long idProducto) {
+        List<RespuestaProducto> relacionados = productoServicio.obtenerRelacionados(idProducto);
+        return ResponseEntity.ok(relacionados);
+    }
+
+
     @GetMapping("public/filtar")
     public List<RespuestaFiltro> buscarProductosFiltrados(FlitroProductoDTO filtro) {
         return productoServicio.buscarProductosFiltrados(filtro);

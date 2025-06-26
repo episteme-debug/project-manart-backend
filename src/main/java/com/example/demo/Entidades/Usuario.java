@@ -72,6 +72,9 @@ public class Usuario implements UserDetails {
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ReseñaProducto> reseñaProducto = new ArrayList<>();
 
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PasswordResetToken> tokens = new ArrayList<>();
+
     // Metodos reescritos automáticamente tras la implementacion
 
     @Override

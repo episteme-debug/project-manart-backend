@@ -1,6 +1,7 @@
 package com.example.demo.Repositorios;
 
 import com.example.demo.DTOs.ProductoDTO.RangoDePreciosDTO;
+import com.example.demo.Entidades.CategoriaProducto;
 import com.example.demo.Entidades.Producto;
 import com.example.demo.Entidades.RelacionCategoriaProducto;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,6 +13,20 @@ import java.util.List;
 
 @Repository
 public interface ProductoRepositorio extends JpaRepository<Producto, Long> {
+
+
+    @Query(value = """
+    SELECT DISTINCT p.* FROM producto p
+    JOIN relacion_categoria_producto rcp ON p.id_producto = rcp.id_producto
+    WHERE rcp.id_categoria_producto IN (
+        SELECT id_categoria_producto 
+        FROM relacion_categoria_producto 
+        WHERE id_producto = :idProducto
+    )
+    AND p.id_producto <> :idProducto
+""", nativeQuery = true)
+    List<Producto> findRelacionados(@Param("idProducto") Long idProducto);
+
 
     @Query(value = "SELECT p.*, c.nombre_categoria, o.nombre_promocion, o.porcentaje_descuento_promocion " +
             "FROM producto p " +
