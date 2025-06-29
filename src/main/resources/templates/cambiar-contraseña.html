@@ -1,0 +1,26 @@
+<!-- cambiar-contraseña.html -->
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Recuperación de Contraseña - ManArt</title>
+</head>
+<body>
+<div style="max-width: 600px; margin: auto; background-color: #ffffff; padding: 30px; border: 1px solid #ddd; border-radius: 8px;">
+    <p>Hola estimasdo/a cliente </p>
+    <p>Recibimos una solicitud para restablecer la contraseña de tu cuenta.
+        Si fuiste tú quien la solicitó, haz clic en siguiente enlace para crear una nueva contraseña:</p>
+
+    <p>
+        <a th:href="${recuperarLink}"
+           style="background-color: #ffb224; color: white; padding: 10px 20px; text-decoration: none; border-radius: 4px; display: inline-block;">
+            Recuperar tu contraseña
+        </a>
+    </p>
+    <p>Si no soicitaste esta cambio, puedes ignorar este mensaje. Tu contraseña actual seguirá siendo segura.</p>
+
+    <p>Gracias,</p>
+    <p>El equipo de ManArt </p>
+    <p>Proximos contacto de soporte</p>
+</div>
+</body>
+</html>
