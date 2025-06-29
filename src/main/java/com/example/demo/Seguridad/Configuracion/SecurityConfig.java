@@ -4,16 +4,15 @@ import com.example.demo.Seguridad.Filtros.JWTAuthenticatorFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.context.NullSecurityContextRepository;
 
 @Configuration
 @EnableWebSecurity
@@ -22,16 +21,19 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final AuthenticationProvider authenticationProvider;
+    private final HttpCookieOAuth2AuthorizationRequestRepository authRequestRepository;
     private final JWTAuthenticatorFilter jwtAuthenticatorFilter;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception
-    {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf
                         .disable())
+                .securityContext(context -> context
+                        .requireExplicitSave(false)
+                        .securityContextRepository(new NullSecurityContextRepository()))
                 .authorizeHttpRequests(authRequest ->
                         authRequest
                                 /*Solo rutas con public se les permite el acceso, el resto tienen que autenticarse*/
@@ -41,6 +43,7 @@ public class SecurityConfig {
                                         "/api/carrito/public/**",
                                         "/api/categoriaproducto/public/**",
                                         "/api/direccion/public/**",
+                                        "/api/factura/public/**",
                                         "/api/pago/public/**",
                                         "/api/pedido/public/**",
                                         "/api/producto/public/**",
@@ -56,6 +59,7 @@ public class SecurityConfig {
                                         "/api/carrito/private/**",
                                         "/api/categoriaproducto/private/**",
                                         "/api/direccion/private/**",
+                                        "/api/factura/private/**",
                                         "/api/pago/private/**",
                                         "/api/pedido/private/**",
                                         "/api/producto/private/**",
@@ -66,6 +70,9 @@ public class SecurityConfig {
                                 ).authenticated()
                                 .anyRequest().permitAll())
                 .oauth2Login(oauth -> oauth
+                        .authorizationEndpoint(authEndpoint -> authEndpoint
+                                .authorizationRequestRepository(authRequestRepository)
+                        )
                         .successHandler(oAuth2SuccessHandler))
                 .sessionManagement(sessionManager ->
                         sessionManager
@@ -73,6 +80,7 @@ public class SecurityConfig {
                 )
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticatorFilter, UsernamePasswordAuthenticationFilter.class)
+
                 .build();
     }
 }

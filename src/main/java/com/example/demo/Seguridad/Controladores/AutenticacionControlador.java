@@ -6,6 +6,7 @@ import com.example.demo.DTOs.AuthDTO.LogIn;
 import com.example.demo.DTOs.UsuarioDTO.CreacionUsuario;
 import com.example.demo.Entidades.Usuario;
 import com.example.demo.Seguridad.Servicios.AutenticacionServicio;
+import com.example.demo.Seguridad.Servicios.CookieServicio;
 import com.example.demo.Servicios.UsuarioServicio;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class AutenticacionControlador {
 
     private final AutenticacionServicio autenticacionServicio;
+    private final CookieServicio cookieServicio;
     private final UsuarioServicio usuarioServicio;
 
     @PostMapping("public/registro")
@@ -48,6 +50,12 @@ public class AutenticacionControlador {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body(new ApiMensaje("Error inesperado: " + e.getMessage()));
         }
+    }
+
+    @GetMapping("public/logout")
+    public ResponseEntity<?> logout(HttpServletResponse response) {
+        cookieServicio.deleteCookie("token", response);
+        return ResponseEntity.ok("Sesión cerrada correctamente");
     }
 
     @GetMapping("public/detalleusuario")

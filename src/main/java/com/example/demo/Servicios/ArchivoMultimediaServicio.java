@@ -5,6 +5,7 @@ import com.example.demo.Enums.EntidadesArchivoMultimediaEnum;
 import com.example.demo.Enums.TipoArchivoEnum;
 import com.example.demo.Repositorios.*;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,14 +28,15 @@ public class ArchivoMultimediaServicio {
     private final UsuarioRepositorio usuarioRepositorio;
     private final CategoriaProductoRepositorio categoriaProductoRepositorio;
     private final PublicacionRepositorio publicacionRepositorio;
-
-    private static final String DIR_BASE = "D:\\Manart\\backend\\project-manart-backend\\src\\main\\resources\\static\\cargascliente\\";
+    
+    @Value("${app.upload.static.dir}")
+    private String DIR_BASE;
 
     private static final Map<EntidadesArchivoMultimediaEnum, String> DIRECTORIOS = Map.of(
-            EntidadesArchivoMultimediaEnum.Usuario, DIR_BASE + "usuarios\\",
-            EntidadesArchivoMultimediaEnum.Producto, DIR_BASE + "productos\\",
-            EntidadesArchivoMultimediaEnum.Publicacion, DIR_BASE + "publicaciones\\",
-            EntidadesArchivoMultimediaEnum.CategoriaProducto, DIR_BASE + "categoriaproductos\\"
+            EntidadesArchivoMultimediaEnum.Usuario, "usuarios",
+            EntidadesArchivoMultimediaEnum.Producto, "productos",
+            EntidadesArchivoMultimediaEnum.Publicacion, "publicaciones",
+            EntidadesArchivoMultimediaEnum.CategoriaProducto, "categoriaproductos"
     );
 
 
@@ -43,9 +45,9 @@ public class ArchivoMultimediaServicio {
             throw new IOException("Formato de archivo no especificado.");
 
         return switch (tipoFormato.split("/")[0]) {
-            case "image" -> TipoArchivoEnum.IMAGEN;
-            case "video" -> TipoArchivoEnum.VIDEO;
-            case "audio" -> TipoArchivoEnum.AUDIO;
+            case "image" -> IMAGEN;
+            case "video" -> VIDEO;
+            case "audio" -> AUDIO;
             default -> throw new IOException("Tipo de archivo no permitido: " + tipoFormato);
         };
     }
@@ -70,9 +72,12 @@ public class ArchivoMultimediaServicio {
 
         String nombreArchivo = archivo.getOriginalFilename();
         TipoArchivoEnum tipo = obtenerTipoArchivo(archivo.getContentType());
-        String ruta = obtenerDirectorioBase(entidad) + obtenerSubcarpeta(tipo) + "\\" + nombreArchivo;
+        String subCarpeta = obtenerSubcarpeta(tipo);
+        String directorioBase =  obtenerDirectorioBase(entidad);
+        String rutaCompleta = DIR_BASE + "cargascliente/" + directorioBase + "/" + subCarpeta + "/" + nombreArchivo;
+        String rutaRelativa = "cargascliente/" + directorioBase + "/" + subCarpeta + "/" + nombreArchivo;
 
-        archivo.transferTo(Paths.get(ruta));
+        archivo.transferTo(Paths.get(rutaCompleta));
 
         if (!comprobarExistenciaObjeto(entidad, idObjeto)) {
             throw new NoSuchElementException(entidad + " con id " + idObjeto + " no existe");
@@ -80,7 +85,7 @@ public class ArchivoMultimediaServicio {
 
         ArchivoMultimedia nuevo = new ArchivoMultimedia();
         nuevo.setNombre(nombreArchivo);
-        nuevo.setRuta(ruta);
+        nuevo.setRuta(rutaRelativa);
         nuevo.setTipo(tipo);
         nuevo.setTipoEntidad(entidad);
         nuevo.setIdObjetoEntidad(idObjeto);
@@ -116,10 +121,11 @@ public class ArchivoMultimediaServicio {
     public void eliminarPorId(Long id) throws IOException {
         ArchivoMultimedia archivo = obtenerPorId(id);
         String ruta = archivo.getRuta();
+        String rutaCompleta = DIR_BASE + ruta;
         if (ruta == null || ruta.isEmpty())
             throw new IOException("Ruta del archivo no especificada.");
 
-        Files.deleteIfExists(Paths.get(ruta));
+        Files.deleteIfExists(Paths.get(rutaCompleta));
         archivoMultimediaRepositorio.deleteById(id);
     }
 

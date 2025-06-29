@@ -1,5 +1,8 @@
 package com.example.demo.Servicios;
 
+import com.example.demo.DTOs.FiltrosProductoDTO.FiltroProducto;
+import com.example.demo.DTOs.FiltrosProductoDTO.RangoDePrecios;
+import com.example.demo.DTOs.FiltrosProductoDTO.RespuestaFiltro;
 import com.example.demo.DTOs.ProductoDTO.CreacionProducto;
 import com.example.demo.DTOs.ProductoDTO.RespuestaProducto;
 import com.example.demo.DTOs.ProductoDTO.ActualizacionProducto;
@@ -8,16 +11,20 @@ import com.example.demo.Entidades.CategoriaProducto;
 import com.example.demo.Entidades.Producto;
 import com.example.demo.Entidades.Usuario;
 import com.example.demo.Enums.EntidadesArchivoMultimediaEnum;
+import com.example.demo.Enums.RegionesDeColombiaEnum;
 import com.example.demo.Repositorios.CategoriaProductoRepositorio;
 import com.example.demo.Repositorios.ProductoRepositorio;
 import com.example.demo.Repositorios.UsuarioRepositorio;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -28,19 +35,37 @@ public class ProductoServicio {
     private final ArchivoMultimediaServicio archivoMultimediaServicio;
     private final CategoriaProductoRepositorio categoriaProductoRepositorio;
 
+    public Long obtenerIdUsuarioAutenticado() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth == null || !auth.isAuthenticated()) {
+            throw new IllegalStateException("No hay un usuario autenticado.");
+        }
+
+        Usuario usuarioAutenticado = (Usuario) auth.getPrincipal();
+        Long idUsuario = usuarioAutenticado.getIdUsuario();
+
+        return idUsuario;
+    }
+
     //. Crear nuevo producto
-    public RespuestaProducto crearProducto(CreacionProducto productoDTO) throws BadRequestException {
+    public RespuestaProducto crearProducto(CreacionProducto productoDTO) throws Exception {
         Producto producto = new Producto();
         Usuario usuario = usuarioRepositorio.findById(productoDTO.getIdUsuario())
                         .orElseThrow(() -> new NoSuchElementException("Usuario no encontrado"));
 
+        if (productoDTO.getIdProducto() != 0)
+            producto.setIdProducto(productoDTO.getIdProducto());
+
         producto.setNombreProducto(productoDTO.getNombreProducto());
         producto.setDescripcionProducto(productoDTO.getDescripcionProducto());
+        producto.setRegionProducto(productoDTO.getRegionProducto());
         producto.setPrecioProducto(productoDTO.getPrecioProducto());
         producto.setStockProducto(productoDTO.getStockProducto());
         producto.setUsuario(usuario);
 
         Producto nuevoProducto = productoRepositorio.save(producto);
+        nuevoProducto.setCategorias(categorizarProducto(nuevoProducto.getIdProducto(), productoDTO.getListaCategorias()));
 
         return generarRespuesta(nuevoProducto);
     }
@@ -71,6 +96,22 @@ public class ProductoServicio {
         return listadoRespuestaProducto;
     }
 
+    //. Listar productos por usuario
+    public List<RespuestaProducto> listarPorusuario() {
+        Long idusuario = obtenerIdUsuarioAutenticado();
+
+        List<RespuestaProducto> listadoRespuestaProducto = new ArrayList<>();
+        List<Producto> listadoProductos = productoRepositorio.findByUsuario_IdUsuario(idusuario);
+
+        for (int i = 0; i < listadoProductos.size(); i++) {
+            Producto producto = listadoProductos.get(i);
+            RespuestaProducto respuestaProducto = generarRespuesta(producto);
+            listadoRespuestaProducto.add(respuestaProducto);
+        }
+
+        return listadoRespuestaProducto;
+    }
+
     //. Obtener productos por nombre
     public List<RespuestaProducto> obtenerProductosPorNombre(String nombre) throws BadRequestException {
         if (nombre == null || nombre.trim().isEmpty()) {
@@ -89,7 +130,8 @@ public class ProductoServicio {
     }
 
     // Actualizaar uno o más datos de un producto
-    public RespuestaProducto actualizarProducto(Long id, ActualizacionProducto dto) throws BadRequestException {
+    public RespuestaProducto actualizarProducto(CreacionProducto dto) throws Exception {
+        Long id = dto.getIdProducto();
         if (id == null || id <= 0 || !productoRepositorio.existsById(id)) {
             throw new BadRequestException("ID inválido");
         }
@@ -105,6 +147,10 @@ public class ProductoServicio {
             producto.setDescripcionProducto(dto.getDescripcionProducto().trim());
         }
 
+        if (dto.getRegionProducto() != null) {
+            producto.setRegionProducto(dto.getRegionProducto());
+        }
+
         if (dto.getPrecioProducto() != null) {
             producto.setPrecioProducto(dto.getPrecioProducto());
         }
@@ -113,12 +159,8 @@ public class ProductoServicio {
             producto.setStockProducto(dto.getStockProducto());
         }
 
-        if (dto.getImagenProducto() != null) {
-            producto.setImagenProducto(dto.getImagenProducto().trim());
-        }
-
-        if (dto.getEstadoProducto() != null) {
-            producto.setEstadoProducto(dto.getEstadoProducto());
+        if(dto.getListaCategorias() != null){
+            producto.setCategorias(categorizarProducto(producto.getIdProducto(), dto.getListaCategorias()));
         }
 
         Producto productoActualizado = productoRepositorio.save(producto);
@@ -147,9 +189,10 @@ public class ProductoServicio {
     }
 
     //. Categorizar productos
-    public void categorizarProducto(Long idProducto, List<Long> idsCategorias) {
+    public List<CategoriaProducto> categorizarProducto(Long idProducto, List<Long> idsCategorias) throws Exception {
         Producto producto = productoRepositorio.findById(idProducto)
                 .orElseThrow( () -> new NoSuchElementException("El producto no fue encontrado."));
+        List<CategoriaProducto> categoriaProductos = producto.getCategorias();
 
         if (idsCategorias.isEmpty()) {
             throw new IllegalArgumentException("La lista no puede estar vacía.");
@@ -160,13 +203,14 @@ public class ProductoServicio {
         for (Long idCategoria : idsCategorias) {
             CategoriaProducto categoria = categoriaProductoRepositorio.findById(idCategoria)
                     .orElseThrow(() -> new NoSuchElementException("Categoría no encontrada en la base de datos."));
+            if (categoriaProductos.contains(categoria))
+                continue;
 
-            listadoCategorias.add(categoria);
+            categoriaProductos.add(categoria);
         }
 
-        producto.setCategorias(listadoCategorias);
-
         productoRepositorio.save(producto);
+        return categoriaProductos;
     }
 
     //. Listado de productos por categoría
@@ -200,6 +244,56 @@ public class ProductoServicio {
         return productosRespuesta;
     }
 
+    public List<RespuestaProducto> listarPorRegion (RegionesDeColombiaEnum region) {
+        List<Producto> productos = productoRepositorio.findByRegionProducto(region);
+        List<RespuestaProducto> productosRespuesta = new ArrayList<>();
+
+        for (Producto producto : productos) {
+            RespuestaProducto respuesta = generarRespuesta(producto);
+            productosRespuesta.add(respuesta);
+        }
+
+        return productosRespuesta;
+    }
+
+    public List<RespuestaFiltro> buscarProductosFiltrados(FiltroProducto dto) {
+        List<Producto> productos = productoRepositorio.findByProductosFiltrados(
+                dto.getNombreCategoria(),
+                dto.getPorcentajeDescuento(),
+                dto.getPrecioMin(),
+                dto.getPrecioMax()
+        );
+        List<RespuestaFiltro> respuesta = productos.stream().map(p->{
+            RespuestaFiltro rp = new RespuestaFiltro();
+            rp.setIdProducto(p.getIdProducto());
+            rp.setNombreProducto(p.getNombreProducto());
+            rp.setDescripcionProducto(p.getDescripcionProducto());
+            rp.setStockProducto(p.getStockProducto());
+            rp.setPrecioProducto(p.getPrecioProducto());
+            rp.setIdUsuario(p.getUsuario().getIdUsuario());
+            rp.setCategorias(p.getCategorias());
+
+            return rp;
+        }).collect(Collectors.toList());
+        return respuesta;
+    }
+
+    public RangoDePrecios obtenerRangoDePrecios() {
+        return productoRepositorio.rango_precios();
+    }
+
+    public List<RespuestaProducto> obtenerProductosRelacionados(Long idProducto) {
+        List<Producto> productos = productoRepositorio.findRelacionados(idProducto);
+
+        List<RespuestaProducto> productosRespuesta = new ArrayList<>();
+        for (Producto producto : productos) {
+            RespuestaProducto respuesta = generarRespuesta(producto);
+            productosRespuesta.add(respuesta);
+        }
+
+        return productosRespuesta;
+    }
+
     //. Construccion de respuesta
     public RespuestaProducto generarRespuesta(Producto producto) {
         RespuestaProducto respuestaProducto = new RespuestaProducto();
@@ -207,6 +301,7 @@ public class ProductoServicio {
         respuestaProducto.setIdProducto(producto.getIdProducto());
         respuestaProducto.setNombreProducto(producto.getNombreProducto());
         respuestaProducto.setDescripcionProducto(producto.getDescripcionProducto());
+        respuestaProducto.setRegionProducto(producto.getRegionProducto());
         respuestaProducto.setStockProducto(producto.getStockProducto());
         respuestaProducto.setPrecioProducto(producto.getPrecioProducto());
         respuestaProducto.setIdUsuario(producto.getUsuario().getIdUsuario());

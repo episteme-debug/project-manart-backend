@@ -5,6 +5,7 @@ import com.example.demo.DTOs.CategoriasProductoDTO.CreacionCategoria;
 import com.example.demo.DTOs.CategoriasProductoDTO.RespuestaCategoria;
 import com.example.demo.Entidades.ArchivoMultimedia;
 import com.example.demo.Entidades.CategoriaProducto;
+import com.example.demo.Entidades.Producto;
 import com.example.demo.Enums.EntidadesArchivoMultimediaEnum;
 import com.example.demo.Repositorios.ArchivoMultimediaRepositorio;
 import com.example.demo.Repositorios.CategoriaProductoRepositorio;
@@ -97,7 +98,16 @@ public class CategoriaProductoServicio {
 
     //6. Eliminar categoría
     public void eliminarCategoria(Long idCategoria){
-        categoriaProductoRepositorio.deleteById(idCategoria);
+        CategoriaProducto categoria = categoriaProductoRepositorio.findById(idCategoria)
+                .orElseThrow(() -> new RuntimeException("Categoría no encontrada"));
+
+        for (Producto producto : categoria.getProductos()) {
+            producto.getCategorias().remove(categoria);
+        }
+
+        categoria.getProductos().clear();
+
+        categoriaProductoRepositorio.delete(categoria);
     }
 
     public RespuestaCategoria generarRespuesta (CategoriaProducto categoriaProducto) {
@@ -110,7 +120,7 @@ public class CategoriaProductoServicio {
 
         List<ArchivoMultimedia> archivos = archivoMultimediaRepositorio.findByTipoEntidadAndIdObjetoEntidad(EntidadesArchivoMultimediaEnum.CategoriaProducto, categoriaProducto.getIdCategoria());
 
-        respuestaCategoria.setArchivoMultimedia(archivos);
+        respuestaCategoria.setListaArchivos(archivos);
 
         return respuestaCategoria;
     }

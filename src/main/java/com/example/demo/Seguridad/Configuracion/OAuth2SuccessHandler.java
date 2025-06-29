@@ -4,6 +4,7 @@ import com.example.demo.DTOs.AuthDTO.AutenticacionRespuesta;
 import com.example.demo.Entidades.Usuario;
 import com.example.demo.Enums.UsuarioEnum;
 import com.example.demo.Repositorios.UsuarioRepositorio;
+import com.example.demo.Seguridad.Servicios.CookieServicio;
 import com.example.demo.Seguridad.Servicios.JWTServicio;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
@@ -23,6 +24,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
+    private final CookieServicio cookieServicio;
     private final JWTServicio jwtServicio;
     private final UsuarioRepositorio usuarioRepositorio;
     private final PasswordEncoder passwordEncoder;
@@ -50,27 +52,25 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         // Si existe, se loguea
         if (usuarioOptional.isPresent()) {
             Usuario usuario = usuarioOptional.get();
-            respuesta = login(usuario);
+            login(usuario, response);
 
         } else {
-            respuesta = registro(nombre, apellido, alias, email);
+            registro(nombre, apellido, alias, email, response);
 
         }
-
-        construccionRespuesta(response, respuesta);
     }
 
-    public AutenticacionRespuesta login (Usuario usuario) {
+    public void login (Usuario usuario, HttpServletResponse response) {
         String token = jwtServicio.generarToken(usuario);
-        return AutenticacionRespuesta.builder()
-                .token(token)
-                .build();
+        cookieServicio.deleteCookie("token", response);
+        cookieServicio.addHttpOnlyCookie("token", token, 7*24*60*60, response);
     }
 
-    public AutenticacionRespuesta registro (String nombre, String apellido, String alias, String email) {
+    public void registro (String nombre, String apellido, String alias, String email, HttpServletResponse response) {
         Usuario nuevoUsuario = new Usuario();
         nuevoUsuario.setNombreUsuario(nombre != null ? nombre : "Usuario");
         nuevoUsuario.setApellidoUsuario(apellido != null ? apellido : "OAuth");
+        nuevoUsuario.setNumeroDocumentoUsuario("222222222222");
         nuevoUsuario.setAlias(alias);
         nuevoUsuario.setEmailUsuario(email);
         nuevoUsuario.setHashContrasenaUsuario(passwordEncoder.encode("N/A"));
@@ -80,9 +80,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         usuarioRepositorio.save(nuevoUsuario);
 
         String token = jwtServicio.generarToken(nuevoUsuario);
-        return AutenticacionRespuesta.builder()
-                .token(token)
-                .build();
+        cookieServicio.deleteCookie("token", response);
+        cookieServicio.addHttpOnlyCookie("token", token, 7*24*60*60, response);
     }
 
     public void construccionRespuesta (HttpServletResponse response, AutenticacionRespuesta respuesta) throws IOException {

@@ -1,8 +1,12 @@
 package com.example.demo.Controladores;
 
+import com.example.demo.DTOs.FiltrosProductoDTO.FiltroProducto;
+import com.example.demo.DTOs.FiltrosProductoDTO.RangoDePrecios;
+import com.example.demo.DTOs.FiltrosProductoDTO.RespuestaFiltro;
 import com.example.demo.DTOs.ProductoDTO.CreacionProducto;
 import com.example.demo.DTOs.ProductoDTO.RespuestaProducto;
 import com.example.demo.DTOs.ProductoDTO.ActualizacionProducto;
+import com.example.demo.Enums.RegionesDeColombiaEnum;
 import com.example.demo.Servicios.ProductoServicio;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +28,6 @@ public class ProductoControlador {
 
     //. Crear nuevo producto
     @PostMapping("private/crear")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('VENDEDOR')")
     public ResponseEntity<?> crearProducto(@RequestBody CreacionProducto productoDTO) {
         try {
             RespuestaProducto nuevo = productoServicio.crearProducto(productoDTO);
@@ -32,6 +35,8 @@ public class ProductoControlador {
 
         } catch (BadRequestException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
 
     }
@@ -64,6 +69,19 @@ public class ProductoControlador {
         return productoServicio.listarProductosPorCategoria(idCategoria);
     }
 
+    //. Listar productos por region
+    @GetMapping("public/listarporregion/{region}")
+    public List<RespuestaProducto> listarProductosPorRegion(@PathVariable RegionesDeColombiaEnum region) {
+        return productoServicio.listarPorRegion(region);
+    }
+
+    //. Listar productos por region
+    @GetMapping("private/listarporusuario")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('VENDEDOR')")
+    public List<RespuestaProducto> listarPorusuario() {
+        return productoServicio.listarPorusuario();
+    }
+
 
     //. Obtener lista de productos por nombre
     @GetMapping("public/obtenerpornombre/{nombreProducto}")
@@ -78,23 +96,34 @@ public class ProductoControlador {
         }
     }
 
+    @PostMapping("private/crear-actualizar")
+    public ResponseEntity<?> crearOActualizarProducto(@RequestBody CreacionProducto dto) throws Exception {
+        if (dto.getIdProducto() == 0) {
+            return ResponseEntity.ok(productoServicio.crearProducto(dto));
+        } else {
+            return ResponseEntity.ok(productoServicio.actualizarProducto(dto));
+        }
+    }
+
 
     //. Actualizar un producto existente
     @PatchMapping("private/actualizarproducto/{idProducto}")
-    @PreAuthorize("@autorizacion.esPropietarioProducto(#idProducto)")
-    public ResponseEntity<?> actualizarProducto(@PathVariable Long idProducto, @RequestBody ActualizacionProducto dto) {
+    @PreAuthorize("@autorizacion.esPropietarioProducto(#idProducto) or hasRole('ADMIN')")
+    public ResponseEntity<?> actualizarProducto(@PathVariable Long idProducto, @RequestBody CreacionProducto dto) {
         try {
-            RespuestaProducto actualizado = productoServicio.actualizarProducto(idProducto, dto);
+            RespuestaProducto actualizado = productoServicio.actualizarProducto(dto);
             return ResponseEntity.ok(actualizado);
 
         } catch (BadRequestException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
 
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
     //.  Eliminar un producto
-    @DeleteMapping("private/eliminarproducto/{idProducto}")
+    @DeleteMapping("private/eliminar/{idProducto}")
     @PreAuthorize("@autorizacion.esPropietarioProducto(#idProducto) or hasRole('ADMIN')")
     public ResponseEntity<?> eliminarProducto(@PathVariable Long idProducto) {
         try {
@@ -110,15 +139,34 @@ public class ProductoControlador {
         }
     }
 
-    @PatchMapping("private/categorizarProducto/{idProducto}")
+    @PatchMapping("private/categorizarproducto/{idProducto}")
     @PreAuthorize("@autorizacion.esPropietarioProducto(#idProducto) or hasRole('ADMIN')")
     public ResponseEntity<?> categorizarProducto (@PathVariable Long idProducto, @RequestBody List<Long> idsCategorias) {
         try {
             productoServicio.categorizarProducto(idProducto, idsCategorias);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok().body("Categorización exitosa");
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
+    }
+
+    @GetMapping("public/filtrar")
+    public List<RespuestaFiltro> buscarProductosFiltrados(FiltroProducto filtro) {
+        return productoServicio.buscarProductosFiltrados(filtro);
+    }
+
+    @GetMapping("public/relacionados/{idProducto}")
+    public ResponseEntity<List<RespuestaProducto>> obtenerRelacionados(@PathVariable Long idProducto) {
+        List<RespuestaProducto> relacionados = productoServicio.obtenerProductosRelacionados(idProducto);
+        return ResponseEntity.ok(relacionados);
+    }
+
+    @GetMapping("public/rango-precios")
+    public ResponseEntity<RangoDePrecios> obtenerRangoPrecios() {
+        RangoDePrecios rango = productoServicio.obtenerRangoDePrecios();
+        return (rango != null) ? ResponseEntity.ok(rango) : ResponseEntity.noContent().build();
     }
 
 }

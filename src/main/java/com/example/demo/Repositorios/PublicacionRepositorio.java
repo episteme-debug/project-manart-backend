@@ -4,6 +4,8 @@ import com.example.demo.Entidades.Publicacion;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface PublicacionRepositorio extends JpaRepository<Publicacion, Long> {
 /*    List<Publicacion> FindUsuarioB(Long usuarioId);
@@ -14,4 +16,5 @@ public interface PublicacionRepositorio extends JpaRepository<Publicacion, Long>
 
     List<Publicacion> findByFechaCreacionBetween(LocalDate inicio, LocalDate fin);*/
 
+    List<Publicacion> findByEstado(Boolean estado);
 }
