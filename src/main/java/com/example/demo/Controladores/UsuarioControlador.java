@@ -84,7 +84,7 @@ public class UsuarioControlador {
     //. Actualizar contraseña de usuario
     @PatchMapping("private/actualizarcontraseña/{idUsuario}")
     @PreAuthorize("@autorizacion.esPropietario(#idUsuario)")
-    public ResponseEntity<?> actualizarContraseña(@RequestBody ActualizacionContraseñaUsuario dto, @PathVariable Long idUsuario) {
+    public ResponseEntity<?> actualizarContrasena(@RequestBody ActualizacionContraseñaUsuario dto, @PathVariable Long idUsuario) {
         try {
             String actualizado = usuarioServicio.actualizarContraseña(dto, idUsuario);
             return ResponseEntity.ok(actualizado);
