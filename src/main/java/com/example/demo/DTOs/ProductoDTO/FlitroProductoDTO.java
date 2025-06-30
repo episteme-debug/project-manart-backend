@@ -10,4 +10,5 @@ public class FlitroProductoDTO {
     public Integer porcentajeDescuento;
     public Double precioMin;
     public Double precioMax;
+    public String region;
 }

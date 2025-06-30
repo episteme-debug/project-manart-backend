@@ -7,6 +7,7 @@ import com.example.demo.Entidades.CategoriaProducto;
 import com.example.demo.Entidades.Producto;
 import com.example.demo.Entidades.Usuario;
 import com.example.demo.Enums.EntidadesArchivoMultimediaEnum;
+import com.example.demo.Enums.RegionesDeColombiaEnum;
 import com.example.demo.Repositorios.CategoriaProductoRepositorio;
 import com.example.demo.Repositorios.ProductoRepositorio;
 import com.example.demo.Repositorios.UsuarioRepositorio;
@@ -199,7 +200,17 @@ public class ProductoServicio {
 
         return productosRespuesta;
     }
+    public List<RespuestaProducto> listarPorRegion (RegionesDeColombiaEnum region) {
+        List<Producto> productos = productoRepositorio.findByRegionProducto(region);
+        List<RespuestaProducto> productosRespuesta = new ArrayList<>();
 
+        for (Producto producto : productos) {
+            RespuestaProducto respuesta = generarRespuesta(producto);
+            productosRespuesta.add(respuesta);
+        }
+
+        return productosRespuesta;
+    }
 
     public List<RespuestaProducto> obtenerRelacionados(Long idProducto) {
         List<Producto> productos = productoRepositorio.findRelacionados(idProducto);
@@ -213,43 +224,13 @@ public class ProductoServicio {
         return productosRespuesta;
     }
 
-
-
-
-
-    //. Construccion de respuesta
-    public RespuestaProducto generarRespuesta(Producto producto) {
-        RespuestaProducto respuestaProducto = new RespuestaProducto();
-
-        respuestaProducto.setIdProducto(producto.getIdProducto());
-        respuestaProducto.setNombreProducto(producto.getNombreProducto());
-        respuestaProducto.setDescripcionProducto(producto.getDescripcionProducto());
-        respuestaProducto.setStockProducto(producto.getStockProducto());
-        respuestaProducto.setPrecioProducto(producto.getPrecioProducto());
-        respuestaProducto.setIdUsuario(producto.getUsuario().getIdUsuario());
-
-        List<String> nombreCategorias = new ArrayList<>();
-        List<CategoriaProducto> categorias = producto.getCategorias();
-        for (CategoriaProducto categoria : categorias) {
-            String nombre = categoria.getNombreCategoria();
-            nombreCategorias.add(nombre);
-        }
-
-        respuestaProducto.setListaCategorias(nombreCategorias);
-
-        List<ArchivoMultimedia> listaArchivos = archivoMultimediaServicio.listarArchivosPorEntidadYId(EntidadesArchivoMultimediaEnum.Producto, producto.getIdProducto());
-
-        respuestaProducto.setListaArchivos(listaArchivos);
-
-        return respuestaProducto;
-    }
-
     public List<RespuestaFiltro> buscarProductosFiltrados(FlitroProductoDTO dto) {
         List<Producto> productos = productoRepositorio.buscarProductosFiltrados(
                 dto.getNombreCategoria(),
                 dto.getPorcentajeDescuento(),
                 dto.getPrecioMin(),
-                dto.getPrecioMax()
+                dto.getPrecioMax(),
+                dto.getRegion()
         );
         List<RespuestaFiltro> respuesta = productos.stream().map(p->{
             RespuestaFiltro rp = new RespuestaFiltro();
@@ -270,4 +251,34 @@ public class ProductoServicio {
         return productoRepositorio.rango_precios();
     }
 
+
+
+    //. Construccion de respuesta
+    public RespuestaProducto generarRespuesta(Producto producto) {
+        RespuestaProducto respuestaProducto = new RespuestaProducto();
+
+        respuestaProducto.setIdProducto(producto.getIdProducto());
+        respuestaProducto.setNombreProducto(producto.getNombreProducto());
+        respuestaProducto.setDescripcionProducto(producto.getDescripcionProducto());
+        respuestaProducto.setRegionProducto(producto.getRegionProducto());
+        respuestaProducto.setStockProducto(producto.getStockProducto());
+        respuestaProducto.setPrecioProducto(producto.getPrecioProducto());
+        respuestaProducto.setIdUsuario(producto.getUsuario().getIdUsuario());
+
+        List<String> nombreCategorias = new ArrayList<>();
+        List<CategoriaProducto> categorias = producto.getCategorias();
+        for (CategoriaProducto categoria : categorias) {
+            String nombre = categoria.getNombreCategoria();
+            nombreCategorias.add(nombre);
+        }
+
+        respuestaProducto.setListaCategorias(nombreCategorias);
+
+        List<ArchivoMultimedia> listaArchivos = archivoMultimediaServicio.listarArchivosPorEntidadYId(EntidadesArchivoMultimediaEnum.Producto, producto.getIdProducto());
+
+        respuestaProducto.setListaArchivos(listaArchivos);
+
+        return respuestaProducto;
+    }
 }
+

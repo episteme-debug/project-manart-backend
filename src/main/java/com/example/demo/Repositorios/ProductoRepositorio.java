@@ -4,6 +4,7 @@ import com.example.demo.DTOs.ProductoDTO.RangoDePreciosDTO;
 import com.example.demo.Entidades.CategoriaProducto;
 import com.example.demo.Entidades.Producto;
 import com.example.demo.Entidades.RelacionCategoriaProducto;
+import com.example.demo.Enums.RegionesDeColombiaEnum;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -36,10 +37,11 @@ public interface ProductoRepositorio extends JpaRepository<Producto, Long> {
             "WHERE (:nombreCategoria IS NULL OR c.nombre_categoria = :nombreCategoria) " +
             "AND (:porcentajeDescuento IS NULL OR o.porcentaje_descuento_promocion = :porcentajeDescuento) " +
             "AND (:precioMin IS NULL OR p.precio_producto >= :precioMin) " +
-            "AND (:precioMax IS NULL OR p.precio_producto <= :precioMax)",
+            "AND (:precioMax IS NULL OR p.precio_producto <= :precioMax)"+
+            " AND (:region IS NULL OR p.region_producto =  :region)",
             nativeQuery = true)
 
-    List<Producto> buscarProductosFiltrados(String nombreCategoria, Integer porcentajeDescuento, Double precioMin, Double precioMax);
+    List<Producto> buscarProductosFiltrados(String nombreCategoria, Integer porcentajeDescuento, Double precioMin, Double precioMax , String region);
 
     @Query("SELECT new com.example.demo.DTOs.ProductoDTO.RangoDePreciosDTO(MIN(p.precioProducto), MAX(p.precioProducto)) FROM Producto p")
     RangoDePreciosDTO rango_precios();
@@ -52,4 +54,6 @@ public interface ProductoRepositorio extends JpaRepository<Producto, Long> {
     List<Producto> findByCategorias_IdCategoria(Long idCategoria);
 
     List<Producto> findByUsuario_IdUsuario(Long idUsuario);
+
+    List<Producto> findByRegionProducto(RegionesDeColombiaEnum region);
 }

@@ -3,6 +3,7 @@ package com.example.demo.Controladores;
 import com.example.demo.DTOs.ProductoDTO.FlitroProductoDTO;
 import com.example.demo.DTOs.ProductoDTO.*;
 import com.example.demo.Entidades.Producto;
+import com.example.demo.Enums.RegionesDeColombiaEnum;
 import com.example.demo.Servicios.ProductoServicio;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +64,11 @@ public class ProductoControlador {
     public List<RespuestaProducto> listarProductosPorCategoria(@PathVariable Long idCategoria) {
         return productoServicio.listarProductosPorCategoria(idCategoria);
     }
-
+    //. Listar productos por region /api/producto/public/listarporregion/AMAZONICA
+    @GetMapping("public/listarporregion/{region}")
+    public List<RespuestaProducto> listarProductosPorRegion(@PathVariable RegionesDeColombiaEnum region) {
+        return productoServicio.listarPorRegion(region);
+    }
 
     //. Obtener lista de productos por nombre
     @GetMapping("public/obtenerpornombre/{nombreProducto}")
