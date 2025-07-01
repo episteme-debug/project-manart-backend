@@ -2,7 +2,6 @@ package com.example.demo.Repositorios;
 
 import com.example.demo.DTOs.FiltrosProductoDTO.RangoDePrecios;
 import com.example.demo.Entidades.Producto;
-import com.example.demo.Entidades.RelacionCategoriaProducto;
 import com.example.demo.Enums.RegionesDeColombiaEnum;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -48,6 +47,6 @@ public interface ProductoRepositorio extends JpaRepository<Producto, Long> {
 
     List<Producto> findByRegionProducto(RegionesDeColombiaEnum region);
 
-    @Query("SELECT MIN(precioProducto), MAX(precioProducto) FROM Producto p")
+    @Query("SELECT new com.example.demo.DTOs.FiltrosProductoDTO.RangoDePrecios(MIN(p.precioProducto), MAX(p.precioProducto)) FROM Producto p")
     RangoDePrecios rango_precios();
 }

@@ -16,12 +16,12 @@ import org.springframework.web.bind.annotation.*;
 public class FacturaControlador {
 
     private final FacturaServicio facturaServicio;
-    private final ReporteFacturaServicio reporteFacturaService;
+    private final ReporteFacturaServicio reporteFacturaServicio;
 
     @GetMapping("private/obtenerporid/{idFactura}/pdf")
     @PreAuthorize("@autorizacion.esPropietarioFactura(#idFactura) or hasRole('ADMIN')")
     public ResponseEntity<byte[]> generarPDF(@PathVariable Long idFactura) throws Exception {
-        byte[] pdf = reporteFacturaService.generarFacturaPDF(idFactura);
+        byte[] pdf = reporteFacturaServicio.generarFacturaPDF(idFactura);
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_PDF);
@@ -31,9 +31,22 @@ public class FacturaControlador {
     }
 
     @PostMapping("private/crearfactura/{idPedido}/{metodo}")
-    public ResponseEntity<?> crearFactura (@PathVariable Long idPedido, @PathVariable String metodo) {
+    public ResponseEntity<?> crearFactura(@PathVariable Long idPedido, @PathVariable String metodo) {
         try {
             facturaServicio.crearFactura(idPedido, metodo);
+            return ResponseEntity.ok("OK");
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+
+        }
+    }
+
+    @PostMapping("private/enviarfacturaporemail/{idFactura}")
+    @PreAuthorize("@autorizacion.esPropietarioFactura(#idFactura) or hasRole('ADMIN')")
+    public ResponseEntity<?> enviarPorEmail(@PathVariable Long idFactura) {
+        try {
+            reporteFacturaServicio.enviarPorEmail(idFactura);
             return ResponseEntity.ok("OK");
 
         } catch (Exception e) {

@@ -48,7 +48,7 @@ public class PasswordResetTokenServicio {
 
         eviarCorreo(usuario.getEmailUsuario(),"Recuperacion de Contraseña",html);
     }
-    private  void eviarCorreo( String destino,String asunto, String contenidohtml){
+    private void eviarCorreo( String destino,String asunto, String contenidohtml){
         try{
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message,true);

@@ -1,10 +1,12 @@
 package com.example.demo.Servicios.PasarelaPago;
 
 import com.example.demo.Configuraciones.PayUConfig;
+import com.example.demo.Entidades.Factura;
 import com.example.demo.Entidades.Pedido;
 import com.example.demo.Enums.EstadoPedidoEnum;
 import com.example.demo.Repositorios.PedidoRepositorio;
 import com.example.demo.Servicios.Facturacion.FacturaServicio;
+import com.example.demo.Servicios.Facturacion.ReporteFacturaServicio;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,7 @@ public class NotificacionPagoServicio {
     private final FacturaServicio facturaServicio;
     private final PayUConfig payUConfig;
     private final PedidoRepositorio pedidoRepositorio;
+    private final ReporteFacturaServicio reporteFacturaServicio;
 
     public void procesarNotificacion(Map<String, String> payload) throws Exception {
         String referencia = payload.get("reference_sale");
@@ -80,6 +83,8 @@ public class NotificacionPagoServicio {
                 pedido.setEstado(EstadoPedidoEnum.COMPLETADO);
                 pedidoRepositorio.save(pedido);
                 facturaServicio.crearFactura(pedido.getIdPedido(), metodoPago);
+                Factura factura = facturaServicio.obtenerFacturaPorPedido(pedido.getIdPedido());
+                reporteFacturaServicio.enviarPorEmail(factura.getIdFactura());
                 break;
             case "6": // Transacción Rechazada
                 pedido.setEstado(EstadoPedidoEnum.DECLINADO);

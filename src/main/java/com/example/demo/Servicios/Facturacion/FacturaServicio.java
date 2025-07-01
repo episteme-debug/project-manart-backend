@@ -89,6 +89,16 @@ public class FacturaServicio {
                 .orElseThrow(() -> new NoSuchElementException("Factura no encontrada"));
     }
 
+    public Factura obtenerFacturaPorPedido(Long idPedido) {
+        Pedido pedido = pedidoRepositorio.findById(idPedido)
+                .orElseThrow(() -> new NoSuchElementException("Pedido no encontrado"));
+
+        Factura factura = facturaRepositorio.findByPedido_IdPedido(idPedido)
+                .orElseThrow(() -> new NoSuchElementException("Factura no encontrada"));
+
+        return factura;
+    }
+
     public Pedido verificarPedido (Long idPedido) {
         Pedido pedido = pedidoRepositorio.findById(idPedido)
                 .orElseThrow(() -> new NoSuchElementException("Pedido no encontrado"));
