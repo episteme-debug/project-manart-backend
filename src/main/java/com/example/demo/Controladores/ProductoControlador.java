@@ -152,8 +152,9 @@ public class ProductoControlador {
         }
     }
 
-    @GetMapping("public/filtrar")
-    public List<RespuestaFiltro> buscarProductosFiltrados(FiltroProducto filtro) {
+    @PostMapping("public/filtrar")
+    public List<RespuestaFiltro> buscarProductosFiltrados(@RequestBody FiltroProducto filtro) {
+        System.out.println(filtro);
         return productoServicio.buscarProductosFiltrados(filtro);
     }
 

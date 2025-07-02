@@ -1,5 +1,6 @@
 package com.example.demo.DTOs.FiltrosProductoDTO;
 
+import com.example.demo.DTOs.CategoriasProductoDTO.RespuestaCategoria;
 import com.example.demo.Entidades.ArchivoMultimedia;
 import com.example.demo.Entidades.CategoriaProducto;
 import lombok.AllArgsConstructor;
@@ -20,5 +21,5 @@ public class RespuestaFiltro {
     private BigDecimal precioProducto;
     private Long idUsuario;
     private List<ArchivoMultimedia> listaArchivos;
-    private List<CategoriaProducto> categorias;
+    private List<RespuestaCategoria> categorias;
 }

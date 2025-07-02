@@ -1,5 +1,6 @@
 package com.example.demo.Servicios;
 
+import com.example.demo.DTOs.CategoriasProductoDTO.RespuestaCategoria;
 import com.example.demo.DTOs.FiltrosProductoDTO.FiltroProducto;
 import com.example.demo.DTOs.FiltrosProductoDTO.RangoDePrecios;
 import com.example.demo.DTOs.FiltrosProductoDTO.RespuestaFiltro;
@@ -52,7 +53,7 @@ public class ProductoServicio {
     public RespuestaProducto crearProducto(CreacionProducto productoDTO) throws Exception {
         Producto producto = new Producto();
         Usuario usuario = usuarioRepositorio.findById(productoDTO.getIdUsuario())
-                        .orElseThrow(() -> new NoSuchElementException("Usuario no encontrado"));
+                .orElseThrow(() -> new NoSuchElementException("Usuario no encontrado"));
 
         if (productoDTO.getIdProducto() != 0)
             producto.setIdProducto(productoDTO.getIdProducto());
@@ -159,7 +160,7 @@ public class ProductoServicio {
             producto.setStockProducto(dto.getStockProducto());
         }
 
-        if(dto.getListaCategorias() != null){
+        if (dto.getListaCategorias() != null) {
             producto.setCategorias(categorizarProducto(producto.getIdProducto(), dto.getListaCategorias()));
         }
 
@@ -191,7 +192,7 @@ public class ProductoServicio {
     //. Categorizar productos
     public List<CategoriaProducto> categorizarProducto(Long idProducto, List<Long> idsCategorias) throws Exception {
         Producto producto = productoRepositorio.findById(idProducto)
-                .orElseThrow( () -> new NoSuchElementException("El producto no fue encontrado."));
+                .orElseThrow(() -> new NoSuchElementException("El producto no fue encontrado."));
         List<CategoriaProducto> categoriaProductos = producto.getCategorias();
 
         if (idsCategorias.isEmpty()) {
@@ -229,7 +230,7 @@ public class ProductoServicio {
         return respuestaProductoProductos;
     }
 
-    public List<RespuestaProducto> listarPorUsuario (Long idUsuario) {
+    public List<RespuestaProducto> listarPorUsuario(Long idUsuario) {
         Usuario usuario = usuarioRepositorio.findById(idUsuario)
                 .orElseThrow(() -> new NoSuchElementException("Usuario no encontrado"));
 
@@ -244,7 +245,7 @@ public class ProductoServicio {
         return productosRespuesta;
     }
 
-    public List<RespuestaProducto> listarPorRegion (RegionesDeColombiaEnum region) {
+    public List<RespuestaProducto> listarPorRegion(RegionesDeColombiaEnum region) {
         List<Producto> productos = productoRepositorio.findByRegionProducto(region);
         List<RespuestaProducto> productosRespuesta = new ArrayList<>();
 
@@ -263,7 +264,8 @@ public class ProductoServicio {
                 dto.getPrecioMin(),
                 dto.getPrecioMax()
         );
-        List<RespuestaFiltro> respuesta = productos.stream().map(p->{
+        List<RespuestaCategoria> categoriaList = new ArrayList<>();
+        List<RespuestaFiltro> respuesta = productos.stream().map(p -> {
             RespuestaFiltro rp = new RespuestaFiltro();
             rp.setIdProducto(p.getIdProducto());
             rp.setNombreProducto(p.getNombreProducto());
@@ -271,7 +273,7 @@ public class ProductoServicio {
             rp.setStockProducto(p.getStockProducto());
             rp.setPrecioProducto(p.getPrecioProducto());
             rp.setIdUsuario(p.getUsuario().getIdUsuario());
-            rp.setCategorias(p.getCategorias());
+            rp.setCategorias(categoriaList);
 
             return rp;
         }).collect(Collectors.toList());

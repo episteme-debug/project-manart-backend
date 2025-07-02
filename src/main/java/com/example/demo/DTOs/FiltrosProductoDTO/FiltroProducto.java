@@ -4,12 +4,14 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class FiltroProducto {
     public String nombreCategoria;
     public Integer porcentajeDescuento;
-    public Double precioMin;
-    public Double precioMax;
+    public BigDecimal precioMin;
+    public BigDecimal precioMax;
 }
