@@ -60,12 +60,16 @@ public class RelacionCarritoProductoServicio {
         return generarRespuesta(agregarNuevoProductoAlCarrito(producto, idUsuario, cantidad));
     }
 
-    private RelacionCarritoProducto actualizarCantidadProductoExistente(RelacionCarritoProducto relacion, Integer cantidad) throws BadRequestException {
+    public RelacionCarritoProducto actualizarCantidad(Long idRelacion, Integer nuevaCantidad) {
+        RelacionCarritoProducto relacion = relacionCarritoProductoRepositorio.findById(idRelacion)
+                .orElseThrow(() -> new RuntimeException("Producto no encontrado en el carrito"));
+
+        return actualizarCantidadProductoExistente(relacion, nuevaCantidad);
+    }
+
+    private RelacionCarritoProducto actualizarCantidadProductoExistente(RelacionCarritoProducto relacion, Integer cantidad) {
         relacion.setCantidad(cantidad);
         relacion.setSubtotal(relacion.getPrecioUnitario().multiply(BigDecimal.valueOf(cantidad)));
-
-        Producto producto = relacion.getProducto();
-        actualizarStockProducto(producto, cantidad);
         return relacionCarritoProductoRepositorio.save(relacion);
     }
 
@@ -135,5 +139,6 @@ public class RelacionCarritoProductoServicio {
 
         producto.setStockProducto(producto.getStockProducto() - cantidad);
     }
+
 
 }

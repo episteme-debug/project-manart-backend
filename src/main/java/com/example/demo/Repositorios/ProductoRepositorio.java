@@ -31,8 +31,8 @@ public interface ProductoRepositorio extends JpaRepository<Producto, Long> {
 
     @Query(value = "SELECT p.*, c.nombre_categoria, o.nombre_promocion, o.porcentaje_descuento_promocion " +
             "FROM producto p " +
-            "INNER JOIN relacion_categoria_producto rcp ON p.id_producto = rcp.id_producto " +
-            "INNER JOIN categoria_producto c ON rcp.id_categoria_producto = c.id_categoria " +
+            "INNER JOIN relacion_producto_categoria rcp ON p.id_producto = rcp.producto_id " +
+            "INNER JOIN categoria_producto c ON rcp.categoria_id = c.id_categoria " +
             "LEFT JOIN promocion o ON p.id_promocion = o.id_promocion " +
             "WHERE (:nombreCategoria IS NULL OR c.nombre_categoria = :nombreCategoria) " +
             "AND (:porcentajeDescuento IS NULL OR o.porcentaje_descuento_promocion = :porcentajeDescuento) " +

@@ -10,7 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 @CrossOrigin("http://127.0.0.1:5500/")
@@ -74,5 +76,17 @@ public class RelacionCarritoProductoControlador {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
 
         }
+    }
+
+    @PutMapping("private/actualizar-cantidad/{idRelacion}")
+    public ResponseEntity<Map<String, String>> actualizarCantidad(
+            @PathVariable Long idRelacion,
+            @RequestParam Integer cantidad) {
+
+        relacionCarritoProductoServicio.actualizarCantidad(idRelacion, cantidad);
+        Map<String, String> respuesta = new HashMap<>();
+        respuesta.put("mensaje", "Cantidad actualizada correctamente");
+
+        return ResponseEntity.ok(respuesta);
     }
 }
