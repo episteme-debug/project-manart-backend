@@ -292,7 +292,7 @@ public class ProductoServicio {
         }
 
         return productosRespuesta;
-    }
+    }//
 
     //. Construccion de respuesta
     public RespuestaProducto generarRespuesta(Producto producto) {
