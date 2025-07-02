@@ -29,7 +29,7 @@ public class Publicacion {
     private String contenido;
 
     @Column(nullable = false)
-    private Boolean estado;
+    private Boolean estado = true;
 
     @CreationTimestamp
     @Column(nullable = false)

@@ -6,10 +6,13 @@ import com.example.demo.DTOs.CategoriasProductoDTO.RespuestaCategoria;
 import com.example.demo.Entidades.ArchivoMultimedia;
 import com.example.demo.Entidades.CategoriaProducto;
 import com.example.demo.Entidades.Producto;
+import com.example.demo.Entidades.Usuario;
 import com.example.demo.Enums.EntidadesArchivoMultimediaEnum;
 import com.example.demo.Repositorios.ArchivoMultimediaRepositorio;
 import com.example.demo.Repositorios.CategoriaProductoRepositorio;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,10 +28,13 @@ public class CategoriaProductoServicio {
 
     //1. Crear una Categoria de Producto
     public RespuestaCategoria crearCategoriaProducto(CreacionCategoria creacionCategoria){
-        CategoriaProducto categoriaProducto = new CategoriaProducto();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Usuario usuario = (Usuario) auth.getPrincipal();
 
+        CategoriaProducto categoriaProducto = new CategoriaProducto();
         categoriaProducto.setNombreCategoria(creacionCategoria.getNombreCategoria());
         categoriaProducto.setDescripcionCategoria(creacionCategoria.getDescripcionCategoria());
+        categoriaProducto.setUsuarioCreador(usuario);
         
         CategoriaProducto nuevaCategoria = categoriaProductoRepositorio.save(categoriaProducto);
 
@@ -119,11 +125,12 @@ public class CategoriaProductoServicio {
         respuestaCategoria.setEstadoCategoria(categoriaProducto.getEstadoCategoria());
 
         List<ArchivoMultimedia> archivos = archivoMultimediaRepositorio.findByTipoEntidadAndIdObjetoEntidad(EntidadesArchivoMultimediaEnum.CategoriaProducto, categoriaProducto.getIdCategoria());
-
         respuestaCategoria.setArchivoMultimedia(archivos);
-
-        return respuestaCategoria;
-    }
+        if (categoriaProducto.getUsuarioCreador() != null) {
+            respuestaCategoria.setNombreUsuario(categoriaProducto.getUsuarioCreador().getNombreUsuario());
+        }
+            return respuestaCategoria;
+        }
 
 /*    // Contar cuántos productos hay por categoría.
     public int contarProductosPorCategoria(Long categoriaId) {

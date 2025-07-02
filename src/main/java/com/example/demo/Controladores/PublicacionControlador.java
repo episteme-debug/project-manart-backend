@@ -1,12 +1,11 @@
 package com.example.demo.Controladores;
 
-import com.example.demo.DTOs.Publicacion.CrearPublicacion;
+import com.example.demo.DTOs.Publicacion.CrearPublicacionDTO;
 import com.example.demo.DTOs.Publicacion.PublicacionDTO;
 import com.example.demo.Entidades.Publicacion;
 import com.example.demo.Servicios.PublicacionServicio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -22,17 +21,16 @@ public class PublicacionControlador {
     @Autowired
     PublicacionServicio publicacionServicio;
 
-    @PostMapping("private/crear")
+    @PostMapping("/private/crear")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> crearPublicacion(@RequestBody CrearPublicacion dto) {
+    public ResponseEntity<?> crear(@RequestBody CrearPublicacionDTO dto) {
         try {
             PublicacionDTO nueva = publicacionServicio.crearPublicacion(dto);
             return ResponseEntity.status(HttpStatus.CREATED).body(nueva);
-        } catch (IllegalArgumentException | NoSuchElementException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Error: " + e.getMessage());
         }
     }
-
 
 
     @GetMapping("public/obtenerporId/{idPubicacion}")
@@ -61,18 +59,17 @@ public class PublicacionControlador {
 
     @PatchMapping("private/actualizar/{idPublicacion}")
     @PreAuthorize("hasRole('ADMIN')")
-    public  ResponseEntity<?> actulizarPublicaion(@PathVariable Long idPublicacion, @RequestBody PublicacionDTO publicacionDTO){
-        try{
-            Publicacion actualizar = publicacionServicio.actulizarPublicacion(idPublicacion,publicacionDTO);
+    public ResponseEntity<?> actulizarPublicaion(@PathVariable Long idPublicacion, @RequestBody PublicacionDTO publicacionDTO) {
+        try {
+            PublicacionDTO actualizar = publicacionServicio.actualizarPublicacion(idPublicacion, publicacionDTO);
             return ResponseEntity.ok(actualizar);
-        }catch (IllegalArgumentException e) {
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-
         } catch (NoSuchElementException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-
         }
     }
+
 
 
     @DeleteMapping("private/eliminar/{idPublicacion}")

@@ -1,6 +1,6 @@
 package com.example.demo.Servicios;
 
-import com.example.demo.DTOs.Publicacion.CrearPublicacion;
+import com.example.demo.DTOs.Publicacion.CrearPublicacionDTO;
 import com.example.demo.DTOs.Publicacion.PublicacionDTO;
 import com.example.demo.Entidades.Publicacion;
 import com.example.demo.Entidades.Usuario;
@@ -8,8 +8,11 @@ import com.example.demo.Repositorios.PublicacionRepositorio;
 import com.example.demo.Repositorios.UsuarioRepositorio;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -25,19 +28,19 @@ public class PublicacionServicio {
     @Autowired
     private UsuarioRepositorio usuarioRepositorio;
 
-    public PublicacionDTO crearPublicacion(CrearPublicacion dto) {
-        Usuario usuario = usuarioRepositorio.findById(dto.getIdUsuario())
-                .orElseThrow(() -> new NoSuchElementException("Usuario no encontrado"));
+
+    public PublicacionDTO crearPublicacion(CrearPublicacionDTO dto) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        Usuario usuario = (Usuario) auth.getPrincipal();
 
         Publicacion publicacion = new Publicacion();
         publicacion.setTitulo(dto.getTitulo());
         publicacion.setContenido(dto.getContenido());
-        publicacion.setEstado(dto.getEstado());
         publicacion.setUsuario(usuario);
 
-        Publicacion nueva = publicacionRepositorio.save(publicacion);
+        Publicacion guardada = publicacionRepositorio.save(publicacion);
 
-        return generarRespuesta(nueva); // usa el DTO normal
+        return generarRespuesta(guardada);
     }
 
 
@@ -71,36 +74,35 @@ public class PublicacionServicio {
                 .collect(Collectors.toList());
     }
 
-
-    public Publicacion actulizarPublicacion(Long id,PublicacionDTO publicacionDTO){
-        if(publicacionDTO == null || publicacionDTO.getId() == null || id == null || id <= 0){
-            throw new IllegalArgumentException("Los datos de la publicacion no son validos");
+    public PublicacionDTO actualizarPublicacion(Long id, PublicacionDTO dto) {
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("El ID de la publicación no es válido.");
         }
 
-        Optional<Publicacion> publicacionOptional = publicacionRepositorio.findById(publicacionDTO.getId());
-        if(!publicacionOptional.isPresent()){
-            throw  new NoSuchElementException("Publicaion no encontrada");
+        Optional<Publicacion> publicacionOptional = publicacionRepositorio.findById(id);
+        if (!publicacionOptional.isPresent()) {
+            throw new NoSuchElementException("Publicación no encontrada");
         }
 
-        Publicacion publicacion = publicacionRepositorio.findById(id).get();
+        Publicacion publicacion = publicacionOptional.get();
 
-        if(publicacionDTO.getTitulo() != null){
-            publicacion.setTitulo(publicacionDTO.getTitulo());
+        if (dto.getTitulo() != null) {
+            publicacion.setTitulo(dto.getTitulo());
         }
 
-        if(publicacionDTO.getContenido() != null){
-            publicacion.setContenido(publicacionDTO.getContenido());
+        if (dto.getContenido() != null) {
+            publicacion.setContenido(dto.getContenido());
         }
 
-        if(publicacionDTO.getEstado() != null){
-            publicacion.setEstado(publicacionDTO.getEstado());
+        if (dto.getEstado() != null) {
+            publicacion.setEstado(dto.getEstado());
         }
 
-        if(publicacionDTO.getFechaUltimaActualizacion() != null){
-            publicacion.setFechaUltimaActualizacion(publicacionDTO.getFechaUltimaActualizacion());
-        }
-        return publicacionRepositorio.save(publicacion);
+        Publicacion publicacionActualizada = publicacionRepositorio.save(publicacion);
+        return generarRespuesta(publicacionActualizada);
     }
+
+
 
     public void eliminarPorId (Long id){
         if(id == null || id <= 0){
@@ -120,6 +122,12 @@ public class PublicacionServicio {
         publicacionDTO.setEstado(publicacion.getEstado());
         publicacionDTO.setFechaCreacion(publicacion.getFechaCreacion());
         publicacionDTO.setFechaUltimaActualizacion(publicacion.getFechaUltimaActualizacion());
+
+        if (publicacion.getUsuario() != null) {
+            publicacionDTO.setNombreUsuario(publicacion.getUsuario().getNombreUsuario());
+        }
+
         return publicacionDTO;
     }
+
 }

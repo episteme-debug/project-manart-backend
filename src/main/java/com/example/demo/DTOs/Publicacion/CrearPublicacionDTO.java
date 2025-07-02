@@ -7,9 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CrearPublicacion {
+public class CrearPublicacionDTO {
     private String titulo;
     private String contenido;
-    private Boolean estado;
-    private Long idUsuario;
 }

@@ -16,4 +16,5 @@ public class PublicacionDTO {
     private Boolean estado;
     private LocalDateTime fechaCreacion;
     private LocalDateTime fechaUltimaActualizacion;
+    private String nombreUsuario;
 }

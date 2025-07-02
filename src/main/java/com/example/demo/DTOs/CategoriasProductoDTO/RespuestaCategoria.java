@@ -16,4 +16,5 @@ public class RespuestaCategoria {
     private String descripcionCategoria;
     private Boolean estadoCategoria;
     private List<ArchivoMultimedia> archivoMultimedia;
+    private String nombreUsuario;
 }
