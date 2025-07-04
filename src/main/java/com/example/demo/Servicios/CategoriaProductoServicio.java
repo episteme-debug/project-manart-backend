@@ -87,10 +87,6 @@ public class CategoriaProductoServicio {
             categoriaProducto.setEstadoCategoria(actualizacionCategoria.getEstadoCategoria());
         }
 
-        if(actualizacionCategoria.getImagenCategoria() != null){
-            categoriaProducto.setImagenCategoria(actualizacionCategoria.getImagenCategoria());
-        }
-
         CategoriaProducto nuevaCategoria = categoriaProductoRepositorio.save(categoriaProducto);
 
         return generarRespuesta(nuevaCategoria);

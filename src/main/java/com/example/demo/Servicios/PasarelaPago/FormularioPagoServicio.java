@@ -34,7 +34,7 @@ public class FormularioPagoServicio {
         datos.put("test", config.isTest() ? "1" : "0");
         datos.put("buyerEmail", pedido.getUsuario().getEmailUsuario());
         datos.put("responseUrl", "https://tusitio.com/respuesta");
-        datos.put("confirmationUrl", "https://a602-2800-484-f179-cc10-8c7b-f2a7-7e9b-7b65.ngrok-free.app/api/pago/public/notificacion");
+        datos.put("confirmationUrl", "https://hip-lamps-drum.loca.lt/api/pago/public/notificacion");
 
         return datos;
     }

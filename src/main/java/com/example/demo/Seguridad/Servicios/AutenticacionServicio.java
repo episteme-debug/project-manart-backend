@@ -39,28 +39,28 @@ public class AutenticacionServicio {
 
         String token = jwtService.generarToken(usuarioCreado);
         cookieServicio.deleteCookie("token", response);
-        cookieServicio.addHttpOnlyCookie("token", token, 7*24*60*60, response);
+        cookieServicio.addHttpOnlyCookie("token", token, 7 * 24 * 60 * 60, response);
 
-            return usuarioCreado.getRolUsuario().toString();
+        return usuarioCreado.getRolUsuario().toString();
+    }
+
+    public String login(LogIn request, HttpServletResponse response) {
+        try {
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
+                    request.getAlias(), request.getContraseña()
+            ));
+        } catch (AuthenticationException e) {
+            throw new BadCredentialsException("Alias o contraseña incorrectos");
         }
 
-        public String login (LogIn request, HttpServletResponse response){
-            try {
-                authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
-                        request.getAlias(), request.getContraseña()
-                ));
-            } catch (AuthenticationException e) {
-                throw new BadCredentialsException("Alias o contraseña incorrectos");
-            }
+        Usuario usuario = usuarioServicio.obtenerPorAlias(request.getAlias());
+        String token = jwtService.generarToken(usuario);
 
-            Usuario usuario = usuarioServicio.obtenerPorAlias(request.getAlias());
-            String token = jwtService.generarToken(usuario);
+        cookieServicio.deleteCookie("token", response);
+        cookieServicio.addHttpOnlyCookie("token", token, 7 * 24 * 60 * 60, response);
 
-            cookieServicio.deleteCookie("token", response);
-            cookieServicio.addHttpOnlyCookie("token", token, 7*24*60*60, response);
-
-            return usuario.getRolUsuario().toString();
-        }
+        return usuario.getRolUsuario().toString();
+    }
 
     public Usuario inicializarUsuario(CreacionUsuario dto) {
         if (dto == null ||
@@ -99,4 +99,4 @@ public class AutenticacionServicio {
     }
 
 
-    }
+}

@@ -40,9 +40,6 @@ public class Producto {
     private BigDecimal precioProducto;
 
     @Column(nullable = false)
-    private String imagenProducto = "avatarGenerico.jpg";
-
-    @Column(nullable = false)
     private Boolean estadoProducto = true;
 
     //Relaciones

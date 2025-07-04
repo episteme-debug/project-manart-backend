@@ -257,27 +257,21 @@ public class ProductoServicio {
         return productosRespuesta;
     }
 
-    public List<RespuestaFiltro> buscarProductosFiltrados(FiltroProducto dto) {
+    public List<RespuestaProducto> buscarProductosFiltrados(FiltroProducto dto) {
         List<Producto> productos = productoRepositorio.findByProductosFiltrados(
                 dto.getNombreCategoria(),
                 dto.getPorcentajeDescuento(),
                 dto.getPrecioMin(),
                 dto.getPrecioMax()
         );
-        List<RespuestaCategoria> categoriaList = new ArrayList<>();
-        List<RespuestaFiltro> respuesta = productos.stream().map(p -> {
-            RespuestaFiltro rp = new RespuestaFiltro();
-            rp.setIdProducto(p.getIdProducto());
-            rp.setNombreProducto(p.getNombreProducto());
-            rp.setDescripcionProducto(p.getDescripcionProducto());
-            rp.setStockProducto(p.getStockProducto());
-            rp.setPrecioProducto(p.getPrecioProducto());
-            rp.setIdUsuario(p.getUsuario().getIdUsuario());
-            rp.setCategorias(categoriaList);
+        List<RespuestaProducto> productosRespuesta = new ArrayList<>();
 
-            return rp;
-        }).collect(Collectors.toList());
-        return respuesta;
+        for (Producto producto : productos) {
+            RespuestaProducto respuesta = generarRespuesta(producto);
+            productosRespuesta.add(respuesta);
+        }
+
+        return productosRespuesta;
     }
 
     public RangoDePrecios obtenerRangoDePrecios() {

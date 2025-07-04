@@ -37,11 +37,6 @@ public class CategoriaProducto {
     @NotNull(message = "El estado de la categoría no puede ser nulo")
     private Boolean estadoCategoria = true;
 
-    @Column(nullable = false, length = 150)
-    @NotBlank(message = "La imagen de la categoría no puede estar vacía")
-    @Size(max = 150, message = "El nombre de la imagen no debe exceder los 150 caracteres")
-    private String imagenCategoria = "avatarGenerico.jpg";
-
     @ManyToMany(mappedBy = "categorias")
     private List<Producto> productos;
 }

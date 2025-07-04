@@ -40,7 +40,7 @@ public class FacturaServicio {
         BigDecimal IVA = totalBruto.multiply(porcentajeIVA);
         BigDecimal totalNeto = totalBruto.add(IVA);
         List<Direccion> direcciones = direccionRepositorio.findByUsuario_IdUsuario(pedido.getUsuario().getIdUsuario());
-        Direccion direccion = direcciones.get(0);
+        Direccion direccion = new Direccion();
 
 
         factura.setTotalBruto(totalBruto);

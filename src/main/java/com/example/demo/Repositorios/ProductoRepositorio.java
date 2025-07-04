@@ -16,11 +16,11 @@ public interface ProductoRepositorio extends JpaRepository<Producto, Long> {
 
     @Query(value = """
     SELECT DISTINCT p.* FROM producto p
-    JOIN relacion_categoria_producto rcp ON p.id_producto = rcp.id_producto
-    WHERE rcp.id_categoria_producto IN (
-        SELECT id_categoria_producto 
-        FROM relacion_categoria_producto 
-        WHERE id_producto = :idProducto
+    JOIN relacion_producto_categoria rcp ON p.id_producto = rcp.producto_id
+    WHERE rcp.categoria_id IN (
+        SELECT categoria_id
+        FROM relacion_producto_categoria
+        WHERE producto_id = :idProducto
     )
     AND p.id_producto <> :idProducto
 """, nativeQuery = true)
