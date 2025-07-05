@@ -301,6 +301,7 @@ public class ProductoServicio {
         respuestaProducto.setStockProducto(producto.getStockProducto());
         respuestaProducto.setPrecioProducto(producto.getPrecioProducto());
         respuestaProducto.setIdUsuario(producto.getUsuario().getIdUsuario());
+        respuestaProducto.setNombreUsuario(producto.getUsuario().getNombreUsuario() + " " + producto.getUsuario().getApellidoUsuario());
 
         List<String> nombreCategorias = new ArrayList<>();
         List<CategoriaProducto> categorias = producto.getCategorias();

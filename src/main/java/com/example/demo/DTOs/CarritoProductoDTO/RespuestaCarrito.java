@@ -17,4 +17,5 @@ public class RespuestaCarrito {
     private Integer cantidad;
     private BigDecimal precioUnitario = BigDecimal.valueOf(0.00);
     private BigDecimal subtotal = BigDecimal.valueOf(0.00);
+    private String imagenProducto;
 }

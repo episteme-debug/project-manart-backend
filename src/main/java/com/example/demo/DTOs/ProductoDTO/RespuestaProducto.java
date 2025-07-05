@@ -20,6 +20,7 @@ public class RespuestaProducto {
     private Integer stockProducto;
     private BigDecimal precioProducto;
     private Long idUsuario;
+    private String nombreUsuario;
     private List<ArchivoMultimedia> listaArchivos;
     private List<String> listaCategorias;
 }

@@ -2,10 +2,8 @@ package com.example.demo.Servicios;
 
 import com.example.demo.DTOs.CarritoProductoDTO.AgregarItem;
 import com.example.demo.DTOs.CarritoProductoDTO.RespuestaCarrito;
-import com.example.demo.Entidades.CarritoCompra;
-import com.example.demo.Entidades.Producto;
-import com.example.demo.Entidades.RelacionCarritoProducto;
-import com.example.demo.Entidades.Usuario;
+import com.example.demo.Entidades.*;
+import com.example.demo.Enums.EntidadesArchivoMultimediaEnum;
 import com.example.demo.Repositorios.CarritoCompraRepositorio;
 import com.example.demo.Repositorios.ProductoRepositorio;
 import com.example.demo.Repositorios.RelacionCarritoProductoRepositorio;
@@ -24,9 +22,10 @@ import java.util.NoSuchElementException;
 @Service
 public class RelacionCarritoProductoServicio {
 
+    private final ArchivoMultimediaServicio archivoMultimediaServicio;
+    private final CarritoCompraRepositorio carritoCompraRepositorio;
     private final RelacionCarritoProductoRepositorio relacionCarritoProductoRepositorio;
     private final ProductoRepositorio productoRepositorio;
-    private final CarritoCompraRepositorio carritoCompraRepositorio;
 
     public Long obtenerIdUsuarioAutenticado() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -95,7 +94,7 @@ public class RelacionCarritoProductoServicio {
     //. Traer a todo los productos de carrito
     public List<RespuestaCarrito> listarProductos(){
         List<RelacionCarritoProducto> items = relacionCarritoProductoRepositorio.findAll();
-        List<RespuestaCarrito> listadoRespuesta =new ArrayList<>();
+        List<RespuestaCarrito> listadoRespuesta = new ArrayList<>();
 
         for (RelacionCarritoProducto item : items) {
             RespuestaCarrito respuestaItem = generarRespuesta(item);
@@ -126,6 +125,13 @@ public class RelacionCarritoProductoServicio {
         respuesta.setCantidad(item.getCantidad());
         respuesta.setPrecioUnitario(item.getPrecioUnitario());
         respuesta.setSubtotal(item.getSubtotal());
+
+        List<ArchivoMultimedia> archivos = archivoMultimediaServicio.listarArchivosPorEntidadYId(EntidadesArchivoMultimediaEnum.Producto, item.getProducto().getIdProducto());
+        if(archivos.isEmpty()){
+            respuesta.setImagenProducto("");
+        } else {
+            respuesta.setImagenProducto(archivos.getFirst().getRuta());
+        }
 
         return respuesta;
     }
