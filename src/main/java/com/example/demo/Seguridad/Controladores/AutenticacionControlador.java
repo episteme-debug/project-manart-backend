@@ -52,7 +52,7 @@ public class AutenticacionControlador {
         }
     }
 
-    @GetMapping("public/logout")
+    @PostMapping("public/logout")
     public ResponseEntity<?> logout(HttpServletResponse response) {
         cookieServicio.deleteCookie("token", response);
         return ResponseEntity.ok("Sesión cerrada correctamente");
