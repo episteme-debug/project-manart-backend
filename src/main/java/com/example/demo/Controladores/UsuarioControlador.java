@@ -107,7 +107,7 @@ public class UsuarioControlador {
 
     //. Obtener usuario en sesión
     @GetMapping("private/cargar-usuario")
-    public ResponseEntity<?> verificarSesion() {
+    public ResponseEntity<?> verificarSesion() {a
         try {
             return ResponseEntity.ok(usuarioServicio.obtenerUsuarioAutenticado());
         } catch (Exception e) {
