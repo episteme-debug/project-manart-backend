@@ -9,6 +9,7 @@ import com.example.demo.Enums.EntidadesArchivoMultimediaEnum;
 import com.example.demo.Enums.UsuarioEnum;
 import com.example.demo.Repositorios.UsuarioRepositorio;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -162,6 +163,18 @@ public class UsuarioServicio {
         String alias = SecurityContextHolder.getContext().getAuthentication().getName();
 
         return obtenerPorAlias(alias);
+    }
+
+    public RespuestaUsuario obtenerUsuarioAutenticado() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+
+        if (auth == null || !auth.isAuthenticated()) {
+            throw new IllegalStateException("No hay un usuario autenticado.");
+        }
+
+        Usuario usuarioAutenticado = (Usuario) auth.getPrincipal();
+
+        return generarRespuesta(usuarioAutenticado);
     }
 
     public RespuestaUsuario generarRespuesta (Usuario usuario) {

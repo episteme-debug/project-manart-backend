@@ -105,4 +105,14 @@ public class UsuarioControlador {
         }
     }
 
+    //. Obtener usuario en sesión
+    @GetMapping("private/cargar-usuario")
+    public ResponseEntity<?> verificarSesion() {
+        try {
+            return ResponseEntity.ok(usuarioServicio.obtenerUsuarioAutenticado());
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Sin sesión");
+        }
+    }
+
 }

@@ -9,7 +9,7 @@ public class CookieServicio {
 
     public void addHttpOnlyCookie(String nombre, String valor, int maxAge, HttpServletResponse response) {
         String headerValue = String.format(
-                "%s=%s; Max-Age=%d; Path=/; HttpOnly; SameSite=Lax",
+                "%s=%s; Max-Age=%d; Path=/; HttpOnly; SameSite=None; Secure",
                 nombre, valor, maxAge
         );
         response.addHeader("Set-Cookie", headerValue);
@@ -17,7 +17,7 @@ public class CookieServicio {
 
     public void deleteCookie(String nombre, HttpServletResponse response) {
         String headerValue = String.format(
-                "%s=; Max-Age=0; Path=/; HttpOnly; SameSite=Lax",
+                "%s=; Max-Age=0; Path=/; HttpOnly; SameSite=None; Secure",
                 nombre
         );
         response.addHeader("Set-Cookie", headerValue);

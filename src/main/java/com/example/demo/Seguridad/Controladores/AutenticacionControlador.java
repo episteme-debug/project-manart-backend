@@ -4,10 +4,14 @@ import com.example.demo.DTOs.ApiMensaje;
 import com.example.demo.DTOs.AuthDTO.AutenticacionRespuesta;
 import com.example.demo.DTOs.AuthDTO.LogIn;
 import com.example.demo.DTOs.UsuarioDTO.CreacionUsuario;
+import com.example.demo.DTOs.UsuarioDTO.RespuestaUsuario;
 import com.example.demo.Entidades.Usuario;
 import com.example.demo.Seguridad.Servicios.AutenticacionServicio;
 import com.example.demo.Seguridad.Servicios.CookieServicio;
+import com.example.demo.Seguridad.Servicios.JWTServicio;
 import com.example.demo.Servicios.UsuarioServicio;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,6 +27,7 @@ public class AutenticacionControlador {
 
     private final AutenticacionServicio autenticacionServicio;
     private final CookieServicio cookieServicio;
+    private final JWTServicio jwtServicio;
     private final UsuarioServicio usuarioServicio;
 
     @PostMapping("public/registro")
@@ -63,4 +68,5 @@ public class AutenticacionControlador {
         Usuario usuario = usuarioServicio.obtenerDetalleUsuario();
         return ResponseEntity.ok(usuario);
     }
+
 }

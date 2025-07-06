@@ -3,17 +3,24 @@ package com.example.demo.Seguridad.Servicios;
 import com.example.demo.DTOs.AuthDTO.AutenticacionRespuesta;
 import com.example.demo.DTOs.AuthDTO.LogIn;
 import com.example.demo.DTOs.UsuarioDTO.CreacionUsuario;
+import com.example.demo.DTOs.UsuarioDTO.RespuestaUsuario;
 import com.example.demo.Entidades.CarritoCompra;
 import com.example.demo.Entidades.Usuario;
 import com.example.demo.Repositorios.UsuarioRepositorio;
 import com.example.demo.Servicios.CarritoCompraServicio;
 import com.example.demo.Servicios.UsuarioServicio;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -22,12 +29,12 @@ import org.springframework.stereotype.Service;
 public class AutenticacionServicio {
 
     private final JWTServicio jwtService;
-    private final UsuarioRepositorio usuarioRepositorio;
-    private final UsuarioServicio usuarioServicio;
     private final PasswordEncoder passwordEncoder;
     private final AuthenticationManager authenticationManager;
     private final CarritoCompraServicio carritoCompraServicio;
     private final CookieServicio cookieServicio;
+    private final UsuarioRepositorio usuarioRepositorio;
+    private final UsuarioServicio usuarioServicio;
 
     public String registroUsuario(CreacionUsuario dto, HttpServletResponse response) {
         Usuario usuarioCreado = usuarioRepositorio.save(inicializarUsuario(dto));
@@ -97,6 +104,5 @@ public class AutenticacionServicio {
     private boolean isNullOrEmpty(String s) {
         return s == null || s.trim().isEmpty();
     }
-
 
 }

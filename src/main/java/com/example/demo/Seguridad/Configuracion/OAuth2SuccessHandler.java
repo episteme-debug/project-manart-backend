@@ -1,11 +1,13 @@
 package com.example.demo.Seguridad.Configuracion;
 
 import com.example.demo.DTOs.AuthDTO.AutenticacionRespuesta;
+import com.example.demo.Entidades.CarritoCompra;
 import com.example.demo.Entidades.Usuario;
 import com.example.demo.Enums.UsuarioEnum;
 import com.example.demo.Repositorios.UsuarioRepositorio;
 import com.example.demo.Seguridad.Servicios.CookieServicio;
 import com.example.demo.Seguridad.Servicios.JWTServicio;
+import com.example.demo.Servicios.CarritoCompraServicio;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,6 +26,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
+    private final CarritoCompraServicio carritoCompraServicio;
     private final CookieServicio cookieServicio;
     private final JWTServicio jwtServicio;
     private final UsuarioRepositorio usuarioRepositorio;
@@ -56,8 +59,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         } else {
             registro(nombre, apellido, alias, email, response);
-
         }
+        response.sendRedirect("http://localhost:3000/home");
     }
 
     public void login (Usuario usuario, HttpServletResponse response) {
@@ -77,7 +80,11 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         nuevoUsuario.setTelefonoUsuario("N/A");
         nuevoUsuario.setRolUsuario(UsuarioEnum.VENDEDOR);
 
-        usuarioRepositorio.save(nuevoUsuario);
+        Usuario usuarioCreado = usuarioRepositorio.save(nuevoUsuario);
+        // Crear un carrito asociado a este usuario
+        CarritoCompra carritoCompra = new CarritoCompra();
+        carritoCompra.setUsuario(usuarioCreado);
+        carritoCompraServicio.crearCarrito(carritoCompra);
 
         String token = jwtServicio.generarToken(nuevoUsuario);
         cookieServicio.deleteCookie("token", response);

@@ -7,6 +7,7 @@ import com.example.demo.DTOs.FiltrosProductoDTO.RespuestaFiltro;
 import com.example.demo.DTOs.ProductoDTO.CreacionProducto;
 import com.example.demo.DTOs.ProductoDTO.RespuestaProducto;
 import com.example.demo.DTOs.ProductoDTO.ActualizacionProducto;
+import com.example.demo.DTOs.UsuarioDTO.RespuestaUsuario;
 import com.example.demo.Entidades.ArchivoMultimedia;
 import com.example.demo.Entidades.CategoriaProducto;
 import com.example.demo.Entidades.Producto;
@@ -16,6 +17,7 @@ import com.example.demo.Enums.RegionesDeColombiaEnum;
 import com.example.demo.Repositorios.CategoriaProductoRepositorio;
 import com.example.demo.Repositorios.ProductoRepositorio;
 import com.example.demo.Repositorios.UsuarioRepositorio;
+import com.example.demo.Seguridad.Servicios.AutenticacionServicio;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
 import org.springframework.security.core.Authentication;
@@ -36,7 +38,7 @@ public class ProductoServicio {
     private final ArchivoMultimediaServicio archivoMultimediaServicio;
     private final CategoriaProductoRepositorio categoriaProductoRepositorio;
 
-    public Long obtenerIdUsuarioAutenticado() {
+    public Usuario obtenerUsuarioAutenticado() {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 
         if (auth == null || !auth.isAuthenticated()) {
@@ -44,9 +46,8 @@ public class ProductoServicio {
         }
 
         Usuario usuarioAutenticado = (Usuario) auth.getPrincipal();
-        Long idUsuario = usuarioAutenticado.getIdUsuario();
 
-        return idUsuario;
+        return usuarioAutenticado;
     }
 
     //. Crear nuevo producto
@@ -99,7 +100,7 @@ public class ProductoServicio {
 
     //. Listar productos por usuario
     public List<RespuestaProducto> listarPorusuario() {
-        Long idusuario = obtenerIdUsuarioAutenticado();
+        Long idusuario = obtenerUsuarioAutenticado().getIdUsuario();
 
         List<RespuestaProducto> listadoRespuestaProducto = new ArrayList<>();
         List<Producto> listadoProductos = productoRepositorio.findByUsuario_IdUsuario(idusuario);
