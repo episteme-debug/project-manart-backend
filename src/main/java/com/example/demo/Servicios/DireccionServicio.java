@@ -169,8 +169,12 @@ public class DireccionServicio {
     }
 
     public String construirDireccionComoTexto (Direccion direccion) {
-        String dir = direccion.getTipoVia() + " " + direccion.getNumeroViaPrincipal() + " " + direccion.getLetraViaPrincipal() + " " + direccion.getNumeroViaSecundaria() + " " + direccion.getLetraViaSecundaria() + " "  + direccion.getNumeroPredio() + " " + direccion.getComplemento();
-
+        String dir;
+        if (direccion == null) {
+            dir = "No hay direccion registrada";
+        } else {
+            dir = direccion.getTipoVia() + " " + direccion.getNumeroViaPrincipal() + " " + direccion.getLetraViaPrincipal() + " " + direccion.getNumeroViaSecundaria() + " " + direccion.getLetraViaSecundaria() + " " + direccion.getNumeroPredio() + " " + direccion.getComplemento();
+        }
         return dir;
     }
 

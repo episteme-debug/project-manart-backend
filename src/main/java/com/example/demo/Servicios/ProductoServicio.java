@@ -61,6 +61,7 @@ public class ProductoServicio {
 
         producto.setNombreProducto(productoDTO.getNombreProducto());
         producto.setDescripcionProducto(productoDTO.getDescripcionProducto());
+        producto.setDescripcionDetalladaProducto(productoDTO.getDescripcionDetalladaProducto());
         producto.setRegionProducto(productoDTO.getRegionProducto());
         producto.setPrecioProducto(productoDTO.getPrecioProducto());
         producto.setStockProducto(productoDTO.getStockProducto());
@@ -147,6 +148,10 @@ public class ProductoServicio {
 
         if (dto.getDescripcionProducto() != null) {
             producto.setDescripcionProducto(dto.getDescripcionProducto().trim());
+        }
+
+        if (dto.getDescripcionDetalladaProducto() != null) {
+            producto.setDescripcionProducto(dto.getDescripcionDetalladaProducto().trim());
         }
 
         if (dto.getRegionProducto() != null) {
@@ -298,6 +303,7 @@ public class ProductoServicio {
         respuestaProducto.setIdProducto(producto.getIdProducto());
         respuestaProducto.setNombreProducto(producto.getNombreProducto());
         respuestaProducto.setDescripcionProducto(producto.getDescripcionProducto());
+        respuestaProducto.setDescripcionDetalladaProducto(producto.getDescripcionDetalladaProducto());
         respuestaProducto.setRegionProducto(producto.getRegionProducto());
         respuestaProducto.setStockProducto(producto.getStockProducto());
         respuestaProducto.setPrecioProducto(producto.getPrecioProducto());
