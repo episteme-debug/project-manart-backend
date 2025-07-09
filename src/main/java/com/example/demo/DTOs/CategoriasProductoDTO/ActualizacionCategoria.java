@@ -8,10 +8,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ActualizacionCategoria {
-
     private Long idCategoria;
     private String nombreCategoria;
     private String descripcionCategoria;
     private Boolean estadoCategoria;
-    private String imagenCategoria;
 }

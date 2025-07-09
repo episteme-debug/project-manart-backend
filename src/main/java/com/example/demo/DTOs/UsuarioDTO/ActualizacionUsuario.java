@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 public class ActualizacionUsuario {
     private String alias;
     private String nombreUsuario;
+    private String numeroDocumentoUsuario;
     private String apellidoUsuario;
     private String emailUsuario;
     private String telefonoUsuario;
     private Boolean estadoUsuario;
-
 }
