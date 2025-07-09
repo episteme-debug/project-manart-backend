@@ -1,11 +1,12 @@
 {
-  "nombreUsuario": "Severus",
-  "alias" : "slytherin",
-  "apellidoUsuario": "Snape",
-  "emailUsuario": "severus.snape@hogwarts.edu",
-  "hashContrasenaUsuario": "expelliarmus",
-  "telefonoUsuario": "+44-555-1996",
-  "rolUsuario": "ADMIN"
+  "nombreUsuario": "Quintín",
+  "alias": "quintin_lame",
+  "apellidoUsuario": "Lame Chantre",
+  "emailUsuario": "salazar.ce@outlook.es",
+  "hashContrasenaUsuario": "resistencia1914",
+  "telefonoUsuario": "+57-311-555-0123",
+  "rolUsuario": "ADMIN",
+  "numeroDocumentoUsuario": "12345678"
 }
 
 {

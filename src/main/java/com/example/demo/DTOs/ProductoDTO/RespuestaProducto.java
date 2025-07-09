@@ -16,6 +16,7 @@ public class RespuestaProducto {
     private Long idProducto;
     private String nombreProducto;
     private String descripcionProducto;
+    private String descripcionDetalladaProducto;
     private RegionesDeColombiaEnum regionProducto;
     private Integer stockProducto;
     private BigDecimal precioProducto;

@@ -14,14 +14,17 @@ public class PasswordResetTokenControlador {
     @Autowired
     private PasswordResetTokenServicio passwordResetTokenServicio;
 
-    @PostMapping("/recuperacion-contresena")
-    public ResponseEntity<String> solicitarRecuperacion(@RequestParam String email){
+    @PostMapping("/recuperacion-contrasena/{email}")
+    public ResponseEntity<String> solicitarRecuperacion(@PathVariable String email){
+        System.out.println("Hola");
         passwordResetTokenServicio.crearYEnviarToken(email);
         return ResponseEntity.ok("Correo de recuperacion enviado");
     }
 
-    @PostMapping("/actualizar-contrasema")
+    @PostMapping("/actualizar-contrasena")
     public  ResponseEntity<String> cambiarContrasena(@RequestParam String token,@RequestParam String nuevaContrasena){
+        System.out.println("hola");
+        System.out.println(token);
         boolean actualizar = passwordResetTokenServicio.validadTokenYActualizarContrasena(token,nuevaContrasena);
 
         if(actualizar){

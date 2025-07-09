@@ -39,7 +39,7 @@ public class PasswordResetTokenServicio {
 
         tokenRepositorio.save(passwordResetToken);
 
-        String link = "http://localhost:3000/cambiar-contrasena/" + token;
+        String link = "http://localhost:3000/cambiar-password/" + token;
 
         Context context = new Context();
         context.setVariable("recuperarLink", link);
@@ -48,6 +48,7 @@ public class PasswordResetTokenServicio {
 
         eviarCorreo(usuario.getEmailUsuario(),"Recuperacion de Contraseña",html);
     }
+
     private void eviarCorreo( String destino,String asunto, String contenidohtml){
         try{
             MimeMessage message = mailSender.createMimeMessage();

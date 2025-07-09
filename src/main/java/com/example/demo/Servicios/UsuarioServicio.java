@@ -102,6 +102,10 @@ public class UsuarioServicio {
             usuario.setEstadoUsuario(actualizacionUsuario.getEstadoUsuario());
         }
 
+        if (actualizacionUsuario.getNumeroDocumentoUsuario() != null) {
+            usuario.setNumeroDocumentoUsuario(actualizacionUsuario.getNumeroDocumentoUsuario());
+        }
+
         Usuario usuarioActualizado = usuarioRepositorio.save(usuario);
 
         return generarRespuesta(usuarioActualizado);
@@ -182,6 +186,7 @@ public class UsuarioServicio {
         respuesta.setIdUsuario(usuario.getIdUsuario());
         respuesta.setAlias(usuario.getAlias());
         respuesta.setNombreUsuario(usuario.getNombreUsuario());
+        respuesta.setNumeroDocumentoUsuario(usuario.getNumeroDocumentoUsuario());
         respuesta.setApellidoUsuario(usuario.getApellidoUsuario());
         respuesta.setEmailUsuario(usuario.getEmailUsuario());
         respuesta.setTelefonoUsuario(usuario.getTelefonoUsuario());

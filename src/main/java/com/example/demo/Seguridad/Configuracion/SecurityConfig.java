@@ -66,7 +66,7 @@ public class SecurityConfig {
                                         "/api/promocion/private/**",
                                         "/api/publicacion/private/**",
                                         "/api/relcarritoproducto/private/**",
-                                        "/api/usuarios/private/**"
+                                        "/api/usuario/private/**"
                                 ).authenticated()
                                 .anyRequest().permitAll())
                 .oauth2Login(oauth -> oauth

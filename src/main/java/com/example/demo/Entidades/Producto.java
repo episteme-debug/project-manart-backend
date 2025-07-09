@@ -29,6 +29,9 @@ public class Producto {
     @Column(nullable = false, length = 500)
     private String descripcionProducto;
 
+    @Column(nullable = false, length = 1000)
+    private String descripcionDetalladaProducto;
+
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private RegionesDeColombiaEnum regionProducto;
