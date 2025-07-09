@@ -151,7 +151,7 @@ public class ProductoServicio {
         }
 
         if (dto.getDescripcionDetalladaProducto() != null) {
-            producto.setDescripcionProducto(dto.getDescripcionDetalladaProducto().trim());
+            producto.setDescripcionDetalladaProducto(dto.getDescripcionDetalladaProducto().trim());
         }
 
         if (dto.getRegionProducto() != null) {
